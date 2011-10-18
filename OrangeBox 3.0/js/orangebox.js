@@ -746,22 +746,23 @@ jQuery(document).ready(function($) {
 	}
 	else {
 		$('a[rel*=lightbox]').each(function(){
-			var href = $(this).attr('href');
-			var gallery = $(this).attr('rel');
-			if(gallery.indexOf(orangebox) >= 0)	{
-				if(i===0){
+			if(i===0){
+				var href = $(this).attr('href');
+				var gallery = $(this).attr('rel');
+				if(gallery.indexOf(orangebox) >= 0)	{
 					oB.methods.setupData($(this));
 					oB.methods.create($(this))
+					i++;
+					return false;
 				}
-				i++;
-			}
-			else if(href.indexOf(orangebox) >= 0)	{
-				if(i===0){
+				else if(href.indexOf(orangebox) >= 0)	{
 					oB.methods.setupData($(this));
 					oB.methods.create($(this))
+					i++;
+					return false;
 				}
-				i++;
 			}
+			else return false;
 		})
 	}
 });
