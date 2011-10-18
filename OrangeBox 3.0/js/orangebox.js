@@ -259,7 +259,7 @@ else {
                             o.addClass('ob_gallery-'+g);
                             var objectSet = $('.ob_gallery-'+g);
                             var lastObject = objectSet.last();
-                            i = objectSet.index(lastObject);
+                            i = objectSet.length -1;
                         } 
                         o.data('ob_data', {
                             ob_height: h,
@@ -750,13 +750,11 @@ jQuery(document).ready(function($) {
 				var href = $(this).attr('href');
 				var gallery = $(this).attr('rel');
 				if(gallery.indexOf(orangebox) >= 0)	{
-					oB.methods.setupData($(this));
 					oB.methods.create($(this))
 					i++;
 					return false;
 				}
 				else if(href.indexOf(orangebox) >= 0)	{
-					oB.methods.setupData($(this));
 					oB.methods.create($(this))
 					i++;
 					return false;
