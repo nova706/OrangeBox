@@ -80,9 +80,9 @@ else {
                             "min-height": oB.settings.contentMinHeight,
                             "min-width": oB.settings.contentMinWidth
                         });
+                        var dotnav = $('<ul id="ob_dots"></ul>');
                         oB.playing = oB.settings.autoplay;
                         oB.progress = null;
-                        var dotnav = $('<ul id="ob_dots"></ul>');
                         oB.docHeight = $(document).height();
                         oB.docWidth = $(document).width();
                         if(!jQuery().orangeControls) { oB.settings.orangeControls = false; }
@@ -233,13 +233,13 @@ else {
                             var iD;
                             if (u.indexOf("?") > iI) { iD = u.substring(iI, u.indexOf("?")); }
                             else { iD = u.substring(iI); }
-                            var signature;
-                            var expires;
                             c = "vimeo";
-                            $.ajax({
+/*                            var signature;
+                            var expires;
+                            var xml = $.ajax({
                                 type: "GET",
-                                url: "http://www.vimeo.com/moogaloop/load/clip:"+iD,
-                                dataType: "xml",
+                                url: "http://vimeo.com/moogaloop/load/clip:"+iD,
+                                dataType: "json",
                                 success: function(xml) {
                                     signature = $(xml).find('request_signature');
                                     expires = $(xml).find('request_signature_expires');
@@ -247,7 +247,7 @@ else {
                                     u = 'http://www.vimeo.com/moogaloop/play/clip:'+iD+'/'+signature+'/'+expires+'/?q=sd';
                                 }
                             });
-                        }
+*/                        }
                         else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}/)) {
                             c = "viddler";
                         }
@@ -442,7 +442,7 @@ else {
                         }
                         if(contentType === "jw") {
                             jwplayer("ob_video").setup({
-                                flashplayer: "/jwplayer/player.swf",
+                                flashplayer: "/orangebox/jw/player.swf",
                                 autostart: true,
                                 file: href,
                                 events: {
