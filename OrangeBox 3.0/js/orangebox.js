@@ -211,21 +211,21 @@ else {
                         var g = false;
                         var rel = o.attr('rel');
                         if(typeof o.attr('title') !== "undefined") {t = o.attr('title');}
-                        if (u.match(/(width\=)|(height\=)/)) {
-                            var heightIndex = u.indexOf("height=") + 7;
+                        if (u.match(/width\=/)) {
                             var widthIndex = u.indexOf("width=") + 6;
-                            var heightString = u.substr(heightIndex);
                             var widthString = u.substr(widthIndex);
-                            if(heightString.indexOf("&") > 0) { heightString = heightString.substr(0,heightString.indexOf("&")); }
                             if(widthString.indexOf("&") > 0) { widthString = widthString.substr(0,widthString.indexOf("&")); }
                             w = widthString;
+                        }
+                        if (u.match(/height\=/)) {
+                            var heightIndex = u.indexOf("height=") + 7;
+                            var heightString = u.substr(heightIndex);
+                            if(heightString.indexOf("&") > 0) { heightString = heightString.substr(0,heightString.indexOf("&")); }
                             h = heightString;
                         }
-                        if (u.match(/\?iframe/)) { c = "iframe"; }
+                        if (u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "iframe"; }
                         else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "image"; }
-                        else if (u.match(/\.(?:mov|mp4|m4v)(\?.{6,}(\&.{6,})?)?$/)) {
-                            c = "quicktime";
-                        }
+                        else if (u.match(/\.(?:mov|mp4|m4v|f4v|ogg|flv|webm)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "jw"; }
                         else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "flash"; }
                         else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "jw"; }
                         else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
