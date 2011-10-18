@@ -86,6 +86,7 @@ else {
                         oB.docHeight = $(document).height();
                         oB.docWidth = $(document).width();
                         if(!jQuery().orangeControls) { oB.settings.orangeControls = false; }
+                        if(typeof addthis === 'undefined') { oB.settings.addThis = false; }
                         
                     //Setup Dots
                         oB.currentGallery.each(function(x){ 
@@ -700,7 +701,18 @@ else {
                         $("body").append(ob_load);
                         loadTimer=setTimeout(function() { $('#ob_load').fadeIn(); }, 600);
                     }
-                }
+                },
+				getUrlVars: function(){
+					var vars = [], hash;
+					var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+					for(var i = 0; i < hashes.length; i++)
+					{
+						hash = hashes[i].split('=');
+						vars.push(hash[0]);
+						vars[hash[0]] = hash[1];
+					}
+					return vars;
+				}
             }
         };
         
@@ -726,4 +738,30 @@ else {
 jQuery(document).ready(function($) {
     if (typeof orangebox_vars !== "undefined") { $('a[rel*=lightbox]').orangeBox(orangebox_vars); }
     else { $('a[rel*=lightbox]').orangeBox(); }
+	var orangebox = oB.methods.getUrlVars()['orangebox'];
+	var id = '#'+ orangebox;
+	var i=0;
+	if(id.match(/^#\w{1,}$/) && $(id).length > 0) {
+		oB.methods.create($(orangebox));
+	}
+	else {
+		$('a[rel*=lightbox]').each(function(){
+			var href = $(this).attr('href');
+			var gallery = $(this).attr('rel');
+			if(gallery.indexOf(orangebox) >= 0)	{
+				if(i===0){
+					oB.methods.setupData($(this));
+					oB.methods.create($(this))
+				}
+				i++;
+			}
+			else if(href.indexOf(orangebox) >= 0)	{
+				if(i===0){
+					oB.methods.setupData($(this));
+					oB.methods.create($(this))
+				}
+				i++;
+			}
+		})
+	}
 });
