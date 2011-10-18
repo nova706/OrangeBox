@@ -1,11 +1,11 @@
 /*
- * version: 2.0.4
+ * version: 2.0.5
  * package: OrangeBox
  * author: David Paul Hamilton - http://orangebox.davidpaulhamilton.net
  * copyright: Copyright (c) 2011 David Hamilton / DavidPaulHamilton.net All rights reserved.
  * license: GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
  */
-if (typeof(oB) !== 'undefined') { $.error( 'OrangeBox: Variable "oB", used by OrangeBox, is already defined');  }
+if (typeof(oB) !== 'undefined') { console.log( 'OrangeBox: Variable "oB", used by OrangeBox, is already defined');  }
 else {
     var oB;
 	(function($) {
@@ -222,13 +222,13 @@ else {
                             h = heightString;
                         }
                         if (u.match(/\?iframe/)) { c = "iframe"; }
-                        else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)$/)) { c = "image"; }
-                        else if (u.match(/\.(?:mov|mp4|m4v)(\?.{6,}\&.{6,})?$/)) {
+                        else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "image"; }
+                        else if (u.match(/\.(?:mov|mp4|m4v)(\?.{6,}(\&.{6,})?)?$/)) {
                             c = "quicktime";
                         }
-                        else if (u.match(/\.swf(\?.{6,}\&.{6,})?$/)) { c = "flash"; }
-                        else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}/)) { c = "jw"; }
-                        else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}/)) {
+                        else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "flash"; }
+                        else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "jw"; }
+                        else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
                             var iI = u.indexOf("vimeo.com/") + 10;
                             var iD;
                             if (u.indexOf("?") > iI) { iD = u.substring(iI, u.indexOf("?")); }
@@ -248,11 +248,11 @@ else {
                                 }
                             });
 */                        }
-                        else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}/)) {
+                        else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
                             c = "viddler";
                         }
-                        else if (u.match(/^#\w{1,}/)) { c = "inline"; }
-                        else { $.error( 'OrangeBox: Unsupported Media: '+u); }
+                        else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "inline"; }
+                        else { console.log('OrangeBox: Unsupported Media: '+u); }
                         if (rel && rel.indexOf("[") && c) {
                             g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
                             o.addClass('ob_gallery-'+g);
@@ -277,7 +277,7 @@ else {
                             ob_delayTimer: o.attr('data-ob_delayTimer')
                         });
                     }
-                    else { $.error( 'OrangeBox: Object has no "href" attribute'); return false; }
+                    else { console.log('OrangeBox: Object has no "href" attribute'); return false; }
                 },
                 destroy : function( options, x ) {
                     $(document).trigger('oB_closing');
@@ -648,7 +648,7 @@ else {
                             showVideo();
                             break;
                         default:
-                            $.error( 'OrangeBox: Unsupported Media: '+href);
+                            console.log('OrangeBox: Unsupported Media: '+href);
                     }
                 },
                 navigate : function( d, i, options ) {
@@ -706,7 +706,7 @@ else {
         
         $.fn.orangeBox = function( method ) {        
             if ( method === "showContent" || method === "setupData" ) {
-                $.error( 'OrangeBox: ' +  method + ' cannot be called externally' );
+				console.log( 'OrangeBox: ' +  method + ' cannot be called externally' );
                 return false;
             }
             else if ( oB.methods[method] ) {
@@ -716,7 +716,7 @@ else {
                 return oB.methods.init.apply( this, arguments );
             }
             else {
-                $.error( 'OrangeBox: Method ' +  method + ' does not exist in OrangeBox' );
+				console.log( 'OrangeBox: Method ' +  method + ' does not exist in OrangeBox' );
                 return false;
             }    
         
