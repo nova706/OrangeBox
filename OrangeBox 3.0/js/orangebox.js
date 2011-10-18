@@ -279,7 +279,6 @@ else {
                             ob_caption: o.attr('data-ob_caption'),
                             ob_linkTarget: o.attr('data-ob_linkTarget'),
                             ob_share: o.attr('data-ob_share'),
-                            ob_shareLink: o.attr('data-ob_shareLink'),
                             ob_delayTimer: o.attr('data-ob_delayTimer')
                         });
                     }
@@ -437,8 +436,13 @@ else {
                             $('#ob_share').empty().remove();
                             var addThis = $('<a id="ob_share" class="addthis_button_compact"></a>');
                             var shareClass = "ob_share-"+title;
-                            var link = href;
-                            if ( obj.data('ob_data').ob_shareLink ) { link = obj.data('ob_data').ob_shareLink; }
+							var loc = window.location;
+							var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
+							var windowURL =  loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname;
+							if(windowURL.indexOf('?') > 0) {
+								windowURL = windowURL.substr(0,windowURL.indexOf('?'));
+							}
+                            var link = windowURL + "?orangebox=" + href;
                             addThis.addClass(shareClass);
                             $('#ob_window').append(addThis);
                             $('#ob_title').css('margin-right', 24);
@@ -744,6 +748,9 @@ jQuery(document).ready(function($) {
     if (typeof orangebox_vars !== "undefined") { $('a[rel*=lightbox]').orangeBox(orangebox_vars); }
     else { $('a[rel*=lightbox]').orangeBox(); }
 	var orangebox = oB.methods.getUrlVars()['orangebox'];
+	if(orangebox.indexOf('#.') > 0) {
+		orangebox = orangebox.substr(0,orangebox.indexOf('#.'));
+	}
 	var id = '#'+ orangebox;
 	var i=0;
 	function checkURL() {
