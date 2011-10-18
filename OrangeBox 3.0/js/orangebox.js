@@ -742,7 +742,7 @@ jQuery(document).ready(function($) {
 	var id = '#'+ orangebox;
 	var i=0;
 	if(id.match(/^#\w{1,}$/) && $(id).length > 0) {
-		oB.methods.create($(orangebox));
+		oB.methods.create($(id));
 	}
 	else {
 		$('a[rel*=lightbox]').each(function(){
