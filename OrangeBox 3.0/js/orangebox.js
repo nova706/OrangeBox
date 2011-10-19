@@ -439,14 +439,15 @@ else {
 							var loc = window.location;
 							var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
 							var windowURL =  loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname;
+							var href_encode = encodeURIComponent(href);
 							if(windowURL.indexOf('?') > 0) {
 								windowURL = windowURL.substr(0,windowURL.indexOf('?'));
 							}
-                            var link = windowURL + "?orangebox=" + href;
+                            var ob_link = windowURL + "?orangebox=" + href_encode;
                             addThis.addClass(shareClass);
                             $('#ob_window').append(addThis);
                             $('#ob_title').css('margin-right', 24);
-                            addthis.button('.'+shareClass, { services_compact: 'twitter,facebook,digg,delicious,more', ui_offset_left: -244, ui_offset_top: 4 }, { url: link, title: title });
+                            addthis.button('.'+shareClass, { services_compact: 'twitter,facebook,digg,delicious,more', ui_offset_left: -244, ui_offset_top: 4 }, { url: ob_link, title: title });
                             $('#ob_share').html('').append('<span class="at300bs at15nc at15t_compact"></span>');
                             if ( title === "" ) { title = "share" }
                         }
@@ -748,40 +749,39 @@ jQuery(document).ready(function($) {
     if (typeof orangebox_vars !== "undefined") { $('a[rel*=lightbox]').orangeBox(orangebox_vars); }
     else { $('a[rel*=lightbox]').orangeBox(); }
 	var orangebox = oB.methods.getUrlVars()['orangebox'];
-	if(orangebox.indexOf('#.') > 0) {
-		orangebox = orangebox.substr(0,orangebox.indexOf('#.'));
+	if(typeof orangebox !== 'undefined'){ 
+		if (orangebox.indexOf('#.') > 0) {
+			orangebox = orangebox.substr(0,orangebox.indexOf('#.'));
+		}
+		orangebox = decodeURIComponent(orangebox);
 	}
 	var id = '#'+ orangebox;
-	var i=0;
 	function checkURL() {
 		if(id.match(/^#\w{1,}$/) && $(id).length > 0) {
 			oB.methods.create($(id));
 		}
 		else {
 			$('a[rel*=lightbox]').each(function(){
-				if(i===0){
-					var href = $(this).attr('href');
-					var gallery = $(this).attr('rel');
-					if(gallery.indexOf(orangebox) >= 0)	{
-						oB.methods.create($(this))
-						i++;
-						return false;
-					}
-					else if(href.indexOf(orangebox) >= 0)	{
-						oB.methods.create($(this))
-						i++;
-						return false;
-					}
+				var href = $(this).attr('href');
+				var gallery = $(this).attr('rel');
+				if(gallery.indexOf(orangebox) >= 0)	{
+					oB.methods.create($(this))
+					return false;
 				}
-				else return false;
+				else if(href.indexOf(orangebox) >= 0)	{
+					oB.methods.create($(this))
+					return false;
+				}
 			})
 		}
 	}
 	if ( oB.settings.addThis ) { 
 		$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function(data, textStatus){
 		   console.log('OrangeBox: addThis loaded');
-		   checkURL();
+		   if(typeof orangebox !== 'undefined') {
+			   checkURL();
+		   }
 		});
 	}
-	else checkURL();
+	else if(typeof orangebox !== 'undefined') { checkURL(); }
 });
