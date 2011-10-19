@@ -41,7 +41,8 @@ else {
                 maxVideoWidth: 640,
                 maxVideoHeight: 390,
                 fadeTime: 200,
-                slideshowTimer: 3000
+                slideshowTimer: 3000,
+                streamItems: 10
             },
             methods: {
                 init : function( options ) {
@@ -233,6 +234,68 @@ else {
                         else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "image"; }
                         else if (u.match(/\.(?:mov|mp4|m4v|f4v|ogg|flv|webm)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "jw"; }
                         else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "flash"; }
+                        else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) { 
+							c = "flickr"; 
+							u = u.replace('rss_200', 'json');
+							u = u+"&jsoncallback=?";
+							if (rel.indexOf("[") > 0) {
+								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
+								objectclass = 'ob_gallery-'+g;
+								o.addClass(objectclass);
+							}
+							else {
+								g = 'FlickrGallery';
+								objectclass = 'ob_gallery-'+g;
+								o.addClass(objectclass);
+							}
+							var objectclass;
+							$.getJSON(u, function(data){
+								$.each(data.items, function(index,item){
+									var item_href = item.media.m.replace('_m.jpg', '.jpg');
+									var objectSet = $('.'+objectclass);
+									var lastObject = objectSet.last();
+									
+									if(index==0) { 
+										i = objectSet.length - 1;
+										o.data('ob_data', {
+											ob_height: h,
+											ob_width: w,
+											ob_gallery: g,
+											ob_index: i,
+											ob_contentType: c,
+											ob_href: item_href,
+											ob_title: item.title,
+											ob_linkText: o.attr('data-ob_linkText'),
+											ob_link: o.attr('data-ob_link'),
+											ob_caption: o.attr('data-ob_caption'),
+											ob_linkTarget: o.attr('data-ob_linkTarget'),
+											ob_share: 'false',
+											ob_delayTimer: o.attr('data-ob_delayTimer')
+										});
+									}
+									else if(index<oB.settings.streamItems) {
+										i = objectSet.length;
+										alink = $('<a class="'+objectclass+'" href="'+item_href+'" title="'+item.title+'" rel="lightbox['+g+']"></a>');
+										alink.data('ob_data', {
+											ob_height: h,
+											ob_width: w,
+											ob_gallery: g,
+											ob_index: i,
+											ob_contentType: c,
+											ob_href: item_href,
+											ob_title: item.title,
+											ob_linkText: o.attr('data-ob_linkText'),
+											ob_link: o.attr('data-ob_link'),
+											ob_caption: o.attr('data-ob_caption'),
+											ob_linkTarget: o.attr('data-ob_linkTarget'),
+											ob_share: 'false',
+											ob_delayTimer: o.attr('data-ob_delayTimer')
+										});
+										$(alink).appendTo('body');
+									}
+								});
+							});
+						}
                         else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "jw"; }
                         else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
                             var iI = u.indexOf("vimeo.com/") + 10;
@@ -259,7 +322,7 @@ else {
                         }
                         else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "inline"; }
                         else { console.log('OrangeBox: Unsupported Media: '+u); }
-                        if (rel && rel.indexOf("[") && c) {
+                        if (rel && rel.indexOf("[") && c && c != 'flickr') {
                             g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
                             o.addClass('ob_gallery-'+g);
                             var objectSet = $('.ob_gallery-'+g);
@@ -335,7 +398,7 @@ else {
                         var wH = oH + (oB.settings.contentBorderWidth*2);
                         var wW = oW + (oB.settings.contentBorderWidth*2);
                         var p = $(window).scrollTop();
-                        var target = "_blank";
+                        var target = 'target="_blank"';
                         if(p === 0) { p = $(document).scrollTop(); }
                         if(p === 0) { p = window.pageYOffset; }
                         if(obj.data('ob_data').ob_link){
@@ -646,6 +709,7 @@ else {
                             showiFrame();
                             break;
                         case "image":
+                        case "flickr":
                             showImage();
                             break;
                         case "inline":
