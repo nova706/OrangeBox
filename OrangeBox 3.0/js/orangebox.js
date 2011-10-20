@@ -322,7 +322,7 @@ else {
                         }
                         else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "inline"; }
                         else { console.log('OrangeBox: Unsupported Media: '+u); }
-                        if (rel && rel.indexOf("[") && c && c !== 'flickr') {
+                        if (rel && rel.indexOf("[") > 0 && c && c !== 'flickr') {
                             g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
                             o.addClass('ob_gallery-'+g);
                             var objectSet = $('.ob_gallery-'+g);
