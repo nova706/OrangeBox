@@ -643,8 +643,8 @@ else {
                     
                 //iFrame Content
                     function showiFrame() {	
-                        var mH = setValue(oB.settings.inlineHeight, "height");
-                        var mW = setValue(oB.settings.inlineWidth, "width");
+                        var mH = setValue(oB.settings.iframeHeight, "height");
+                        var mW = setValue(oB.settings.iframeWidth, "width");
 						var dim = getDim(mH, mW, mH, mW);
                         var newhref = href.replace(/(\?|\&)iframe\=true/, '');
                         newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
