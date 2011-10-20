@@ -5,10 +5,10 @@
  * copyright: Copyright (c) 2011 David Hamilton / DavidPaulHamilton.net All rights reserved.
  * license: GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
  */
-if (typeof(oB) !== 'undefined') { console.log( 'OrangeBox: Variable "oB", used by OrangeBox, is already defined');  }
+if (typeof oB !== 'undefined') { console.log('OrangeBox: Variable "oB", used by OrangeBox, is already defined'); }
 else {
-    var oB;
-	(function($) {
+	var oB;
+	(function ($) {
         oB = {
             progress: '',
             playing: '',
@@ -45,7 +45,7 @@ else {
                 streamItems: 10
             },
             methods: {
-                init : function( options ) {
+                init : function (options) {
                     if (!$('#ob_window').length) {
                         if ( options ) { $.extend( oB.settings, options ); }
                         return this.each(function() {
@@ -85,11 +85,11 @@ else {
                         oB.progress = null;
                         oB.docHeight = $(document).height();
                         oB.docWidth = $(document).width();
-                        if(oB.settings.orangeControls == true && !jQuery().orangeControls) { 
+                        if(oB.settings.orangeControls === true && !$().orangeControls) { 
 							console.log( 'OrangeBox: Connection with OrangeControls failed');
 							oB.settings.orangeControls = false; 
 						}
-                        if(oB.settings.addThis == true && typeof addthis === 'undefined') { 
+                        if(oB.settings.addThis === true && typeof addthis === 'undefined') { 
 							console.log( 'OrangeBox: Connection with addThis failed');
 							oB.settings.addThis = false; 
 						}
@@ -238,6 +238,7 @@ else {
 							c = "flickr"; 
 							u = u.replace('rss_200', 'json');
 							u = u+"&jsoncallback=?";
+							var objectclass;
 							if (rel.indexOf("[") > 0) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
 								objectclass = 'ob_gallery-'+g;
@@ -248,14 +249,13 @@ else {
 								objectclass = 'ob_gallery-'+g;
 								o.addClass(objectclass);
 							}
-							var objectclass;
 							$.getJSON(u, function(data){
 								$.each(data.items, function(index,item){
 									var item_href = item.media.m.replace('_m.jpg', '.jpg');
 									var objectSet = $('.'+objectclass);
 									var lastObject = objectSet.last();
 									
-									if(index==0) { 
+									if(index===0) { 
 										i = objectSet.length - 1;
 										o.data('ob_data', {
 											ob_height: h,
@@ -275,7 +275,7 @@ else {
 									}
 									else if(index<oB.settings.streamItems) {
 										i = objectSet.length;
-										alink = $('<a class="'+objectclass+'" href="'+item_href+'" title="'+item.title+'" rel="lightbox['+g+']"></a>');
+										var alink = $('<a class="'+objectclass+'" href="'+item_href+'" title="'+item.title+'" rel="lightbox['+g+']"></a>');
 										alink.data('ob_data', {
 											ob_height: h,
 											ob_width: w,
@@ -322,7 +322,7 @@ else {
                         }
                         else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "inline"; }
                         else { console.log('OrangeBox: Unsupported Media: '+u); }
-                        if (rel && rel.indexOf("[") && c && c != 'flickr') {
+                        if (rel && rel.indexOf("[") && c && c !== 'flickr') {
                             g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
                             o.addClass('ob_gallery-'+g);
                             var objectSet = $('.ob_gallery-'+g);
@@ -351,7 +351,7 @@ else {
                     $(document).trigger('oB_closing');
                     if ( options ) { $.extend( oB.settings, options ); }
                     try{jwplayer("ob_video").remove();}
-                    catch(error){};
+                    catch(error){}
                     $('#ob_video').empty().remove();
                     oB.methods.showLoad("stop");
                     clearTimeout(oB.controlTimer);
@@ -363,7 +363,7 @@ else {
                     $('#ob_container').fadeOut(oB.settings.fadeTime, function() {
                         $(this).remove().empty();
                         $(document).trigger('oB_closed');
-                        if(x && jQuery.isFunction(x)) { x(); }
+                        if(x && $.isFunction(x)) { x(); }
                     });
                 },
                 showContent : function ( obj, initial ) {
@@ -390,13 +390,33 @@ else {
                     
                 //Start Preloader
                     oB.methods.showLoad();
+					
+				//Set Height and Width
+					function getSize(dimension) {
+						var size;
+						if(dimension === "width") { 
+							var content_width = parseInt(content.css('width').replace('px',''),10);
+							size = content.outerWidth() + (oB.settings.contentBorderWidth*2); 
+							if(size < oB.settings.contentMinWidth) { 
+								size = oB.settings.contentMinWidth + (oB.settings.contentBorderWidth*2); 
+							}
+							if(!size && content_height){ size = content_width; }
+						}
+						if(dimension === "height") { 
+							var content_height = parseInt(content.css('height').replace('px',''), 10);
+							size = content.outerHeight() + (oB.settings.contentBorderHeight*2); 
+							if(size < oB.settings.contentMinHeight) { 
+								size = oB.settings.contentMinHeight + (oB.settings.contentBorderWidth*2); 
+							}
+							if(!size && content_height){ size = content_height; }
+						}
+						return size;
+					}
                         
                 //Set Modal Properties
                     function setModalProperties() {
-                        var oH = content.outerHeight();
-                        var oW = content.outerWidth();
-                        var wH = oH + (oB.settings.contentBorderWidth*2);
-                        var wW = oW + (oB.settings.contentBorderWidth*2);
+                        var wH = getSize('height');
+                        var wW = getSize('width');
                         var p = $(window).scrollTop();
                         var target = 'target="_blank"';
                         if(p === 0) { p = $(document).scrollTop(); }
@@ -415,15 +435,10 @@ else {
                             ob_caption.append('<p>'+obj.data('ob_data').ob_caption+'</p>');
                             $('#ob_content').append(ob_caption);
                         }
-                    //Check for Mins
-                        if(wH < oB.settings.contentMinHeight) { wH = oB.settings.contentMinHeight + (oB.settings.contentBorderWidth*2); }
-                        if(wW < oB.settings.contentMinWidth) { wW = oB.settings.contentMinWidth + (oB.settings.contentBorderWidth*2); }
                         $("#ob_container").css({ "margin-top" : p });
-                        $("#ob_window").css({ "height": wH, "width": wW });
+                        $("#ob_window").css({ "min-height": wH, "width": wW });
                         $('#ob_float').css({ "margin-bottom": -($("#ob_window").outerHeight(true)) / 2 });
-                        if (isError){ $('#ob_content').css({ "height": oH, "width": oW, "min-height": 0 }); }
-                        else { $('#ob_content').css({ "height": wH - (oB.settings.contentBorderWidth*2), "width": wW - (oB.settings.contentBorderWidth*2), "min-height": oB.settings.contentMinHeight });
-                        }
+                        $('#ob_content').css({ "min-height": wH - (oB.settings.contentBorderWidth*2), "width": wW - (oB.settings.contentBorderWidth*2) });
                     }
                     
                 //Update Navigation
@@ -512,9 +527,11 @@ else {
                             $('#ob_title').css('margin-right', 24);
                             addthis.button('.'+shareClass, { services_compact: 'twitter,facebook,digg,delicious,more', ui_offset_left: -244, ui_offset_top: 4 }, { url: ob_link, title: title });
                             $('#ob_share').html('').append('<span class="at300bs at15nc at15t_compact"></span>');
-                            if ( title === "" ) { title = "share" }
+                            if ( title === "" ) { title = "share"; }
                         }
                         if(contentType === "jw") {
+							var jw_width = content.css('width');
+							var jw_height = content.css('height');
                             jwplayer("ob_video").setup({
                                 flashplayer: "/orangebox/jw/player.swf",
                                 autostart: true,
@@ -526,8 +543,8 @@ else {
                                         }
                                     }
                                 },
-                                width: '100%',
-                                height: '100%'
+                                width: jw_width,
+                                height: jw_height
                             });
                         }
                         $('#ob_window').fadeIn(oB.settings.fadeTime, function(){
@@ -540,7 +557,7 @@ else {
                         if(oB.playing && contentType !== "jw") {
                             var delayTimer = oB.settings.slideshowTimer;
                             if(obj.data('ob_data').ob_delayTimer) {
-                                delayTimer = parseInt(obj.data('ob_data').ob_delayTimer) + parseInt(oB.settings.slideshowTimer);
+                                delayTimer = parseInt(obj.data('ob_data').ob_delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10);
                             }
                             oB.slideshowTimer = setTimeout(function(){
                                 oB.methods.navigate(1);
@@ -565,7 +582,7 @@ else {
                         setModalProperties();
                     }
                     
-                //Set Width or Height Value
+                //Set Maximum Width or Height Value
                     function setValue(i, x) {
                         var w = oB.docWidth;
                         var h = oB.docHeight;
@@ -581,7 +598,7 @@ else {
                     
                 //iFrame Content
                     function showiFrame() {	
-                        var newhref = href.replace(/\?iframe$/, '');
+                        var newhref = href.replace(/\?iframe\=true$/, '');
                         content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
                                 "height": setValue(oB.settings.iframeHeight, "height"),
                                 "width": setValue(oB.settings.iframeWidth, "width")
@@ -646,13 +663,8 @@ else {
                             else if(href.indexOf("viddler.com/simple/") > 0) { iI = href.indexOf("viddler.com/simple/") + 19; }
                             if (href.indexOf("?") > iI) { i = href.substring(iI, href.indexOf("?")); }
                             else { i = href.substring(iI); }
-                            var i = i.replace(/\//g,'');
+                            i = i.replace(/\//g,'');
                             content = $('<iframe id="ob_video" '+a+' src="http://cdn.static.viddler.com/flash/publisher.swf?key='+i+'&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>');
-                        }
-                        
-                    //If Quicktime
-                        else if (contentType === "quicktime") {
-                            content = $('<div id="ob_video"><object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab" height="' + h + '" width="' + w + '"><param name="src" value="' + href + '"><param name="wmode" value="transparent" /><param name="type" value="video/quicktime"><param name="autoplay" value="true"><embed src="' + href + '" height="' + h + '" width="' + w + '" autoplay="true" type="video/quicktime" pluginspage="http://www.apple.com/quicktime/download/" scale="aspect"></embed></object></div>');
                         }
                         
                     //If Flash
@@ -738,13 +750,17 @@ else {
                         $(document).trigger('oB_navigate', [i]);
                         $('#ob_window').fadeOut(oB.settings.fadeTime, function () {
                             try{jwplayer("ob_video").remove();}
-                            catch(error){};
+                            catch(error){}
                             $('#ob_video').empty().remove();
                             $('#ob_title').empty();
-                            $('#ob_content').empty();
+                            $('#ob_content').empty().css({
+									"min-height": 0
+								});
                             oB.delayTimer = $(oB.currentGallery[i]).data('ob_data').ob_delayTimer;
                             oB.methods.showContent($(oB.currentGallery[i]), false );
-                        });
+                        }).css({
+							"min-height": 0
+						});
                     }
                     else { oB.progress = null; }
                     if(!oB.currentGallery[i + 1]) { oB.methods.slideshowPause(); }
@@ -777,9 +793,10 @@ else {
                     }
                 },
 				getUrlVars: function(){
+					var i;
 					var vars = [], hash;
 					var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-					for(var i = 0; i < hashes.length; i++)
+					for(i = 0; i < hashes.length; i++)
 					{
 						hash = hashes[i].split('=');
 						vars.push(hash[0]);
@@ -829,14 +846,14 @@ jQuery(document).ready(function($) {
 				var href = $(this).attr('href');
 				var gallery = $(this).attr('rel');
 				if(gallery.indexOf(orangebox) >= 0)	{
-					oB.methods.create($(this))
+					oB.methods.create($(this));
 					return false;
 				}
 				else if(href.indexOf(orangebox) >= 0)	{
-					oB.methods.create($(this))
+					oB.methods.create($(this));
 					return false;
 				}
-			})
+			});
 		}
 	}
 	if ( oB.settings.addThis ) { 
