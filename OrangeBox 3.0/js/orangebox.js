@@ -1,5 +1,5 @@
 /*
- * version: 2.0.5
+ * version: 3.0.0
  * package: OrangeBox
  * author: David Paul Hamilton - http://orangebox.davidpaulhamilton.net
  * copyright: Copyright (c) 2011 David Hamilton / DavidPaulHamilton.net All rights reserved.
@@ -582,7 +582,7 @@ else {
                         setModalProperties();
                     }
                     
-                //Set Maximum Width or Height Value
+                //Get Maximum Width or Height Value
                     function setValue(i, x) {
                         var w = oB.docWidth;
                         var h = oB.docHeight;
@@ -595,23 +595,79 @@ else {
                         }
                         return false;
                     }
+					
+				//Get Width and Height
+					function getDim(mH, mW, setHeight, setWidth) {
+						var w,h;
+						var dim;
+						if (obj.data('ob_data').ob_height && obj.data('ob_data').ob_width) {
+							h = obj.data('ob_data').ob_height;
+							w = obj.data('ob_data').ob_width;
+						}
+						else if(obj.data('ob_data').ob_height) {
+							h = obj.data('ob_data').ob_height;
+							if (setWidth && setHeight) {
+								w = (setWidth / setHeight * h);
+							}
+						}
+						else if(obj.data('ob_data').ob_width) {
+							w = obj.data('ob_data').ob_width;
+							if (setWidth && setHeight) {
+								h = (setHeight / setWidth * w);
+							}
+						}
+						else {
+							if (setWidth) {
+								w = setWidth;
+							}
+							if (setHeight) {
+								h = setHeight;
+							}
+						}
+						
+					//Scale Content to fit
+						if(mH) {
+							if(h > mH){
+								w = w * mH / h;
+								h = mH ;
+							}
+						}
+						if(mW) {
+							if(w > mW){
+								h = h * mW / w;
+								w = mW;
+							}
+						}
+						return [h,w];			
+					}
                     
                 //iFrame Content
                     function showiFrame() {	
-                        var newhref = href.replace(/\?iframe\=true$/, '');
+                        var mH = setValue(oB.settings.inlineHeight, "height");
+                        var mW = setValue(oB.settings.inlineWidth, "width");
+						var dim = getDim(mH, mW, mH, mW);
+                        var newhref = href.replace(/(\?|\&)iframe\=true/, '');
+                        newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
+                        newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
                         content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
-                                "height": setValue(oB.settings.iframeHeight, "height"),
-                                "width": setValue(oB.settings.iframeWidth, "width")
+                                "height": dim[0],
+                                "width": dim[1]
                             });
                         buildit();
                     }
                     
                 //Inline Content
                     function showInline() {
+                        var mH = setValue(oB.settings.inlineHeight, "height");
+                        var mW = setValue(oB.settings.inlineWidth, "width");
+						var dim = getDim(mH, mW, mH, mW);
+						if(href.indexOf('?') > 0) {
+							href = href.substr(0,href.indexOf('?'));	
+						}
                         if($(href).length && $(href).html() !== ""){
                             content = $('<div id="ob_inline">' + $(href).html() + '</div>').css({
-                                    "height": setValue(oB.settings.inlineHeight, "height"),
-                                    "width": setValue(oB.settings.inlineWidth, "width")
+                                    "height": dim[0],
+                                    "width": dim[1]
                                 });
                             buildit();
                         }
@@ -623,26 +679,11 @@ else {
                         var i;
                         var mH = setValue(oB.settings.maxVideoHeight, "height");
                         var mW = setValue(oB.settings.maxVideoWidth, "width");
+						var dim = getDim(mH, mW, mH, mW);
+						var h = dim[0];
+						var w = dim[1];
                         var a = 'height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto"';
-                        var h;
-                        var w;
                         var iI;
-                        if (obj.data('ob_data').ob_height && obj.data('ob_data').ob_width) {
-                            h = obj.data('ob_data').ob_height;
-                            w = obj.data('ob_data').ob_width;
-                            if(h > mH){
-                                w = w * mH / h;
-                                h = mH;
-                            }
-                            if(w > mW){
-                                h = h * mW / w;
-                                w = mW;
-                            }
-                        }
-                        else {
-                            w = mW;	
-                            h = mH;	
-                        }
                         
                     //If JW
                         if (contentType === "jw") {
@@ -680,20 +721,13 @@ else {
                         var img = new Image();
                         content = $(img);
                         content.load(function () {
-                            var mH = 0;
-                            var mW = 0;
-                            var w = img.width;
-                            var h = img.height;
-                            mH = setValue(oB.settings.maxImageHeight, "height");
-                            mW = setValue(oB.settings.maxImageWidth, "width");
-                            if(h > mH){
-                                w = w * mH / h;
-                                h = mH ;
-                            }
-                            if(w > mW){
-                                h = h * mW / w;
-                                w = mW ;
-                            }
+                            var mH = setValue(oB.settings.maxImageHeight, "height");
+                            var mW = setValue(oB.settings.maxImageWidth, "width");
+							var dim = getDim(mH, mW, img.height, img.width);
+                            var h = dim[0];
+                            var w = dim[1];
+							
+							
                             if(h < oB.settings.contentMinHeight){
                                 content.css({
                                     "margin-top": (oB.settings.contentMinHeight / 2) - (h / 2)
