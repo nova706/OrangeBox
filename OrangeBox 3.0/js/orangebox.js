@@ -400,7 +400,7 @@ else {
 							if(size < oB.settings.contentMinWidth) { 
 								size = oB.settings.contentMinWidth + (oB.settings.contentBorderWidth*2); 
 							}
-							if(!size && content_height){ size = content_width; }
+							if(!size && content_width){ size = content_width; }
 						}
 						if(dimension === "height") { 
 							var content_height = parseInt(content.css('height').replace('px',''), 10);
