@@ -786,7 +786,8 @@ else {
                             try{jwplayer("ob_video").remove();}
                             catch(error){}
                             $('#ob_video').empty().remove();
-                            $('#ob_title').empty();
+							$('#ob_share').empty().remove();
+                            $('#ob_title').empty().css('margin-right', 0);
                             $('#ob_content').empty().css({
 									"min-height": 0
 								});
