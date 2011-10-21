@@ -726,7 +726,43 @@ else {
 							var dim = getDim(mH, mW, img.height, img.width);
                             var h = dim[0];
                             var w = dim[1];
-							
+							var origImgWidth = img.width;
+							var origImgHeight = img.height;
+							var collapseWidth;
+							var collapseHeight;
+							var expandWidth = origImgWidth;
+							var expandHeight = origImgHeight;
+							var running = false;
+							$('#ob_content').unbind('click').click(function(){
+								var outerHeight = $('#ob_content').outerHeight();
+								if(!running && outerHeight <= expandHeight) {
+									expandWidth = origImgWidth;
+									expandHeight = origImgHeight;
+									var windowPadding = parseInt($('#ob_window').css("padding-left"),10)*2;
+									if($(this).hasClass('expanded')) {
+										running = true;
+										$("#ob_window").animate({ "minheight": collapseHeight, "width": collapseWidth },400);
+										$('#ob_float').animate({ "margin-bottom": -(collapseHeight+windowPadding) / 2 },400);
+										$('#ob_content').animate({ "min-height": collapseHeight - (oB.settings.contentBorderWidth*2), "width": collapseWidth - (oB.settings.contentBorderWidth*2) },400);
+										$('#ob_image').animate({ "height": collapseHeight - (oB.settings.contentBorderWidth*2), "width": collapseWidth - (oB.settings.contentBorderWidth*2) }, 400, function(){running = false;});
+										$(this).removeClass('expanded');
+									}
+									else {
+										running = true;
+										collapseWidth = $('#ob_content').outerWidth();
+										collapseHeight = $('#ob_content').outerHeight();
+										if(expandWidth > $(window).width()){
+											expandHeight = (expandHeight * $(window).width() / expandWidth) - windowPadding;
+											expandWidth = $(window).width() - windowPadding;
+										}
+										$("#ob_window").animate({ "minheight": expandHeight, "width": expandWidth },400);
+										$('#ob_float').animate({ "margin-bottom": -(expandHeight+windowPadding) / 2 },400);
+										$('#ob_content').animate({ "min-height": expandHeight - (oB.settings.contentBorderWidth*2), "width": expandWidth - (oB.settings.contentBorderWidth*2) },400);
+										$('#ob_image').animate({ "height": expandHeight - (oB.settings.contentBorderWidth*2), "width": expandWidth - (oB.settings.contentBorderWidth*2) }, 400, function(){running = false;});
+										$(this).addClass('expanded');
+									}
+								}
+							});
 							
                             if(h < oB.settings.contentMinHeight){
                                 content.css({
@@ -786,6 +822,7 @@ else {
                             try{jwplayer("ob_video").remove();}
                             catch(error){}
                             $('#ob_video').empty().remove();
+							$('#ob_content').removeClass('expanded');
 							$('#ob_share').empty().remove();
                             $('#ob_title').empty().css('margin-right', 0);
                             $('#ob_content').empty().css({
