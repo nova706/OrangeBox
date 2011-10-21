@@ -42,7 +42,8 @@ else {
                 maxVideoHeight: 390,
                 fadeTime: 200,
                 slideshowTimer: 3000,
-                streamItems: 10
+                streamItems: 10,
+				logging: false
             },
             methods: {
                 init : function (options) {
@@ -86,11 +87,11 @@ else {
                         oB.docHeight = $(document).height();
                         oB.docWidth = $(document).width();
                         if(oB.settings.orangeControls === true && !$().orangeControls) { 
-							console.log( 'OrangeBox: Connection with OrangeControls failed');
+							if(oB.settings.logging)console.log( 'OrangeBox: Connection with OrangeControls failed');
 							oB.settings.orangeControls = false; 
 						}
                         if(oB.settings.addThis === true && typeof addthis === 'undefined') { 
-							console.log( 'OrangeBox: Connection with addThis failed');
+							if(oB.settings.logging)console.log( 'OrangeBox: Connection with addThis failed');
 							oB.settings.addThis = false; 
 						}
                         
@@ -321,7 +322,7 @@ else {
                             c = "viddler";
                         }
                         else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { c = "inline"; }
-                        else { console.log('OrangeBox: Unsupported Media: '+u); }
+                        else { if(oB.settings.logging)console.log('OrangeBox: Unsupported Media: '+u); }
                         if (rel && rel.indexOf("[") > 0 && c && c !== 'flickr') {
                             g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
                             o.addClass('ob_gallery-'+g);
@@ -345,14 +346,16 @@ else {
                             ob_delayTimer: o.attr('data-ob_delayTimer')
                         });
                     }
-                    else { console.log('OrangeBox: Object has no "href" attribute'); return false; }
+                    else { if(oB.settings.logging)console.log('OrangeBox: Object has no "href" attribute'); return false; }
                 },
                 destroy : function( options, x ) {
                     $(document).trigger('oB_closing');
                     if ( options ) { $.extend( oB.settings, options ); }
-                    try{jwplayer("ob_video").remove();}
-                    catch(error){}
-                    $('#ob_video').empty().remove();
+					if($('#ob_video').length > 0) {
+						try{jwplayer("ob_video").remove();}
+						catch(error){if(oB.settings.logging)console.log( 'OrangeBox: ' +  error );}
+						$('#ob_video').empty().remove();
+					}
                     oB.methods.showLoad("stop");
                     clearTimeout(oB.controlTimer);
                     clearTimeout(oB.slideshowTimer);
@@ -363,6 +366,7 @@ else {
                     $('#ob_container').fadeOut(oB.settings.fadeTime, function() {
                         $(this).remove().empty();
                         $(document).trigger('oB_closed');
+						if(oB.settings.logging)console.log( 'OrangeBox: Closed' );
                         if(x && $.isFunction(x)) { x(); }
                     });
                 },
@@ -508,20 +512,21 @@ else {
                     
                 //Build the Window
                     function buildit() {
+						var loc = window.location;
+						var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
+						var windowURL =  loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname;
+						var href_encode = encodeURIComponent(href);
+						if(windowURL.indexOf('?') > 0) {
+							windowURL = windowURL.substr(0,windowURL.indexOf('?'));
+						}
+						var ob_link = windowURL + "?orangebox=" + href_encode;
+						if(oB.settings.logging)console.log( 'OrangeBox: Browser Link: ' + ob_link );
                         oB.methods.showLoad("stop");
                         $('#ob_content').append(content);
                         if ( oB.settings.addThis && contentType !== "iframe" && contentType !== "inline" && obj.data('ob_data').ob_share !== "false") {
                             $('#ob_share').empty().remove();
                             var addThis = $('<a id="ob_share" class="addthis_button_compact"></a>');
                             var shareClass = "ob_share-"+title;
-							var loc = window.location;
-							var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
-							var windowURL =  loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname;
-							var href_encode = encodeURIComponent(href);
-							if(windowURL.indexOf('?') > 0) {
-								windowURL = windowURL.substr(0,windowURL.indexOf('?'));
-							}
-                            var ob_link = windowURL + "?orangebox=" + href_encode;
                             addThis.addClass(shareClass);
                             $('#ob_window').append(addThis);
                             $('#ob_title').css('margin-right', 24);
@@ -549,6 +554,7 @@ else {
                         }
                         $('#ob_window').fadeIn(oB.settings.fadeTime, function(){
                             if(initial){ $(document).trigger('oB_init'); }
+							if(oB.settings.logging && initial)console.log( 'OrangeBox: Initialized' );
                             $('#ob_overlay').css({ "height": $(document).height() });
                         });
                         setModalProperties();
@@ -571,7 +577,8 @@ else {
                         oB.methods.showLoad("stop");
                         $('#ob_content').empty().append(content);
                         $('#ob_window').fadeIn(oB.settings.fadeTime, function(){
-                            $('#ob_overlay').css({ "height": $(document).height() });    
+                            $('#ob_overlay').css({ "height": $(document).height() }); 
+							if(oB.settings.logging)console.log( 'OrangeBox: Could not find file' );   
                         });
                         $('#ob_title').hide();
                         $('#ob_right').hide();
@@ -805,7 +812,7 @@ else {
                             showVideo();
                             break;
                         default:
-                            console.log('OrangeBox: Unsupported Media: '+href);
+                            if(oB.settings.logging)console.log('OrangeBox: Unsupported Media: '+href);
                     }
                 },
                 navigate : function( d, i, options ) {
@@ -818,10 +825,13 @@ else {
                     if(oB.currentGallery[i]) {
                         oB.progress = true;
                         $(document).trigger('oB_navigate', [i]);
+						if(oB.settings.logging)console.log( 'OrangeBox: Navigating to' +  [i] );
                         $('#ob_window').fadeOut(oB.settings.fadeTime, function () {
-                            try{jwplayer("ob_video").remove();}
-                            catch(error){}
-                            $('#ob_video').empty().remove();
+							if($('#ob_video').length > 0) {
+								try{jwplayer("ob_video").remove();}
+								catch(error){if(oB.settings.logging)console.log( 'OrangeBox: ' +  error );}
+								$('#ob_video').empty().remove();
+							}
 							$('#ob_content').removeClass('expanded');
 							$('#ob_share').empty().remove();
                             $('#ob_title').empty().css('margin-right', 0);
@@ -839,6 +849,7 @@ else {
                 },
                 slideshowPlay  : function() {
                     $(document).trigger('oB_play');
+					if(oB.settings.logging)console.log( 'OrangeBox: Playing' );
                     var c =  parseInt($('#ob_content').attr('class').substr(7), 10);
                     oB.playing = true;
                     if(oB.currentGallery[c + 1]){ oB.methods.navigate(1); }
@@ -847,6 +858,7 @@ else {
                 slideshowPause  : function() {
                     if(oB.playing) {
                         $(document).trigger('oB_pause');
+						if(oB.settings.logging)console.log( 'OrangeBox: Paused' );
                         oB.playing = false;
                         clearTimeout(oB.slideshowTimer);
                     }
@@ -881,7 +893,7 @@ else {
         
         $.fn.orangeBox = function( method ) {        
             if ( method === "showContent" || method === "setupData" ) {
-				console.log( 'OrangeBox: ' +  method + ' cannot be called externally' );
+				if(oB.settings.logging)console.log( 'OrangeBox: ' +  method + ' cannot be called externally' );
                 return false;
             }
             else if ( oB.methods[method] ) {
@@ -891,7 +903,7 @@ else {
                 return oB.methods.init.apply( this, arguments );
             }
             else {
-				console.log( 'OrangeBox: Method ' +  method + ' does not exist in OrangeBox' );
+				if(oB.settings.logging)console.log( 'OrangeBox: Method ' +  method + ' does not exist in OrangeBox' );
                 return false;
             }    
         
@@ -930,7 +942,7 @@ jQuery(document).ready(function($) {
 	}
 	if ( oB.settings.addThis ) { 
 		$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function(data, textStatus){
-		   console.log('OrangeBox: addThis loaded');
+		   if(oB.settings.logging)console.log('OrangeBox: addThis loaded');
 		   if(typeof orangebox !== 'undefined') {
 			   checkURL();
 		   }
