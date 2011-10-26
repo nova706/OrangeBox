@@ -77,8 +77,20 @@ else {
                             oB.methods.destroy(oB.settings);
                         });
                         var title = $('<div id="ob_title"></div>');
-                        var navRight = $('<a class="ob_nav ob_controls ob_cs" id="ob_right"><span class="ob_cs" id="ob_right-ico"></span></a>');
-                        var navLeft = $('<a class="ob_nav ob_controls ob_cs" id="ob_left"><span class="ob_cs" id="ob_left-ico"></span></a>');
+                        var navRight = $('<a class="ob_nav ob_controls" id="ob_right"><span id="ob_right-ico"></span></a>').click(function (e) {
+								if(oB.progress === null) {
+									oB.methods.slideshowPause();
+									e.stopPropagation();
+									oB.methods.navigate(1);
+								}
+							});
+                        var navLeft = $('<a class="ob_nav ob_controls" id="ob_left"><span id="ob_left-ico"></span></a>').click( function (e) {
+								if(oB.progress === null) {
+									oB.methods.slideshowPause();
+									e.stopPropagation();
+									oB.methods.navigate(-1);
+								}
+							});
                         var content = $('<div id="ob_content"></div>').css({
                             "border-width": oB.settings.contentBorderWidth,
                             "min-height": oB.settings.contentMinHeight,
@@ -146,23 +158,7 @@ else {
                             if(oB.settings.orangeControls) $(document).orangeControls();
                             
                         //Initiate Nav Arrows
-                            if(oB.settings.showNav) {
-                                window.append(navRight).append(navLeft);
-                                navLeft.click( function (e) {
-                                    if(oB.progress === null) {
-                                        oB.methods.slideshowPause();
-                                        e.stopPropagation();
-                                        oB.methods.navigate(-1);
-                                    }
-                                });
-                                navRight.click(function (e) {
-                                    if(oB.progress === null) {
-                                        oB.methods.slideshowPause();
-                                        e.stopPropagation();
-                                        oB.methods.navigate(1);
-                                    }
-                                });
-                            }
+                            if(oB.settings.showNav) window.append(navRight).append(navLeft);
                             
                         //Initiate Nav Dots
                             if(oB.settings.showDots) {
@@ -360,9 +356,7 @@ else {
                     var contentType = obj.data('ob_data').ob_contentType;
                     var content;
                     var currentIndex = obj.data('ob_data').ob_index;
-                    var ob_caption = $('<div id="ob_caption"></div>').css({
-                            "opacity" : 0.95
-                        });
+                    var ob_caption = $('<div id="ob_caption"></div>').css("opacity", 0.95);
                     if(oB.settings.fadeCaption) {
                         ob_caption.hide();
                         $('#ob_content').hover(function(){
@@ -380,12 +374,12 @@ else {
 					
 				//Set Height and Width
 					function getDim() {
-						var content_height = parseInt(content.css('height').replace('px',''), 10);
-						var content_width = parseInt(content.css('width').replace('px',''),10);
+						var css_height = parseInt(content.css('height').replace('px',''), 10);
+						var css_width = parseInt(content.css('width').replace('px',''),10);
 						var h = content.outerHeight(); 
 						var w = content.outerWidth();
-						if(!h && content_height) h = content_height;
-						if(!w && content_width) w = content_width;
+						if(!h && css_height) h = css_height;
+						if(!w && css_width) w = css_width;
 						if(content.attr('id') !== "ob_error" && h < oB.settings.contentMinHeight) h = oB.settings.contentMinHeight; 
 						if(w < oB.settings.contentMinWidth) w = oB.settings.contentMinWidth; 
 						return [h,w];
@@ -395,11 +389,11 @@ else {
                     function setModalProperties() {
                         var dim = getDim();
                         var p = $(window).scrollTop();
-                        var target = 'target="_blank"';
                         if(p === 0) p = $(document).scrollTop();
                         if(p === 0) p = window.pageYOffset;
 						if(content.attr('id') !== "ob_error") {
 							if(obj.data('ob_data').ob_link){
+								var target = 'target="_blank"';
 								if(obj.data('ob_data').ob_linkTarget === "_self") target = 'target="_self"';
 								if(obj.data('ob_data').ob_linkText)
 									title = title+' <a href="'+obj.data('ob_data').ob_link+'" '+target+' >'+obj.data('ob_data').ob_linkText+'</a>';
@@ -427,42 +421,27 @@ else {
                                 else $(this).removeClass('current');
                             });
                         }
-                        clearTimeout(oB.controlTimer);
-                        function showControls() {
-                            if(oB.currentGallery.length > 1) {
-                                if(oB.settings.orangeControls)
-                                    $(document).orangeControls('toggle', {'time' : oB.settings.fadeTime, 'fade' : "in"});
-                                if(oB.currentGallery[currentIndex + 1]) { 
-                                    $('#ob_right').fadeIn(oB.settings.fadeTime);
-                                    $('#ob_right-ico').fadeIn(oB.settings.fadeTime);
-                                }
-                                else $('#ob_right').hide();
-                                if(oB.currentGallery[currentIndex - 1]) { 
-                                    $('#ob_left').fadeIn(oB.settings.fadeTime); 
-                                    $('#ob_left-ico').fadeIn(oB.settings.fadeTime);
-                                }
-                                else $('#ob_left').hide();
-                            }
-                            $('#ob_close').fadeIn(oB.settings.fadeTime);
+                        if(oB.settings.showNav) {
+							if(oB.currentGallery[currentIndex+1]) $('#ob_right').addClass('ob_controls');
+							else $('#ob_right').removeClass('ob_controls');
+							if(oB.currentGallery[currentIndex-1]) $('#ob_left').addClass('ob_controls');
+							else $('#ob_left').removeClass('ob_controls');
                         }
+                        clearTimeout(oB.controlTimer);
                         if(oB.settings.fadeControls) {
                             if(!oB.currentGallery[currentIndex + 1] || !oB.currentGallery[currentIndex - 1] || initial) {
-                                showControls();
+                                $('.ob_controls').fadeIn(oB.settings.fadeTime);
                                 oB.controlTimer = setTimeout(function() {
                                     $('.ob_controls').fadeOut(oB.settings.fadeTime);
-                                    if(oB.settings.orangeControls)
-                                        $(document).orangeControls('toggle', {'time' : oB.settings.fadeTime, 'fade' : "out"});
                                 }, 1200);
                             }
                             $(document).mousemove(function(event) {
                                 clearTimeout(oB.controlTimer);
                                 oB.controlTimer = setTimeout(function() {
-                                    showControls();
-                                    if (!$(event.target).hasClass('ob_cs') && !$(event.target).hasClass('oc_class')) {
+                                    $('.ob_controls').fadeIn(oB.settings.fadeTime);
+                                    if(!$(event.target).hasClass('ob_controls') && !$(event.target).parent().hasClass('ob_controls')) {
                                         oB.controlTimer = setTimeout(function() {
                                             $('.ob_controls').fadeOut(oB.settings.fadeTime);
-                                            if(oB.settings.orangeControls)
-                                                $(document).orangeControls('toggle', {'time' : oB.settings.fadeTime, 'fade' : "out"});
                                         }, 1200);
                                     }
                                 },20);
@@ -698,7 +677,7 @@ else {
                     if(oB.currentGallery[i]) {
                         oB.progress = true;
                         $(document).trigger('oB_navigate', [i]);
-						if(oB.settings.logging) console.log( 'OrangeBox: Navigating to' +  [i] );
+						if(oB.settings.logging) console.log( 'OrangeBox: Navigating to ' +  [i] );
                         $('#ob_window').fadeOut(oB.settings.fadeTime, function () {
 							if($('#ob_video').length > 0) {
 								try{jwplayer("ob_video").remove();}
