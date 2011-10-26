@@ -1,5 +1,5 @@
 /*
- * version: 2.0.4
+ * version: 3.0.0
  * package: OrangeBox
  * author: David Paul Hamilton - http://orangebox.davidpaulhamilton.net
  * copyright: Copyright (c) 2011 David Hamilton / DavidPaulHamilton.net All rights reserved.
@@ -58,6 +58,7 @@
 }
 #ob_window img {
 	display:block;
+	margin:0 auto;
 }
 #ob_inline {
 	padding:20px;
