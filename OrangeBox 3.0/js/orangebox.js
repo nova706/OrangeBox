@@ -92,6 +92,12 @@ else {
                         oB.docHeight = $(document).height();
                         oB.docWidth = $(document).width();
                         
+					//Check for addThis
+						if(oB.settings.addThis === true && typeof addthis === 'undefined') { 
+							if(oB.settings.logging) console.log( 'OrangeBox: Connection with addThis failed');
+							oB.settings.addThis = false; 
+						}
+
                     //Setup Dots
                         oB.currentGallery.each(function(x){ 
                             if(oB.settings.showDots) dotnav.append('<li id="ob_dot' + x + '"></li>');
@@ -674,7 +680,6 @@ else {
                     if(oB.currentGallery[i]) {
                         oB.progress = true;
                         $(document).trigger('oB_navigate', [i]);
-						if(oB.settings.logging) console.log( 'OrangeBox: Navigating: ID:' +  [i] );
                         $('#ob_window').fadeOut(oB.settings.fadeTime, function () {
 							if($('#ob_video').length > 0) {
 								try{jwplayer("ob_video").remove();}
@@ -697,7 +702,6 @@ else {
                 },
                 slideshowPlay  : function() {
                     $(document).trigger('oB_play');
-					if(oB.settings.logging) console.log( 'OrangeBox: Playing' );
                     var c =  parseInt($('#ob_content').attr('class').substr(7), 10);
                     oB.playing = true;
                     if(oB.currentGallery[c + 1]) oB.methods.navigate(1);
@@ -706,7 +710,6 @@ else {
                 slideshowPause  : function() {
                     if(oB.playing) {
                         $(document).trigger('oB_pause');
-						if(oB.settings.logging) console.log( 'OrangeBox: Paused' );
                         oB.playing = false;
                         clearTimeout(oB.slideshowTimer);
                     }
@@ -742,7 +745,6 @@ else {
                     $('#ob_container').fadeOut(oB.settings.fadeTime, function() {
                         $(this).remove().empty();
                         $(document).trigger('oB_closed');
-						if(oB.settings.logging) console.log( 'OrangeBox: Closed' );
                         if(x && $.isFunction(x)) x();
                     });
                 },
@@ -836,15 +838,10 @@ jQuery(document).ready(function($) {
 			});
 		}
 	}
-	if(oB.settings.addThis) { 
-		$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function(data, textStatus){
-		   if(oB.settings.logging) console.log('OrangeBox: addThis loaded');
+	if(oB.settings.addThis) {
+		$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function(){
 		   if(typeof orangebox !== 'undefined') checkURL();
 		});
-		if(oB.settings.addThis === true && typeof addthis === 'undefined') { 
-			if(oB.settings.logging) console.log( 'OrangeBox: Connection with addThis failed');
-			oB.settings.addThis = false; 
-		}
 	}
 	else if(typeof orangebox !== 'undefined') checkURL();
 	if(oB.settings.orangeControls === true && !$().orangeControls) { 
