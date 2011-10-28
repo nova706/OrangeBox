@@ -5,7 +5,7 @@
  * copyright: Copyright (c) 2011 David Hamilton / DavidPaulHamilton.net All rights reserved.
  * license: GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
  */
-if (typeof oB !== 'undefined') console.log('OrangeBox: Variable "oB", used by OrangeBox, is already defined');
+if (typeof oB !== 'undefined') {console.log('OrangeBox: Variable "oB", used by OrangeBox, is already defined');}
 else {
 	var oB;
 	(function ($) {
@@ -48,7 +48,7 @@ else {
             methods: {
                 init : function (options) {
                     if (!$('#ob_window').length) {
-                        if(options) $.extend( oB.settings, options );
+                        if(options) {$.extend( oB.settings, options );}
                         return this.each(function() {
                             oB.methods.setupData($(this));
                             $(this).click(function(e) {
@@ -60,7 +60,7 @@ else {
                     return false;
                 },
                 create : function( obj, options ) {
-                    if(options) $.extend( oB.settings, options );
+                    if(options) {$.extend( oB.settings, options );}
                     if(!obj) { 
 						obj = $(this); 
 						oB.methods.setupData(obj); 
@@ -94,13 +94,13 @@ else {
                         
 					//Check for addThis
 						if(oB.settings.addThis === true && typeof addthis === 'undefined') { 
-							if(oB.settings.logging) console.log( 'OrangeBox: Connection with addThis failed');
+							if(oB.settings.logging) {console.log( 'OrangeBox: Connection with addThis failed');}
 							oB.settings.addThis = false; 
 						}
 
                     //Setup Dots
                         oB.currentGallery.each(function(x){ 
-                            if(oB.settings.showDots) dotnav.append('<li id="ob_dot' + x + '"></li>');
+                            if(oB.settings.showDots) {dotnav.append('<li id="ob_dot' + x + '"></li>');}
                         });
                         
                     //Set overlay CSS
@@ -111,14 +111,14 @@ else {
                             });
                         
                     //if IE 6					
-                        if(typeof document.body.style.maxHeight === "undefined") $("body","html").css({height: "100%", width: "100%"});
+                        if(typeof document.body.style.maxHeight === "undefined") {$("body","html").css({height: "100%", width: "100%"});}
 						                        
                     //Click to Hide Modal
                         $("body").append(overlay.click(function() { oB.methods.destroy(oB.settings); }));
                         $("body").append(container.click(function() { oB.methods.destroy(oB.settings); }));
-                        if(oB.settings.showClose) ob_window.append($('<div title="close" class="ob_controls ob_cs" id="ob_close"></div>').click(function() {
+                        if(oB.settings.showClose) {ob_window.append($('<div title="close" class="ob_controls ob_cs" id="ob_close"></div>').click(function() {
                             oB.methods.destroy(oB.settings);
-                        }));
+                        }));}
                         ob_window.append($('<div id="ob_content"></div>').css({
                             "border-width": oB.settings.contentBorderWidth,
                             "min-height": oB.settings.contentMinHeight,
@@ -132,7 +132,7 @@ else {
                     //Listens for Escape
                         function handleEscape(e) {
                             if(oB.progress === null) {
-                                if(e.keyCode === 27) oB.methods.destroy(oB.settings);
+                                if(e.keyCode === 27) {oB.methods.destroy(oB.settings);}
                                 else if(e.keyCode === 37) {
                                     oB.methods.slideshowPause();
                                     oB.methods.navigate(-1);
@@ -143,16 +143,16 @@ else {
                                 }
                             }
                         }
-                        if(oB.settings.keyboardNavigation) $(document).keydown(handleEscape);
+                        if(oB.settings.keyboardNavigation) {$(document).keydown(handleEscape);}
                         
                     //Initiate Navigation
                         if(oB.currentGallery.length > 1) {
                             
                         //Initiate OrangeControls
-                            if(oB.settings.orangeControls) $(document).orangeControls();
+                            if(oB.settings.orangeControls) {$(document).orangeControls();}
                             
                         //Initiate Nav Arrows
-                            if(oB.settings.showNav) ob_window.append(navRight).append(navLeft);
+                            if(oB.settings.showNav) {ob_window.append(navRight).append(navLeft);}
                             
                         //Initiate Nav Dots
                             if(oB.settings.showDots) {
@@ -184,17 +184,17 @@ else {
                         var t = "";
                         var g = false;
                         var rel = o.attr('rel');
-                        if(typeof o.attr('title') !== "undefined") t = o.attr('title');
+                        if(typeof o.attr('title') !== "undefined") {t = o.attr('title');}
                         if(u.match(/height\=\d{1,}/)) {
                             var heightIndex = u.indexOf("height=") + 7;
                             var heightString = u.substr(heightIndex);
-                            if(heightString.indexOf("&") > 0) heightString = heightString.substr(0,heightString.indexOf("&"));
+                            if(heightString.indexOf("&") > 0) {heightString = heightString.substr(0,heightString.indexOf("&"));}
                             h = heightString;
                         }
                         if(u.match(/width\=\d{1,}/)) {
                             var widthIndex = u.indexOf("width=") + 6;
                             var widthString = u.substr(widthIndex);
-                            if(widthString.indexOf("&") > 0) widthString = widthString.substr(0,widthString.indexOf("&"));
+                            if(widthString.indexOf("&") > 0) {widthString = widthString.substr(0,widthString.indexOf("&"));}
                             w = widthString;
                         }
                         if(u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { 
@@ -218,21 +218,21 @@ else {
 							m = [oB.settings.maxImageHeight,oB.settings.maxImageWidth];
 							u = u.replace('rss_200', 'json');
 							u = u+"&jsoncallback=?";
-							var objectclass;
+							var objectclass1;
 							if(rel.indexOf("[") > 0) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
-								objectclass = 'ob_gallery-'+g;
-								o.addClass(objectclass);
+								objectclass1 = 'ob_gallery-'+g;
+								o.addClass(objectclass1);
 							}
 							else{
 								g = 'FlickrGallery';
-								objectclass = 'ob_gallery-'+g;
-								o.addClass(objectclass);
+								objectclass1 = 'ob_gallery-'+g;
+								o.addClass(objectclass1);
 							}
 							$.getJSON(u, function(data){
 								$.each(data.items, function(index,item){
 									var item_href = item.media.m.replace('_m.jpg', '.jpg');
-									var objectSet = $('.'+objectclass);
+									var objectSet = $('.'+objectclass1);
 									var lastObject = objectSet.last();
 									var obj;
 									
@@ -261,11 +261,11 @@ else {
 									}
 									else if(index<oB.settings.streamItems) {
 										i = objectSet.length;
-										var obj = $('<a class="'+objectclass+'" href="'+item_href+'" title="'+item.title+'" rel="lightbox['+g+']"></a>');
+										obj = $('<a class="'+objectclass1+'" href="'+item_href+'" title="'+item.title+'" rel="lightbox['+g+']"></a>');
 										addData(obj);
 										$(obj).appendTo('body');
 									}
-									else return false;
+									else {return false;}
 								});
 							});
 						}
@@ -320,11 +320,11 @@ else {
 									}
 									else if(index<oB.settings.streamItems) {
 										i = objectSet.length;
-										var obj = $('<a class="'+objectclass+'" href="'+item.content.src+'" title="'+item.title.$t+'" rel="lightbox['+g+']"></a>');
+										obj = $('<a class="'+objectclass+'" href="'+item.content.src+'" title="'+item.title.$t+'" rel="lightbox['+g+']"></a>');
 										addData(obj);
 										$(obj).appendTo('body');
 									}
-									else return false;
+									else {return false;}
 								});
 							}});
 						}
@@ -335,8 +335,8 @@ else {
                         else if(u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
                             var iI = u.indexOf("vimeo.com/") + 10;
                             var iD;
-                            if(u.indexOf("?") > iI) iD = u.substring(iI, u.indexOf("?"));
-                            else iD = u.substring(iI);
+                            if(u.indexOf("?") > iI) {iD = u.substring(iI, u.indexOf("?"));}
+                            else {iD = u.substring(iI);}
                             c = "vimeo";
 							m = [oB.settings.maxVideoHeight,oB.settings.maxVideoWidth];
                         }
@@ -347,10 +347,10 @@ else {
                         else if(u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { 
 							c = "inline"; 
 							m = [oB.settings.inlineHeight,oB.settings.inlineWidth];
-							if(!h) h = m[0];
-							if(!w) w = m[1];
+							if(!h) {h = m[0];}
+							if(!w) {w = m[1];}
 						}
-                        else if(oB.settings.logging) console.log('OrangeBox: Unsupported Media: '+u);
+                        else if(oB.settings.logging) {console.log('OrangeBox: Unsupported Media: '+u);}
                         if(rel && rel.indexOf("[") > 0 && c && c !== 'flickr') {
                             g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
                             o.addClass('ob_gallery-'+g);
@@ -409,10 +409,10 @@ else {
 						var css_width = parseInt(content.css('width').replace('px',''),10);
 						var h = content.outerHeight(); 
 						var w = content.outerWidth();
-						if(!h && css_height) h = css_height;
-						if(!w && css_width) w = css_width;
-						if(content.attr('id') !== "ob_error" && h < oB.settings.contentMinHeight) h = oB.settings.contentMinHeight; 
-						if(w < oB.settings.contentMinWidth) w = oB.settings.contentMinWidth; 
+						if(!h && css_height) {h = css_height;}
+						if(!w && css_width) {w = css_width;}
+						if(content.attr('id') !== "ob_error" && h < oB.settings.contentMinHeight) {h = oB.settings.contentMinHeight; }
+						if(w < oB.settings.contentMinWidth) {w = oB.settings.contentMinWidth; }
 						return [h,w];
 					}
                         
@@ -420,16 +420,18 @@ else {
                     function setModalProperties() {
                         var dim = getDim();
                         var p = $(window).scrollTop();
-                        if(p === 0) p = $(document).scrollTop();
-                        if(p === 0) p = window.pageYOffset;
+                        if(p === 0) {p = $(document).scrollTop();}
+                        if(p === 0) {p = window.pageYOffset;}
 						if(content.attr('id') !== "ob_error") {
 							if(obj.data('ob_data').ob_link){
 								var target = 'target="_blank"';
-								if(obj.data('ob_data').ob_linkTarget === "_self") target = 'target="_self"';
-								if(obj.data('ob_data').ob_linkText)
+								if(obj.data('ob_data').ob_linkTarget === "_self") {target = 'target="_self"';}
+								if(obj.data('ob_data').ob_linkText){
 									title = title+' <a href="'+obj.data('ob_data').ob_link+'" '+target+' >'+obj.data('ob_data').ob_linkText+'</a>';
-								else
+								}
+								else {
 									title = title+' <a href="'+obj.data('ob_data').ob_link+'" '+target+' >'+obj.data('ob_data').ob_link+'</a>';
+								}
 							}
 							$('#ob_title').append('<h3>' + title + '</h3>');
 							if(obj.data('ob_data').ob_caption) {
@@ -448,15 +450,15 @@ else {
                         if(oB.settings.showDots) {
                             $('#ob_dots').find('li').each(function(){
                                 var i = 'ob_dot' + obj.data('ob_data').ob_index;
-                                if($(this).attr('id') === i) $(this).addClass('current');
-                                else $(this).removeClass('current');
+                                if($(this).attr('id') === i) {$(this).addClass('current');}
+                                else {$(this).removeClass('current');}
                             });
                         }
                         if(oB.settings.showNav) {
-							if(oB.currentGallery[currentIndex+1]) $('#ob_right').addClass('ob_controls');
-							else $('#ob_right').removeClass('ob_controls').hide();
-							if(oB.currentGallery[currentIndex-1]) $('#ob_left').addClass('ob_controls');
-							else $('#ob_left').removeClass('ob_controls').hide();
+							if(oB.currentGallery[currentIndex+1]) {$('#ob_right').addClass('ob_controls');}
+							else {$('#ob_right').removeClass('ob_controls').hide();}
+							if(oB.currentGallery[currentIndex-1]) {$('#ob_left').addClass('ob_controls');}
+							else {$('#ob_left').removeClass('ob_controls').hide();}
                         }
                         clearTimeout(oB.controlTimer);
                         if(oB.settings.fadeControls) {
@@ -495,7 +497,7 @@ else {
 						var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
 						var windowURL =  loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname;
 						var href_encode = encodeURIComponent(href);
-						if(windowURL.indexOf('?') > 0) windowURL = windowURL.substr(0,windowURL.indexOf('?'));
+						if(windowURL.indexOf('?') > 0) {windowURL = windowURL.substr(0,windowURL.indexOf('?'));}
 						var ob_link = windowURL + "?orangebox=" + href_encode;
                         oB.methods.showLoad("stop");
                         $('#ob_content').append(content);
@@ -508,7 +510,7 @@ else {
                             $('#ob_title').css('margin-right', 24);
                             addthis.button('.'+shareClass, { services_compact: 'twitter,facebook,digg,delicious,more', ui_offset_left: -244, ui_offset_top: 4 }, { url: ob_link, title: title });
                             $('#ob_share').html('').append('<span class="at300bs at15nc at15t_compact"></span>');
-                            if(title === "") title = "share";
+                            if(title === "") {title = "share";}
                         }
                         if(contentType === "jw") {
 							var jw_width = content.css('width');
@@ -519,7 +521,7 @@ else {
                                 file: href,
                                 events: {
                                     onComplete: function() {
-                                        if(oB.playing) oB.methods.navigate(1);
+                                        if(oB.playing) {oB.methods.navigate(1);}
                                     }
                                 },
                                 width: jw_width,
@@ -530,10 +532,10 @@ else {
                         $('#ob_window').fadeIn(oB.settings.fadeTime, function(){
 							setTitle();
 							if(initial) {
-								if(oB.settings.logging === "debug") console.log( 'OrangeBox: Initialized: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
+								if(oB.settings.logging === "debug") {console.log( 'OrangeBox: Initialized: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );}
 								$(document).trigger('oB_init');
 							}
-							else if(oB.settings.logging === "debug") console.log( 'OrangeBox: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
+							else if(oB.settings.logging === "debug") {console.log( 'OrangeBox: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );}
                             $('#ob_overlay').css({ "height": $(document).height() });
 							oB.progress = null;
                         });
@@ -541,8 +543,9 @@ else {
                         setControls();
                         if(oB.playing && contentType !== "jw") {
                             var delayTimer = oB.settings.slideshowTimer;
-                            if(obj.data('ob_data').ob_delayTimer)
+                            if(obj.data('ob_data').ob_delayTimer){
                                 delayTimer = parseInt(obj.data('ob_data').ob_delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10);
+							}
                             oB.slideshowTimer = setTimeout(function(){
                                 oB.methods.navigate(1);
                             },delayTimer);
@@ -556,7 +559,7 @@ else {
                         $('#ob_content').empty().append(content);
                         $('#ob_window').fadeIn(oB.settings.fadeTime, function(){
                             $('#ob_overlay').css({ "height": $(document).height() }); 
-							if(oB.settings.logging) console.log( 'OrangeBox: Could not find file' );   
+							if(oB.settings.logging) {console.log( 'OrangeBox: Could not find file' );} 
                         });
                         $('#ob_title').hide();
                         $('#ob_right').hide();
@@ -586,15 +589,15 @@ else {
                 //Inline Content
                     function showInline() {
 						var dim = oB.methods.getSize(obj,0,0,true);
-						if(href.indexOf('?') > 0) href = href.substr(0,href.indexOf('?'));	
+						if(href.indexOf('?') > 0) {href = href.substr(0,href.indexOf('?'));}
                         if($(href).length && $(href).html() !== ""){
                             content = $('<div id="ob_inline">' + $(href).html() + '</div>').css({
                                     "width": dim[1]
                                 });
-							if(dim[0] !== 0) content.css("height", dim[0]);
+							if(dim[0] !== 0) {content.css("height", dim[0]);}
                             buildit();
                         }
-                        else throwError();
+                        else {throwError();}
                     }
                             
                 //Video Content
@@ -607,28 +610,28 @@ else {
                         var iI;
                         
                     //JW
-                        if(contentType === "jw") content = $('<div id="ob_video" height="' + h + '" width="' + w + '"></div>');
+                        if(contentType === "jw") {content = $('<div id="ob_video" height="' + h + '" width="' + w + '"></div>');}
                         
                     //Vimeo	
                         else if(contentType === "vimeo") { 
                             iI = href.indexOf("vimeo.com/") + 10;
-                            if(href.indexOf("?") > iI) i = href.substring(iI, href.indexOf("?"));
-                            else i = href.substring(iI);
+                            if(href.indexOf("?") > iI) {i = href.substring(iI, href.indexOf("?"));}
+                            else {i = href.substring(iI);}
                             content = $('<iframe id="ob_video" '+a+' src="http://player.vimeo.com/video/'+i+'?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>');
                         }
                         
                     //Viddler (player)
                         else if(contentType === "viddler") { 
-                            if(href.indexOf("viddler.com/player/") > 0) iI = href.indexOf("viddler.com/player/") + 19;
-                            else if(href.indexOf("viddler.com/simple/") > 0) iI = href.indexOf("viddler.com/simple/") + 19;
-                            if(href.indexOf("?") > iI) i = href.substring(iI, href.indexOf("?"));
-                            else i = href.substring(iI);
+                            if(href.indexOf("viddler.com/player/") > 0) {iI = href.indexOf("viddler.com/player/") + 19;}
+                            else if(href.indexOf("viddler.com/simple/") > 0) {iI = href.indexOf("viddler.com/simple/") + 19;}
+                            if(href.indexOf("?") > iI) {i = href.substring(iI, href.indexOf("?"));}
+                            else {i = href.substring(iI);}
                             i = i.replace(/\//g,'');
                             content = $('<iframe id="ob_video" '+a+' src="http://cdn.static.viddler.com/flash/publisher.swf?key='+i+'&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>');
                         }
                         
                     //Flash
-                        else if(contentType === "flash") content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + w + '" height="' + h + '" type="application/x-shockwave-flash"></embed></div>');
+                        else if(contentType === "flash") {content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + w + '" height="' + h + '" type="application/x-shockwave-flash"></embed></div>');}
 						
                         content.css({ "width": w, "height": h });
                         buildit();
@@ -643,8 +646,8 @@ else {
 							var oW = img.width;
 							var sH = obj.data('ob_data').ob_height;
 							var sW = obj.data('ob_data').ob_width;
-							if(sH > 0 && sW === 0) sW = oW / oH * sH;
-							else if(sW > 0 && sH === 0) sH = oH / oW * sW;
+							if(sH > 0 && sW === 0) {sW = oW / oH * sH;}
+							else if(sW > 0 && sH === 0) {sH = oH / oW * sW;}
 							else if(sH === 0 && sW === 0) { 
 								sH = oH;
 								sW = oW;
@@ -661,8 +664,8 @@ else {
 								var newDim = oB.methods.getSize(obj,0,0,false);
 								var setDim;
 								var p = $(window).scrollTop();
-								if(p === 0) p = $(document).scrollTop();
-								if(p === 0) p = window.pageYOffset;
+								if(p === 0) {p = $(document).scrollTop();}
+								if(p === 0) {p = window.pageYOffset;}
 								if(!running && h < oH && fullDim[1] !== newDim[1]) {
 									$('#ob_title').stop().fadeOut(50);
 									running = true;
@@ -722,15 +725,15 @@ else {
                             showVideo();
                             break;
                         default:
-                            if(oB.settings.logging) console.log('OrangeBox: Unsupported Media: '+href);
+                            if(oB.settings.logging) {console.log('OrangeBox: Unsupported Media: '+href);}
                     }
                 },
                 navigate : function(d,i,options ) {
-                    if(options) $.extend(oB.settings,options);
+                    if(options) {$.extend(oB.settings,options);}
                     if(!i) {
                         var c =  parseInt($('#ob_content').attr('class').substr(7), 10);
-                        if(d === 1) i = c + 1;
-                        else if(d === -1) i = c - 1;
+                        if(d === 1) {i = c + 1;}
+                        else if(d === -1) {i = c - 1;}
                     }
                     if(oB.currentGallery[i]) {
                         oB.progress = true;
@@ -738,7 +741,7 @@ else {
                         $('#ob_window').fadeOut(oB.settings.fadeTime, function () {
 							if($('#ob_video').length > 0) {
 								try{jwplayer("ob_video").remove();}
-								catch(error){if(oB.settings.logging) console.log( 'OrangeBox: ' +  error );}
+								catch(error){if(oB.settings.logging) {console.log( 'OrangeBox: ' +  error );}}
 								$('#ob_video').empty().remove();
 							}
 							$('#ob_title').empty().css('margin-right', 0);
@@ -752,15 +755,15 @@ else {
 							"min-height": 0
 						});
                     }
-                    else oB.progress = null;
-                    if(!oB.currentGallery[i + 1]) oB.methods.slideshowPause();
+                    else {oB.progress = null;}
+                    if(!oB.currentGallery[i + 1]) {oB.methods.slideshowPause();}
                 },
                 slideshowPlay  : function() {
                     $(document).trigger('oB_play');
                     var c =  parseInt($('#ob_content').attr('class').substr(7), 10);
                     oB.playing = true;
-                    if(oB.currentGallery[c + 1]) oB.methods.navigate(1);
-                    else oB.methods.navigate(0, 0);
+                    if(oB.currentGallery[c + 1]) {oB.methods.navigate(1);}
+                    else {oB.methods.navigate(0, 0);}
                 },
                 slideshowPause  : function() {
                     if(oB.playing) {
@@ -784,41 +787,41 @@ else {
                 },
                 destroy : function( options, x ) {
                     $(document).trigger('oB_closing');
-                    if(options) $.extend( oB.settings, options );
+                    if(options) {$.extend( oB.settings, options );}
 					if($('#ob_video').length > 0) {
 						try{jwplayer("ob_video").remove();}
-						catch(error){if(oB.settings.logging) console.log( 'OrangeBox: ' +  error );}
+						catch(error){if(oB.settings.logging) {console.log( 'OrangeBox: ' +  error );}}
 						$('#ob_video').empty().remove();
 					}
                     oB.methods.showLoad("stop");
                     clearTimeout(oB.controlTimer);
                     clearTimeout(oB.slideshowTimer);
                     clearTimeout(oB.scrollTimer);
-                    if(oB.settings.orangeControls) $(document).orangeControls('destroy', oB.settings.fadeTime);
+                    if(oB.settings.orangeControls) {$(document).orangeControls('destroy', oB.settings.fadeTime);}
                     $(document).unbind("keydown").unbind("mousemove");
                     $('#ob_overlay').fadeOut(oB.settings.fadeTime, function() { $(this).remove().empty(); });
                     $('#ob_container').fadeOut(oB.settings.fadeTime, function() {
                         $(this).remove().empty();
                         $(document).trigger('oB_closed');
-                        if(x && $.isFunction(x)) x();
+                        if(x && $.isFunction(x)) {x();}
                     });
                 },
 				getSize: function(obj,h,w,noMaxHeight){
 					var mH = $(window).height() - 44;
 					var mW = $(window).width() - 44;
-					if(oB.settings.showNav) mW = mW - 120;
+					if(oB.settings.showNav) {mW = mW - 120;}
 					var m;
 					if(obj) {
 						w = obj.data('ob_data').ob_width;
 						h = obj.data('ob_data').ob_height;
 						m = obj.data('ob_data').ob_max;
-						if(m[0] === 0) mH = 0;
-						else if(m[0] > 1 && m[0] < mH) mH = m[0];
-						else if(m[0] > 0 && m[0] <= 1) mH = mH * m[0];
-						if(m[1] > 1 && m[1] < mW) mW = m[1];
-						else if(m[1] > 0 && m[1] <= 1) mW = mW * m[1];
-						if(w === 0) w=mW;
-						if(h === 0 && mH !== 0) h=mH;
+						if(m[0] === 0) {mH = 0;}
+						else if(m[0] > 1 && m[0] < mH) {mH = m[0];}
+						else if(m[0] > 0 && m[0] <= 1) {mH = mH * m[0];}
+						if(m[1] > 1 && m[1] < mW) {mW = m[1];}
+						else if(m[1] > 0 && m[1] <= 1) {mW = mW * m[1];}
+						if(w === 0) {w=mW;}
+						if(h === 0 && mH !== 0) {h=mH;}
 					}
 
 				//Scale Content to fit
@@ -850,7 +853,7 @@ else {
         
         $.fn.orangeBox = function( method ) {        
             if( method === "showContent" || method === "setupData" ) {
-				if(oB.settings.logging) console.log( 'OrangeBox: ' +  method + ' cannot be called externally' );
+				if(oB.settings.logging) {console.log( 'OrangeBox: ' +  method + ' cannot be called externally' );}
                 return false;
             }
             else if( oB.methods[method] ) {
@@ -860,7 +863,7 @@ else {
                 return oB.methods.init.apply( this, arguments );
             }
             else {
-				if(oB.settings.logging) console.log( 'OrangeBox: Method ' +  method + ' does not exist in OrangeBox' );
+				if(oB.settings.logging) {console.log( 'OrangeBox: Method ' +  method + ' does not exist in OrangeBox' );}
                 return false;
             }    
         
@@ -868,16 +871,16 @@ else {
     })(jQuery); 
 }
 jQuery(document).ready(function($) {
-    if(typeof orangebox_vars !== "undefined") $('a[rel*=lightbox]').orangeBox(orangebox_vars);
-    else $('a[rel*=lightbox]').orangeBox();
+    if(typeof orangebox_vars !== "undefined") {$('a[rel*=lightbox]').orangeBox(orangebox_vars);}
+    else {$('a[rel*=lightbox]').orangeBox();}
 	var orangebox = oB.methods.getUrlVars()['orangebox'];
 	if(typeof orangebox !== 'undefined'){ 
-		if(orangebox.indexOf('#.') > 0) orangebox = orangebox.substr(0,orangebox.indexOf('#.'));
+		if(orangebox.indexOf('#.') > 0) {orangebox = orangebox.substr(0,orangebox.indexOf('#.'));}
 		orangebox = decodeURIComponent(orangebox);
 	}
 	var id = '#'+ orangebox;
 	function checkURL() {
-		if(id.match(/^#\w{1,}$/) && $(id).length > 0) oB.methods.create($(id));
+		if(id.match(/^#\w{1,}$/) && $(id).length > 0) {oB.methods.create($(id));}
 		else {
 			$('a[rel*=lightbox]').each(function(){
 				var href = $(this).attr('href');
@@ -895,12 +898,12 @@ jQuery(document).ready(function($) {
 	}
 	if(oB.settings.addThis) {
 		$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function(){
-		   if(typeof orangebox !== 'undefined') checkURL();
+		   if(typeof orangebox !== 'undefined') {checkURL();}
 		});
 	}
-	else if(typeof orangebox !== 'undefined') checkURL();
+	else if(typeof orangebox !== 'undefined') {checkURL();}
 	if(oB.settings.orangeControls === true && !$().orangeControls) { 
-		if(oB.settings.logging) console.log( 'OrangeBox: Connection with OrangeControls failed');
+		if(oB.settings.logging) {console.log( 'OrangeBox: Connection with OrangeControls failed');}
 		oB.settings.orangeControls = false; 
 	}
 });
