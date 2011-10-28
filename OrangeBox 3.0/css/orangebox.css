@@ -101,7 +101,7 @@
 	position:absolute;
 	right:22px;
 	margin-left:40px;
-	top:-2px;
+	display:none;
 	z-index:1004;
 }
 #ob_title h3 {
