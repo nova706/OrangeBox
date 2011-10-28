@@ -33,7 +33,7 @@
 	cursor:default;
 	display:none;
 	position:relative;
-	margin:0 auto;
+	margin:22px auto 0;
 	padding:22px;
 	z-index:1002;
 }
@@ -102,6 +102,7 @@
 	right:22px;
 	margin-left:40px;
 	display:none;
+	text-align:right;
 	z-index:1004;
 }
 #ob_title h3 {

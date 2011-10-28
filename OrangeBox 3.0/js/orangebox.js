@@ -279,20 +279,7 @@ else {
                             else iD = u.substring(iI);
                             c = "vimeo";
 							m = [oB.settings.maxVideoHeight,oB.settings.maxVideoWidth];
-/*                            var signature;
-                            var expires;
-                            var xml = $.ajax({
-                                type: "GET",
-                                url: "http://vimeo.com/moogaloop/load/clip:"+iD,
-                                dataType: "json",
-                                success: function(xml) {
-                                    signature = $(xml).find('request_signature');
-                                    expires = $(xml).find('request_signature_expires');
-                                    c = "jw";
-                                    u = 'http://www.vimeo.com/moogaloop/play/clip:'+iD+'/'+signature+'/'+expires+'/?q=sd';
-                                }
-                            });
-*/                        }
+                        }
                         else if(u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
                             c = "viddler";
 							m = [oB.settings.maxVideoHeight,oB.settings.maxVideoWidth];
@@ -435,6 +422,12 @@ else {
                             $('.ob_controls').fadeIn(oB.settings.fadeTime);
                         }
                     }
+					
+				//Set Title Position
+					function setTitle() {
+						$('#ob_title').css('bottom',$('#ob_window').height()+22);
+						$('#ob_title').fadeTo(100, 1);
+					}
                     
                 //Build the Window
                     function buildit() {
@@ -475,19 +468,17 @@ else {
                         }
 						$('#ob_title').stop().hide();
                         $('#ob_window').fadeIn(oB.settings.fadeTime, function(){
-							$('#ob_title').css('bottom',$('#ob_window').height()+22);
-							$('#ob_window').css('margin-top', $('#ob_title').height());
-							$('#ob_title').fadeTo(50, 1);
+							setTitle();
 							if(initial) {
 								if(oB.settings.logging === "debug") console.log( 'OrangeBox: Initialized: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
 								$(document).trigger('oB_init');
 							}
 							else if(oB.settings.logging === "debug") console.log( 'OrangeBox: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
                             $('#ob_overlay').css({ "height": $(document).height() });
+							oB.progress = null;
                         });
                         setModalProperties();
                         setControls();
-                        oB.progress = null;
                         if(oB.playing && contentType !== "jw") {
                             var delayTimer = oB.settings.slideshowTimer;
                             if(obj.data('ob_data').ob_delayTimer)
@@ -612,7 +603,8 @@ else {
 								var p = $(window).scrollTop();
 								if(p === 0) p = $(document).scrollTop();
 								if(p === 0) p = window.pageYOffset;
-								if(!running && h < oH ) {
+								if(!running && h < oH && fullDim[1] !== newDim[1]) {
+									$('#ob_title').stop().fadeOut(50);
 									running = true;
 									$('.ob_controls').fadeOut(50);
 									if($(this).hasClass('expanded') || fullDim[0] < $('#ob_image').height()) {
@@ -623,12 +615,14 @@ else {
 										$(this).addClass('expanded');
 										setDim = fullDim;
 									}
-									$('#ob_title').animate({'bottom':setDim[0] + (oB.settings.contentBorderWidth*2)+22},400);
 									$("#ob_container").animate({ "margin-top" : p },400);
 									$("#ob_window").animate({ "min-height": setDim[0] + (oB.settings.contentBorderWidth*2), "width": setDim[1] + (oB.settings.contentBorderWidth*2) },400);
 									$('#ob_float').animate({ "margin-bottom": -(setDim[0] + (oB.settings.contentBorderWidth*2) + 44) / 2 },400);
 									$('#ob_content').animate({ "min-height": setDim[0], "width": setDim[1] },400);
-									$('#ob_image').animate({ "height": setDim[0], "width": setDim[1] }, 400, function(){running = false;});
+									$('#ob_image').animate({ "height": setDim[0], "width": setDim[1] }, 400, function(){
+										running = false;
+										setTitle();
+									});
 								}
 							});
 							
