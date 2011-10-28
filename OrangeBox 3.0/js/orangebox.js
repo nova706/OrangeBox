@@ -479,10 +479,10 @@ else {
 							$('#ob_window').css('margin-top', $('#ob_title').height());
 							$('#ob_title').fadeTo(50, 1);
 							if(initial) {
-								if(oB.settings.logging) console.log( 'OrangeBox: Initialized: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
+								if(oB.settings.logging === "debug") console.log( 'OrangeBox: Initialized: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
 								$(document).trigger('oB_init');
 							}
-							else if(oB.settings.logging) console.log( 'OrangeBox: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
+							else if(oB.settings.logging === "debug") console.log( 'OrangeBox: ID:'+currentIndex+' href:"'+href+'" link:"'+ob_link+'"' );
                             $('#ob_overlay').css({ "height": $(document).height() });
                         });
                         setModalProperties();
