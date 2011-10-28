@@ -265,8 +265,68 @@ else {
 										addData(obj);
 										$(obj).appendTo('body');
 									}
+									else return false;
 								});
 							});
+						}
+                        else if(u.match(/^https:\/\/picasaweb\.google\.com\/data\/feed\/base\//)) { 
+							c = "picasa"; 
+							u = u.replace('/base/', '/api/');
+							u = u.replace('alt=rss', 'alt=json-in-script');
+							u = u+'&max-results='+oB.settings.streamItems+'&callback=?';
+							m = [oB.settings.maxImageHeight,oB.settings.maxImageWidth];
+							var objectclass;
+							if(rel.indexOf("[") > 0) {
+								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]"));
+								objectclass = 'ob_gallery-'+g;
+								o.addClass(objectclass);
+							}
+							else{
+								g = 'PicasaGallery';
+								objectclass = 'ob_gallery-'+g;
+								o.addClass(objectclass);
+							}
+							$.ajax({
+								url:u,
+								dataType: 'json', 
+								success: function(data){
+								$.each(data.feed.entry, function(index,item){
+									var objectSet = $('.'+objectclass);
+									var lastObject = objectSet.last();
+									var obj;
+									
+									function addData(obj) {
+										obj.data('ob_data', {
+											ob_height: parseInt(item.gphoto$height.$t,10),
+											ob_width: parseInt(item.gphoto$width.$t,10),
+											ob_max: m,
+											ob_gallery: g,
+											ob_index: i,
+											ob_contentType: c,
+											ob_href: item.content.src,
+											ob_title: item.title.$t,
+											ob_linkText: o.attr('data-ob_linkText'),
+											ob_link: o.attr('data-ob_link'),
+											ob_caption: item.summary.$t,
+											ob_linkTarget: o.attr('data-ob_linkTarget'),
+											ob_share: 'false',
+											ob_delayTimer: o.attr('data-ob_delayTimer')
+										});
+									}
+									
+									if(index===0) { 
+										i = objectSet.length - 1;
+										addData(o);
+									}
+									else if(index<oB.settings.streamItems) {
+										i = objectSet.length;
+										var obj = $('<a class="'+objectclass+'" href="'+item.content.src+'" title="'+item.title.$t+'" rel="lightbox['+g+']"></a>');
+										addData(obj);
+										$(obj).appendTo('body');
+									}
+									else return false;
+								});
+							}});
 						}
                         else if(u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) { 
 							c = "jw"; 
@@ -648,6 +708,7 @@ else {
                             break;
                         case "image":
                         case "flickr":
+                        case "picasa":
                             showImage();
                             break;
                         case "inline":
