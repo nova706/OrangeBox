@@ -465,6 +465,22 @@ if (typeof oB !== 'undefined') {
 						}
 						return [h, w];
 					}
+					
+				//Set Window Margin
+					function setWindowMargin(cH,w) {
+						var copied_elem = $('<div>'+title+'</div>').css({display:"block", position:"absolute", width: w-40});
+						$("body").append(copied_elem);
+						var h = copied_elem.height();
+						copied_elem.remove();
+						$('#ob_window').css('margin-top', h+44);
+						$('#ob_title').css('bottom', cH + 22 );
+					}
+					
+				//Set Title Position
+					function setTitle() {
+						$('#ob_title').css('bottom', $('#ob_window').height() + 22);
+						$('#ob_title').fadeTo(100, 1);
+					}
 
 				//Set Modal Properties
 					function setModalProperties() {
@@ -488,6 +504,7 @@ if (typeof oB !== 'undefined') {
 									title = title + ' <a href="' + obj.data('ob_data').ob_link + '" ' + target + ' >' + obj.data('ob_data').ob_link + '</a>';
 								}
 							}
+							setWindowMargin(dim[0] + (oB.settings.contentBorderWidth * 2), dim[1]);
 							$('#ob_title').append('<h3>' + title + '</h3>');
 							if (obj.data('ob_data').ob_caption) {
 								ob_caption.append('<p>' + obj.data('ob_data').ob_caption + '</p>');
@@ -558,12 +575,6 @@ if (typeof oB !== 'undefined') {
 						}
 					}
 
-				//Set Title Position
-					function setTitle() {
-						$('#ob_title').css('bottom', $('#ob_window').height() + 22);
-						$('#ob_title').fadeTo(100, 1);
-					}
-
 				//Build the Window
 					function buildit() {
 						var loc = window.location;
@@ -614,9 +625,9 @@ if (typeof oB !== 'undefined') {
 								height: jw_height
 							});
 						}
-						$('#ob_title').stop().hide();
+						//$('#ob_title').stop().hide();
 						$('#ob_window').fadeIn(oB.settings.fadeTime, function () {
-							setTitle();
+							//setTitle();
 							if (initial) {
 								if (oB.settings.logging === "debug") {
 									console.log('OrangeBox: Initialized: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"');
@@ -787,7 +798,7 @@ if (typeof oB !== 'undefined') {
 									p = window.pageYOffset;
 								}
 								if (!running && h < oH && fullDim[1] !== newDim[1]) {
-									$('#ob_title').stop().fadeOut(50);
+									$('#ob_title').stop().hide();
 									running = true;
 									$('.ob_controls').fadeOut(50);
 									if ($(this).hasClass('expanded') || fullDim[0] < $('#ob_image').height()) {
@@ -797,6 +808,7 @@ if (typeof oB !== 'undefined') {
 										$(this).addClass('expanded');
 										setDim = fullDim;
 									}
+									setWindowMargin(setDim[0] + (oB.settings.contentBorderWidth * 2), setDim[1]);
 									$("#ob_container").animate({
 										"margin-top": p
 									}, 400);
@@ -816,8 +828,8 @@ if (typeof oB !== 'undefined') {
 										"width": setDim[1]
 									}, 400, function () {
 										running = false;
-										setTitle();
 										$('.ob_controls').fadeIn(50);
+										$('#ob_title').stop().fadeIn(50);
 									});
 								}
 							});
