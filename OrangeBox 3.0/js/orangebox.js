@@ -237,6 +237,11 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "image";
 							m = [oB.settings.maxImageHeight, oB.settings.maxImageWidth];
+						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
+							c = "pdf";
+							u = encodeURIComponent(u);
+							u = "http://docs.google.com/viewer?url="+u+"&embedded=true&iframe=true";
+							m = [oB.settings.iframeHeight, oB.settings.iframeWidth];
 						} else if (u.match(/\.(?:mov|mp4|m4v|f4v|ogg|flv|webm)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "jw";
 							m = [oB.settings.maxVideoHeight, oB.settings.maxVideoWidth];
@@ -440,6 +445,12 @@ if (typeof oB !== 'undefined') {
 						var css_width = parseInt(content.css('width').replace('px', ''), 10);
 						var h = content.outerHeight();
 						var w = content.outerWidth();
+						if (css_height === 0 && contentType === "inline") {
+							var copied_elem = $(href).clone().attr("id", false).css({visibility:"hidden", display:"block", position:"absolute"});
+							$("body").append(copied_elem);
+							h = copied_elem.height();
+							copied_elem.remove();
+						}
 						if (!h && css_height) {
 							h = css_height;
 						}
@@ -457,8 +468,8 @@ if (typeof oB !== 'undefined') {
 
 				//Set Modal Properties
 					function setModalProperties() {
-						var dim = getDim();
 						var p = $(window).scrollTop();
+						var dim = getDim();
 						if (p === 0) {
 							p = $(document).scrollTop();
 						}
@@ -806,6 +817,7 @@ if (typeof oB !== 'undefined') {
 									}, 400, function () {
 										running = false;
 										setTitle();
+										$('.ob_controls').fadeIn(50);
 									});
 								}
 							});
@@ -827,6 +839,7 @@ if (typeof oB !== 'undefined') {
 					}
 					switch (contentType) {
 					case "iframe":
+					case "pdf":
 						showiFrame();
 						break;
 					case "image":
