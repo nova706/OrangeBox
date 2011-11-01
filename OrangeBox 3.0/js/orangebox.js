@@ -468,7 +468,7 @@ if (typeof oB !== 'undefined') {
 					
 				//Set Window Margin
 					function setWindowMargin(cH,w) {
-						var copied_elem = $('<div>'+title+'</div>').css({display:"block", position:"absolute", width: w-40});
+						var copied_elem = $('<div>'+title+'</div>').css({visibility: "hidden", display:"block", position:"absolute", width: w-40});
 						$("body").append(copied_elem);
 						var h = copied_elem.height();
 						copied_elem.remove();
@@ -476,12 +476,6 @@ if (typeof oB !== 'undefined') {
 						$('#ob_title').css('bottom', cH + 22 );
 					}
 					
-				//Set Title Position
-					function setTitle() {
-						$('#ob_title').css('bottom', $('#ob_window').height() + 22);
-						$('#ob_title').fadeTo(100, 1);
-					}
-
 				//Set Modal Properties
 					function setModalProperties() {
 						var p = $(window).scrollTop();
@@ -625,9 +619,7 @@ if (typeof oB !== 'undefined') {
 								height: jw_height
 							});
 						}
-						//$('#ob_title').stop().hide();
 						$('#ob_window').fadeIn(oB.settings.fadeTime, function () {
-							//setTitle();
 							if (initial) {
 								if (oB.settings.logging === "debug") {
 									console.log('OrangeBox: Initialized: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"');
