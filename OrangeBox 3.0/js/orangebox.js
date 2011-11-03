@@ -62,136 +62,11 @@ if (typeof oB !== 'undefined') {
 					}
 					return false;
 				},
-				create: function (obj, o) {
-					if (o) {
-						$.extend(oB.settings, o);
-					}
-					if (!obj) {
-						obj = $(this);
-						oB.methods.setupData(obj);
-					}
-					if (obj.data('ob_data').ob_contentType) {
-
-					//Set Vars
-						var overlay = $('<div id="ob_overlay"></div>');
-						var container = $('<div id="ob_container"></div>');
-						var ob_content = $('<div id="ob_content"></div>').click(function (e) {
-							e.stopPropagation();
-						}).append('<div id="ob_title"></div>').css("border-width", oB.settings.contentBorderWidth);
-						var navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
-							if (oB.progress === null) {
-								oB.methods.slideshowPause();
-								e.stopPropagation();
-								oB.methods.navigate(1);
-							}
-						});
-						var navLeft = $('<a class="ob_nav" id="ob_left"><span class="ob_controls" id="ob_left-ico"></span></a>').click(function (e) {
-							if (oB.progress === null) {
-								oB.methods.slideshowPause();
-								e.stopPropagation();
-								oB.methods.navigate(-1);
-							}
-						});
-						var dotnav = $('<ul id="ob_dots"></ul>').click(function (e) { e.stopPropagation(); });
-						oB.playing = oB.settings.autoplay;
-						oB.progress = null;
-						oB.docHeight = $(document).height();
-						oB.docWidth = $(document).width();
-
-					//Check for addThis
-						if (oB.settings.addThis === true && typeof addthis === 'undefined') {
-							if (oB.settings.logging) {
-								console.log('OrangeBox: Connection with addThis failed');
-							}
-							oB.settings.addThis = false;
-						}
-
-					//Setup Dots
-						oB.currentGallery = $('.ob_gallery-' + obj.data('ob_data').ob_gallery);
-						oB.currentGallery.each(function (x) {
-							if (oB.settings.showDots) {
-								dotnav.append($('<li id="ob_dot' + x + '"></li>').click(function (e) {
-									e.stopPropagation();
-									if (!$(this).hasClass('current') && oB.progress === null) {
-										oB.methods.slideshowPause();
-										var x = $(this).attr('id').substr(6);
-										dotnav.find("li").removeClass('current');
-										$(this).addClass('current');
-										oB.methods.navigate("", x);
-									}
-								}));
-							}
-						});
-
-					//Set overlay CSS
-						overlay.css({
-							"opacity": oB.settings.overlayOpacity,
-							"height": oB.docHeight,
-							"min-height": oB.docHeight,
-							"min-width": oB.docWidth
-						});
-
-					//if IE 6					
-						if (typeof document.body.style.maxHeight === "undefined") {
-							$("body", "html").css({
-								height: "100%",
-								width: "100%"
-							});
-						}
-
-					//Click to Hide Modal
-						$("body").append(overlay.show(oB.settings.fadeTime).click(function () {
-							oB.methods.destroy(oB.settings);
-						})).append(container.click(function () {
-							oB.methods.destroy(oB.settings);
-						}));
-						if (oB.settings.showClose) {
-							ob_content.append($('<div title="close" class="ob_controls ob_cs" id="ob_close"></div>').click(function (e) {
-								e.stopPropagation();
-								oB.methods.destroy(oB.settings);
-							}));
-						}
-						$("#ob_container").append('<div id="ob_float"></div>').append(ob_content);
-
-					//Listens for Escape
-						function handleEscape(e) {
-							if (e.keyCode === 27 && oB.progress === null) {
-								oB.methods.destroy(oB.settings);
-							} else if (e.keyCode === 37 && oB.progress === null) {
-								oB.methods.slideshowPause();
-								oB.methods.navigate(-1);
-							} else if (e.keyCode === 39 && oB.progress === null) {
-								oB.methods.slideshowPause();
-								oB.methods.navigate(1);
-							}
-						}
-						if (oB.settings.keyboardNavigation) {
-							$(document).keydown(handleEscape);
-						}
-
-					//Initiate Navigation
-						if (oB.currentGallery.length > 1) {
-
-							if (oB.settings.orangeControls) {
-								$(document).orangeControls();
-							}
-							if (oB.settings.showNav) {
-								ob_content.append(navRight).append(navLeft);
-							}
-							if (oB.settings.showDots) {
-								ob_content.append(dotnav);
-							}
-						}
-
-					//Fire in the Hole
-						oB.methods.showContent(obj, true);
-					}
-				},
 				setupData: function (o) {
 					var u = o.attr('href');
 					if (u) {
 						var c = false;
-						var w = 0;
+						var s = [0, 0];
 						var h = 0;
 						var m = 0;
 						var i = 0;
@@ -202,20 +77,12 @@ if (typeof oB !== 'undefined') {
 							t = o.attr('title');
 						}
 						if (u.match(/height\=\d{1,}/)) {
-							var heightIndex = u.indexOf("height=") + 7;
-							var heightString = u.substr(heightIndex);
-							if (heightString.indexOf("&") > 0) {
-								heightString = heightString.substr(0, heightString.indexOf("&"));
-							}
-							h = heightString;
+							var heightString = u.match(/height\=\d{1,}/)[0];
+							s[0] = parseInt(heightString.match(/\d{1,}/)[0], 10);
 						}
 						if (u.match(/width\=\d{1,}/)) {
-							var widthIndex = u.indexOf("width=") + 6;
-							var widthString = u.substr(widthIndex);
-							if (widthString.indexOf("&") > 0) {
-								widthString = widthString.substr(0, widthString.indexOf("&"));
-							}
-							w = widthString;
+							var widthString = u.match(/width\=\d{1,}/)[0];
+							s[1] = parseInt(widthString.match(/\d{1,}/)[0], 10);
 						}
 						if (u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "iframe";
@@ -243,7 +110,7 @@ if (typeof oB !== 'undefined') {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 								o.addClass('ob_gallery-' + g);
 							} else {
-								g = 'FlickrGallery';
+								g = 'flickr' + newDate.getTime();
 								o.addClass('ob_gallery-' + g);
 							}
 							$.getJSON(u, function (data) {
@@ -253,8 +120,7 @@ if (typeof oB !== 'undefined') {
 									var obj;
 									function addData(obj) {
 										obj.data('ob_data', {
-											ob_height: parseInt(h, 10),
-											ob_width: parseInt(w, 10),
+											ob_size: s,
 											ob_max: m,
 											ob_gallery: g,
 											ob_index: i,
@@ -263,7 +129,6 @@ if (typeof oB !== 'undefined') {
 											ob_title: item.title,
 											ob_linkText: o.attr('data-ob_linkText'),
 											ob_link: o.attr('data-ob_link'),
-											ob_caption: o.attr('data-ob_caption'),
 											ob_linkTarget: o.attr('data-ob_linkTarget'),
 											ob_share: 'false',
 											ob_delayTimer: o.attr('data-ob_delayTimer')
@@ -292,7 +157,7 @@ if (typeof oB !== 'undefined') {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 								o.addClass('ob_gallery-' + g);
 							} else {
-								g = 'PicasaGallery';
+								g = 'picasa' + newDate.getTime();
 								o.addClass('ob_gallery-' + g);
 							}
 							$.ajax({
@@ -304,8 +169,7 @@ if (typeof oB !== 'undefined') {
 										var obj;
 										function addData(obj) {
 											obj.data('ob_data', {
-												ob_height: parseInt(item.gphoto$height.$t, 10),
-												ob_width: parseInt(item.gphoto$width.$t, 10),
+												ob_size: [parseInt(item.gphoto$height.$t, 10), parseInt(item.gphoto$width.$t, 10)],
 												ob_max: m,
 												ob_gallery: g,
 												ob_index: i,
@@ -353,11 +217,11 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "inline";
 							m = [oB.settings.inlineHeight, oB.settings.inlineWidth];
-							if (!h) {
-								h = m[0];
+							if (s[0] === 0) {
+								s[0] = m[0];
 							}
-							if (!w) {
-								w = m[1];
+							if (s[1] === 0) {
+								s[1] = m[1];
 							}
 						} else if (oB.settings.logging) {
 							console.log('OrangeBox: Unsupported Media: ' + u);
@@ -369,8 +233,7 @@ if (typeof oB !== 'undefined') {
 							i = objectSet.length - 1;
 						}
 						o.data('ob_data', {
-							ob_height: parseInt(h, 10),
-							ob_width: parseInt(w, 10),
+							ob_size: s,
 							ob_max: m,
 							ob_gallery: g,
 							ob_index: i,
@@ -389,6 +252,77 @@ if (typeof oB !== 'undefined') {
 						return false;
 					}
 				},
+				create: function (obj, o) {
+					if (o) {
+						$.extend(oB.settings, o);
+					}
+					if (!obj) {
+						obj = $(this);
+						oB.methods.setupData(obj);
+					}
+					if (obj.data('ob_data').ob_contentType) {
+
+					//Set Vars
+						oB.playing = oB.settings.autoplay;
+						oB.progress = null;
+						oB.docHeight = $(document).height();
+						oB.docWidth = $(document).width();
+						oB.currentGallery = $('.ob_gallery-' + obj.data('ob_data').ob_gallery);
+						var overlay = $('<div id="ob_overlay"></div>').css({
+							"opacity": oB.settings.overlayOpacity,
+							"height": oB.docHeight,
+							"min-height": oB.docHeight,
+							"min-width": oB.docWidth
+						});
+						var container = $('<div id="ob_container"></div>');
+						var ob_content = $('<div id="ob_content"></div>').click(function (e) {
+							e.stopPropagation();
+						}).css("border-width", oB.settings.contentBorderWidth);
+
+					//Check for addThis
+						if (oB.settings.addThis === true && typeof addthis === 'undefined') {
+							if (oB.settings.logging) {
+								console.log('OrangeBox: Connection with addThis failed');
+							}
+							oB.settings.addThis = false;
+						}
+
+					//if IE 6					
+						if (typeof document.body.style.maxHeight === "undefined") {
+							$("body", "html").css({
+								height: "100%",
+								width: "100%"
+							});
+						}
+
+					//Click to Hide Modal
+						$("body").append(overlay.show(oB.settings.fadeTime).click(function () {
+							oB.methods.destroy(oB.settings);
+						})).append(container.click(function () {
+							oB.methods.destroy(oB.settings);
+						}));
+						$("#ob_container").append('<div id="ob_float"></div>').append(ob_content);
+
+					//Listens for Escape
+						function handleEscape(e) {
+							if (e.keyCode === 27 && oB.progress === null) {
+								oB.methods.destroy(oB.settings);
+							} else if (e.keyCode === 37 && oB.progress === null) {
+								oB.methods.slideshowPause();
+								oB.methods.navigate(-1);
+							} else if (e.keyCode === 39 && oB.progress === null) {
+								oB.methods.slideshowPause();
+								oB.methods.navigate(1);
+							}
+						}
+						if (oB.settings.keyboardNavigation) {
+							$(document).keydown(handleEscape);
+						}
+
+					//Fire in the Hole
+						oB.methods.showContent(obj, true);
+					}
+				},
 				showContent: function (obj, initial) {
 					var href = obj.data('ob_data').ob_href;
 					var title = obj.data('ob_data').ob_title;
@@ -399,13 +333,60 @@ if (typeof oB !== 'undefined') {
 					var loc = window.location;
 					var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
 					var windowURL = loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname;
-					var href_encode = encodeURIComponent(href);
 					if (windowURL.indexOf('?') > 0) {
 						windowURL = windowURL.substr(0, windowURL.indexOf('?'));
 					}
+					var href_encode = encodeURIComponent(href);
+					var navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
+						if (oB.progress === null) {
+							oB.methods.slideshowPause();
+							e.stopPropagation();
+							oB.methods.navigate(1);
+						}
+					});
+					var navLeft = $('<a class="ob_nav" id="ob_left"><span class="ob_controls" id="ob_left-ico"></span></a>').click(function (e) {
+						if (oB.progress === null) {
+							oB.methods.slideshowPause();
+							e.stopPropagation();
+							oB.methods.navigate(-1);
+						}
+					});
+					var dotnav = $('<ul id="ob_dots"></ul>').click(function (e) { e.stopPropagation(); });
 					var ob_link = windowURL + "?orangebox=" + href_encode;
 					$('#ob_content').removeClass().addClass('content' + currentIndex);
-
+				
+				//Setup Dot Nav	
+					if (oB.settings.showDots) {
+						oB.currentGallery.each(function (x) {
+							dotnav.append($('<li id="ob_dot' + x + '"></li>').click(function (e) {
+								e.stopPropagation();
+								if (!$(this).hasClass('current') && oB.progress === null) {
+									oB.methods.slideshowPause();
+									var x = $(this).attr('id').substr(6);
+									dotnav.find("li").removeClass('current');
+									$(this).addClass('current');
+									oB.methods.navigate("", x);
+								}
+							}));
+						});
+					}
+					
+				//Append Navigation
+					if (oB.currentGallery.length > 1) {
+						if (oB.settings.orangeControls) {
+							$(document).orangeControls();
+						}
+						if (oB.settings.showDots) {
+							$('#ob_content').append(dotnav);
+						}
+					}
+					if (oB.settings.showClose) {
+						$('#ob_content').append($('<div title="close" class="ob_controls ob_cs" id="ob_close"></div>').click(function (e) {
+							e.stopPropagation();
+							oB.methods.destroy(oB.settings);
+						}));
+					}
+					
 				//Start Preloader
 					oB.methods.showLoad();
 
@@ -455,6 +436,7 @@ if (typeof oB !== 'undefined') {
 							p = window.pageYOffset;
 						}
 						if (content.attr('id') !== "ob_error") {
+							$('#ob_content').append('<div id="ob_title"></div>');
 							if (obj.data('ob_data').ob_link) {
 								var target = 'target="_blank"';
 								if (obj.data('ob_data').ob_linkTarget === "_self") {
@@ -518,14 +500,10 @@ if (typeof oB !== 'undefined') {
 						}
 						if (oB.settings.showNav) {
 							if (oB.currentGallery[currentIndex + 1]) {
-								$('#ob_right').show();
-							} else {
-								$('#ob_right').hide();
+								$('#ob_content').append(navRight);
 							}
 							if (oB.currentGallery[currentIndex - 1]) {
-								$('#ob_left').show();
-							} else {
-								$('#ob_left').hide();
+								$('#ob_content').append(navLeft);
 							}
 						}
 						clearTimeout(oB.controlTimer);
@@ -551,36 +529,10 @@ if (typeof oB !== 'undefined') {
 							$('.ob_controls').fadeIn(oB.settings.fadeTime);
 						}
 					}
-
-				//Build the Window
-					function buildit() {
+					
+				//Fade the Window In
+					function fadeit() {
 						oB.methods.showLoad("stop");
-						$('#ob_content').append(content.addClass('ob_contents'));
-						if (oB.settings.fadeCaption) {
-							ob_caption.hide();
-							$('#ob_content').hover(function () {
-								$('#ob_caption').stop().fadeTo(oB.settings.fadeTime, 0.95);
-							}, function () {
-								$('#ob_caption').stop().fadeOut(oB.settings.fadeTime);
-							});
-						}
-						if (contentType === "jw") {
-							var jw_size = [content.css('height'), content.css('width')];
-							jwplayer("ob_video").setup({
-								flashplayer: "/orangebox/jw/player.swf",
-								autostart: true,
-								file: href,
-								events: {
-									onComplete: function () {
-										if (oB.playing) {
-											oB.methods.navigate(1);
-										}
-									}
-								},
-								width: jw_size[1],
-								height: jw_size[0]
-							});
-						}
 						$('#ob_content').fadeIn(oB.settings.fadeTime, function () {
 							if (initial && oB.settings.logging === "debug") {
 								console.log('OrangeBox: Initialized: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"');
@@ -591,6 +543,39 @@ if (typeof oB !== 'undefined') {
 							$('#ob_overlay').css("height", $(document).height());
 							oB.progress = null;
 						});
+					}
+					
+				//Build the Window
+					function buildit() {
+						$('#ob_content').append(content.addClass('ob_contents'));
+						if (oB.settings.fadeCaption) {
+							ob_caption.hide();
+							$('#ob_content').hover(function () {
+								$('#ob_caption').stop().fadeTo(oB.settings.fadeTime, 0.95);
+							}, function () {
+								$('#ob_caption').stop().fadeOut(oB.settings.fadeTime);
+							});
+						}
+						if (contentType === "jw") {
+							jwplayer("ob_video").setup({
+								flashplayer: "/orangebox/jw/player.swf",
+								autostart: true,
+								file: href,
+								events: {
+									onComplete: function () {
+										if (oB.playing) {
+											oB.methods.navigate(1);
+										}
+									},
+									onReady: fadeit()
+								},
+								width: content.css('width'),
+								height: content.css('height')
+							});
+							$('#ob_content').addClass('jw_player');
+						} else {
+							fadeit();
+						}
 						setModalProperties();
 						setControls();
 						if (oB.playing && contentType !== "jw") {
@@ -602,6 +587,7 @@ if (typeof oB !== 'undefined') {
 								oB.methods.navigate(1);
 							}, delayTimer);
 						}
+						
 					}
 
 				//Error Content
@@ -617,10 +603,6 @@ if (typeof oB !== 'undefined') {
 								console.log('OrangeBox: Could not find file');
 							}
 						});
-						$('#ob_title').hide();
-						$('#ob_right').hide();
-						$('#ob_left').hide();
-						$('#ob_dots').hide();
 						clearTimeout(oB.controlTimer);
 						clearTimeout(oB.slideshowTimer);
 						clearTimeout(oB.scrollTimer);
@@ -630,7 +612,7 @@ if (typeof oB !== 'undefined') {
 
 				//iFrame Content
 					function showiFrame() {
-						var dim = oB.methods.getSize(obj, 0, 0, false);
+						var dim = oB.methods.getSize(obj, [0, 0], false);
 						var newhref = href.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
@@ -643,7 +625,7 @@ if (typeof oB !== 'undefined') {
 
 				//Inline Content
 					function showInline() {
-						var dim = oB.methods.getSize(obj, 0, 0, true);
+						var dim = oB.methods.getSize(obj, [0, 0], true);
 						if (href.indexOf('?') > 0) {
 							href = href.substr(0, href.indexOf('?'));
 						}
@@ -663,7 +645,7 @@ if (typeof oB !== 'undefined') {
 				//Video Content
 					function showVideo() {
 						var i;
-						var dim = oB.methods.getSize(obj, 0, 0, false);
+						var dim = oB.methods.getSize(obj, [0, 0], false);
 						var a = 'height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto"';
 						var iI;
 
@@ -717,7 +699,7 @@ if (typeof oB !== 'undefined') {
 						content = $(img);
 						content.load(function () {
 							var oSize = [img.height, img.width];
-							var sSize = [obj.data('ob_data').ob_height, obj.data('ob_data').ob_width];
+							var sSize = [obj.data('ob_data').ob_size[0], obj.data('ob_data').ob_size[1]];
 							if (sSize[0] > 0 && sSize[1] === 0) {
 								sSize[1] = oSize[1] / oSize[0] * sSize[0];
 							} else if (sSize[1] > 0 && sSize[0] === 0) {
@@ -726,14 +708,14 @@ if (typeof oB !== 'undefined') {
 								sSize[0] = oSize[0];
 								sSize[1] = oSize[1];
 							}
-							obj.data('ob_data').ob_height = sSize[0];
-							obj.data('ob_data').ob_width = sSize[1];
-							var dim = oB.methods.getSize(obj, 0, 0, false);
+							obj.data('ob_data').ob_size[0] = sSize[0];
+							obj.data('ob_data').ob_size[1] = sSize[1];
+							var dim = oB.methods.getSize(obj, [0, 0], false);
 							var running = false;
 							$('#ob_content').unbind('click').click(function (e) {
 								e.stopPropagation();
-								var fullDim = oB.methods.getSize(false, oSize[0], oSize[1], true);
-								var newDim = oB.methods.getSize(obj, 0, 0, false);
+								var fullDim = oB.methods.getSize(false, [oSize[0], oSize[1]], true);
+								var newDim = oB.methods.getSize(obj, [0, 0], false);
 								var setDim;
 								var p = $(window).scrollTop();
 								if (p === 0) {
@@ -831,7 +813,7 @@ if (typeof oB !== 'undefined') {
 						oB.progress = true;
 						$(document).trigger('oB_navigate', [i]);
 						$('#ob_content').fadeOut(oB.settings.fadeTime, function () {
-							if ($('#ob_video').length > 0) {
+							if ($('#ob_content').hasClass('jw_player')) {
 								try {
 									jwplayer("ob_video").remove();
 								} catch (error) {
@@ -839,16 +821,12 @@ if (typeof oB !== 'undefined') {
 										console.log('OrangeBox: ' + error);
 									}
 								}
-								$('#ob_video').empty().remove();
 							}
-							$('#ob_title').empty();
-							$('#ob_share').empty().remove();
-							$('#ob_caption').empty().remove();
 							$(this).removeClass('expanded').css({
-								"min-height": 0
-							}).children('.ob_contents').remove();
+								"min-height": ''
+							}).empty();
 							oB.delayTimer = $(oB.currentGallery[i]).data('ob_data').ob_delayTimer;
-							oB.methods.showContent($(oB.currentGallery[i]), false);
+							oB.methods.showContent($(oB.currentGallery[i]));
 						});
 					} else {
 						oB.progress = null;
@@ -891,16 +869,6 @@ if (typeof oB !== 'undefined') {
 					if (o) {
 						$.extend(oB.settings, o);
 					}
-					if ($('#ob_video').length > 0) {
-						try {
-							jwplayer("ob_video").remove();
-						} catch (error) {
-							if (oB.settings.logging) {
-								console.log('OrangeBox: ' + error);
-							}
-						}
-						$('#ob_video').empty().remove();
-					}
 					oB.methods.showLoad("stop");
 					clearTimeout(oB.controlTimer);
 					clearTimeout(oB.slideshowTimer);
@@ -913,6 +881,15 @@ if (typeof oB !== 'undefined') {
 						$(this).remove().empty();
 					});
 					$('#ob_container').fadeOut(oB.settings.fadeTime, function () {
+						if ($('#ob_content').hasClass('jw_player')) {
+							try {
+								jwplayer("ob_video").remove();
+							} catch (error) {
+								if (oB.settings.logging) {
+									console.log('OrangeBox: ' + error);
+								}
+							}
+						}
 						$(this).remove().empty();
 						$(document).trigger('oB_closed');
 						if (x && $.isFunction(x)) {
@@ -920,7 +897,7 @@ if (typeof oB !== 'undefined') {
 						}
 					});
 				},
-				getSize: function (obj, h, w, noMaxHeight) {
+				getSize: function (obj, s, noMaxHeight) {
 					var mSize = [$(window).height() - 44, $(window).width() - 44];
 					if (oB.docWidth > $(window).width()) {
 						mSize[1] = oB.docWidth - 44;
@@ -929,39 +906,39 @@ if (typeof oB !== 'undefined') {
 						mSize[1] = mSize[1] - 120;
 					}
 					if (obj) {
-						w = obj.data('ob_data').ob_width;
-						h = obj.data('ob_data').ob_height;
+						s[0] = obj.data('ob_data').ob_size[0];
+						s[1] = obj.data('ob_data').ob_size[1];
 						var m = obj.data('ob_data').ob_max;
 						if (m[0] === 0) {
 							mSize[0] = 0;
 						} else if (m[0] > 1 && m[0] < mSize[0]) {
 							mSize[0] = m[0];
 						} else if (m[0] > 0 && m[0] <= 1) {
-							mSize[0] = mSize[0] * m[0];
+							mSize[0] = Math.round(mSize[0] * m[0]);
 						}
 						if (m[1] > 1 && m[1] < mSize[1]) {
 							mSize[1] = m[1];
 						} else if (m[1] > 0 && m[1] <= 1) {
-							mSize[1] = mSize[1] * m[1];
+							mSize[1] = Math.round(mSize[1] * m[1]);
 						}
-						if (w === 0) {
-							w = mSize[1];
+						if (s[1] <= 1) {
+							s[1] = mSize[1];
 						}
-						if (h === 0 && mSize[0] !== 0) {
-							h = mSize[0];
+						if (s[0] === 0 && mSize[0] !== 0) {
+							s[0] = mSize[0];
 						}
 					}
 
 				//Scale Content to fit
-					if (!noMaxHeight && mSize[0] && h > mSize[0]) {
-						w = w * mSize[0] / h;
-						h = mSize[0];
+					if (!noMaxHeight && mSize[0] && s[0] > mSize[0]) {
+						s[1] = s[1] * mSize[0] / s[0];
+						s[0] = mSize[0];
 					}
-					if (w > mSize[1]) {
-						h = h * mSize[1] / w;
-						w = mSize[1];
+					if (s[1] > mSize[1]) {
+						s[0] = s[0] * mSize[1] / s[1];
+						s[1] = mSize[1];
 					}
-					return [parseInt(h, 10), parseInt(w, 10)];
+					return s;
 				},
 				getUrlVars: function () {
 					var i, vars = [], hash, hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
