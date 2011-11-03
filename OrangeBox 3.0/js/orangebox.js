@@ -722,9 +722,7 @@ if (typeof oB !== 'undefined') {
 						content.load(function () {
 							var oSize = [img.height, img.width],
 								sSize = [obj.data('ob_data').ob_size[0], obj.data('ob_data').ob_size[1]],
-								dim = oB.methods.getSize(obj, [0, 0], false),
-								running = false,
-								margin = (oB.settings.contentMinHeight / 2) - (dim[0] / 2);
+								running = false;
 							if (sSize[0] > 0 && sSize[1] === 0) {
 								sSize[1] = oSize[1] / oSize[0] * sSize[0];
 							} else if (sSize[1] > 0 && sSize[0] === 0) {
@@ -734,7 +732,9 @@ if (typeof oB !== 'undefined') {
 								sSize[1] = oSize[1];
 							}
 							obj.data('ob_data').ob_size[0] = sSize[0];
-							obj.data('ob_data').ob_size[1] = sSize[1];
+							obj.data('ob_data').ob_size[1] = sSize[1]
+							var dim = oB.methods.getSize(obj, [0, 0], false),
+								margin = (oB.settings.contentMinHeight / 2) - (dim[0] / 2);
 							$('#ob_content').unbind('click').click(function (e) {
 								e.stopPropagation();
 								var fullDim = oB.methods.getSize(false, [oSize[0], oSize[1]], true),
