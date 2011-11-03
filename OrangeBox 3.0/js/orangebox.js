@@ -221,8 +221,8 @@ if (typeof oB !== 'undefined') {
 							if (s[1] === 0) {
 								s[1] = m[1];
 							}
-						} else if (oB.settings.logging) {
-							console.log('OrangeBox: Unsupported Media: ' + u);
+						} else {
+							oB.methods.logit('Unsupported Media: ' + u);
 						}
 						if (rel && rel.indexOf("[") > 0 && c && c !== 'flickr') {
 							g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
@@ -245,8 +245,8 @@ if (typeof oB !== 'undefined') {
 							ob_share: o.attr('data-ob_share'),
 							ob_delayTimer: o.attr('data-ob_delayTimer')
 						});
-					} else if (oB.settings.logging) {
-						console.log('OrangeBox: Object has no "href" attribute');
+					} else {
+						oB.methods.logit('Object has no "href" attribute');
 						return false;
 					}
 				},
@@ -277,9 +277,7 @@ if (typeof oB !== 'undefined') {
 
 					//Check for addThis
 						if (oB.settings.addThis === true && typeof addthis === 'undefined') {
-							if (oB.settings.logging) {
-								console.log('OrangeBox: Connection with addThis failed');
-							}
+							oB.methods.logit('Connection with addThis failed');
 							oB.settings.addThis = false;
 						}
 
@@ -531,11 +529,11 @@ if (typeof oB !== 'undefined') {
 					function fadeit() {
 						oB.methods.showLoad("stop");
 						$('#ob_content').fadeIn(oB.settings.fadeTime, function () {
-							if (initial && oB.settings.logging === "debug") {
-								console.log('OrangeBox: Initialized: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"');
+							if (initial) {
+								oB.methods.logit('Initialized: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
 								$(document).trigger('oB_init');
-							} else if (oB.settings.logging === "debug") {
-								console.log('OrangeBox: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"');
+							} else {
+								oB.methods.logit('OrangeBox: ID:' + currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
 							}
 							$('#ob_overlay').css("height", $(document).height());
 							oB.progress = null;
@@ -621,9 +619,7 @@ if (typeof oB !== 'undefined') {
 							$('#ob_overlay').css({
 								"height": $(document).height()
 							});
-							if (oB.settings.logging) {
-								console.log('OrangeBox: Could not find file');
-							}
+							oB.methods.logit('Could not find file');
 						});
 						clearTimeout(oB.controlTimer);
 						clearTimeout(oB.slideshowTimer);
@@ -816,9 +812,8 @@ if (typeof oB !== 'undefined') {
 						showVideo();
 						break;
 					default:
-						if (oB.settings.logging) {
-							console.log('OrangeBox: Unsupported Media: ' + href);
-						}
+						oB.methods.logit('Unsupported Media: ' + href);
+						return false;
 					}
 				},
 				navigate: function (d, i, o) {
@@ -843,9 +838,7 @@ if (typeof oB !== 'undefined') {
 								try {
 									jwplayer("ob_video").remove();
 								} catch (error) {
-									if (oB.settings.logging) {
-										console.log('OrangeBox: ' + error);
-									}
+									oB.methods.logit(error);
 								}
 							}
 							$(this).removeClass('expanded').css({
@@ -914,9 +907,7 @@ if (typeof oB !== 'undefined') {
 							try {
 								jwplayer("ob_video").remove();
 							} catch (error) {
-								if (oB.settings.logging) {
-									console.log('OrangeBox: ' + error);
-								}
+								oB.methods.logit(error);
 							}
 						}
 						$(this).remove().empty();
@@ -980,24 +971,27 @@ if (typeof oB !== 'undefined') {
 						vars[hash[0]] = hash[1];
 					}
 					return vars;
+				},
+				logit: function (m, d) {
+					if (d && oB.settings.logging === "debug") {
+						console.log('OrangeBox: ' + m);
+					} else if (oB.settings.logging) {
+						console.log('OrangeBox: ' + m);
+					}
 				}
 			}
 		};
 
 		$.fn.orangeBox = function (method) {
-			if (method === "showContent" || method === "setupData" || method === "getSize" || method === "getUrlVars") {
-				if (oB.settings.logging) {
-					console.log('OrangeBox: ' + method + ' cannot be called externally');
-				}
+			if (method === "showContent" || method === "setupData" || method === "getSize" || method === "getUrlVars" ||  method === "logit") {
+				oB.methods.logit(method + ' cannot be called externally');
 				return false;
 			} else if (oB.methods[method]) {
 				return oB.methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
 			} else if (typeof method === 'object' || !method) {
 				return oB.methods.init.apply(this, arguments);
 			} else {
-				if (oB.settings.logging) {
-					console.log('OrangeBox: Method ' + method + ' does not exist in OrangeBox');
-				}
+				oB.methods.logit(method + ' does not exist in OrangeBox');
 				return false;
 			}
 		};
@@ -1041,9 +1035,7 @@ jQuery(document).ready(function ($) {
 		checkURL();
 	}
 	if (oB.settings.orangeControls === true && !$().orangeControls) {
-		if (oB.settings.logging) {
-			console.log('OrangeBox: Connection with OrangeControls failed');
-		}
+		oB.methods.logit('Connection with OrangeControls failed');
 		oB.settings.orangeControls = false;
 	}
 });
