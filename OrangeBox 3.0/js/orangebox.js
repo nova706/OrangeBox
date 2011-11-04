@@ -422,8 +422,17 @@ if (typeof oB !== 'undefined') {
 
 				//Set Height and Width
 					function getDim() {
-						var css_size = [parseInt(content.css('height').replace('px', ''), 10), parseInt(content.css('width').replace('px', ''), 10), parseInt(content.css('padding-left').replace('px', ''), 10) * 2],
+						var css_size = [],
 							size = [content.outerHeight(), content.outerWidth()];
+						if (content.css('height')) {
+							css_size[0] = parseInt(content.css('height').replace('px', ''), 10);
+						}
+						if (content.css('width')) {
+							css_size[1] = parseInt(content.css('width').replace('px', ''), 10);
+						}
+						if (content.css('padding-left')) {
+							css_size[2] = parseInt(content.css('padding-left').replace('px', ''), 10) * 2;
+						}
 						if (css_size[0] === 0 && contentType === "inline") {
 							var copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: css_size[1] - css_size[2]});
 							$("body").append(copied_elem);
@@ -619,7 +628,8 @@ if (typeof oB !== 'undefined') {
 									'onStateChange': onPlayerStateChange
 								},
 								playerVars: {
-									'autoplay': 1
+									'autoplay': 1,
+									'autohide': 1
 								}
 							});
 							fadeit();
@@ -693,16 +703,16 @@ if (typeof oB !== 'undefined') {
 						var dim = oB.methods.getSize(obj, [0, 0], false);
 						switch (contentType) {
 						case "jw":
-							content = $('<div id="ob_video" height="' + dim[0] + '" width="' + dim[1] + '"></div>');
+							content = $('<div id="ob_video" height="' + dim[0] + '" width="' + dim[1] + '"></div>').css("background-color", "#000000");
 							break;
 						case "youtube":
-							content = $('<div id="ob_video" height="' + dim[0] + '" width="' + dim[1] + '"></div>');
+							content = $('<div id="ob_video" height="' + dim[0] + '" width="' + dim[1] + '"></div>').css("background-color", "#000000");
 							break;
 						case "vimeo":
-							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://player.vimeo.com/video/' + obj.data('ob_data').ob_id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>');
+							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://player.vimeo.com/video/' + obj.data('ob_data').ob_id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
 							break;
 						case "viddler":
-							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('ob_data').ob_id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>');
+							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('ob_data').ob_id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
 							break;
 						case "flash":
 							content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed></div>');
@@ -711,7 +721,6 @@ if (typeof oB !== 'undefined') {
 						content.css({
 							"width": dim[1],
 							"height": dim[0],
-							"background-color": "#000000"
 						});
 						buildit();
 					}
