@@ -39,16 +39,11 @@ if (typeof oB !== 'undefined') {
 				notFound: 'Not Found',
 				overlayOpacity: 0.95,
 				contentBorderWidth: 4,
-				contentMinWidth: 200,
-				contentMinHeight: 100,
-				iframeWidth: 0.75,
-				iframeHeight: 0.75,
-				inlineWidth: 0.5,
-				inlineHeight: 0,
-				maxImageWidth: 0.75,
-				maxImageHeight: 0.75,
-				maxVideoWidth: 640,
-				maxVideoHeight: 390,
+				contentMinSize: [100, 200],
+				iframeSize: [0.75, 0.75],
+				inlineSize: [0, 0.5],
+				maxImageSize: [0.75, 0.75],
+				maxVideoSize: [390, 640],
 				fadeTime: 200,
 				slideshowTimer: 3000,
 				streamItems: 10,
@@ -122,24 +117,24 @@ if (typeof oB !== 'undefined') {
 						}
 						if (u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "iframe";
-							m = [oB.settings.iframeHeight, oB.settings.iframeWidth];
+							m = oB.settings.iframeSize;
 						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "image";
-							m = [oB.settings.maxImageHeight, oB.settings.maxImageWidth];
+							m = oB.settings.maxImageSize;
 						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "pdf";
 							u = encodeURIComponent(u);
 							u = "http://docs.google.com/viewer?url=" + u + "&embedded=true&iframe=true";
-							m = [oB.settings.iframeHeight, oB.settings.iframeWidth];
+							m = oB.settings.iframeSize;
 						} else if (u.match(/\.(?:mov|mp4|m4v|f4v|ogg|flv|webm)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "jw";
-							m = [oB.settings.maxVideoHeight, oB.settings.maxVideoWidth];
+							m = oB.settings.maxVideoSize;
 						} else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "flash";
-							m = [oB.settings.maxVideoHeight, oB.settings.maxVideoWidth];
+							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
 							c = "flickr";
-							m = [oB.settings.maxImageHeight, oB.settings.maxImageWidth];
+							m = oB.settings.maxImageSize;
 							u = u.replace('rss_200', 'json');
 							u = u + "&jsoncallback=?";
 							if (rel.indexOf("[") > 0) {
@@ -186,7 +181,7 @@ if (typeof oB !== 'undefined') {
 							u = u.replace('/base/', '/api/');
 							u = u.replace('alt=rss', 'alt=json-in-script');
 							u = u + '&max-results=' + oB.settings.streamItems + '&callback=?';
-							m = [oB.settings.maxImageHeight, oB.settings.maxImageWidth];
+							m = oB.settings.maxImageSize;
 							if (rel.indexOf("[") > 0) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 								o.addClass('ob_gallery-' + g);
@@ -242,18 +237,18 @@ if (typeof oB !== 'undefined') {
 									oB.ytScript = true;
 								}
 							}
-							m = [oB.settings.maxVideoHeight, oB.settings.maxVideoWidth];
+							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							id = u.match(/vimeo\.com\/\d{1,}/)[0].substring(10);
 							c = "vimeo";
-							m = [oB.settings.maxVideoHeight, oB.settings.maxVideoWidth];
+							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							id = u.match(/viddler\.com\/(player|simple)\/\w{1,}/)[0].substring(19);
 							c = "viddler";
-							m = [oB.settings.maxVideoHeight, oB.settings.maxVideoWidth];
+							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "inline";
-							m = [oB.settings.inlineHeight, oB.settings.inlineWidth];
+							m = oB.settings.inlineSize;
 							if (s[0] === 0) {
 								s[0] = m[0];
 							}
@@ -440,11 +435,11 @@ if (typeof oB !== 'undefined') {
 						if (!size[1] && css_size[1]) {
 							size[1] = css_size[1];
 						}
-						if (content.attr('id') !== "ob_error" && size[0] < oB.settings.contentMinHeight) {
-							size[0] = oB.settings.contentMinHeight;
+						if (content.attr('id') !== "ob_error" && size[0] < oB.settings.contentMinSize[0]) {
+							size[0] = oB.settings.contentMinSize[0];
 						}
-						if (size[1] < oB.settings.contentMinWidth) {
-							size[1] = oB.settings.contentMinWidth;
+						if (size[1] < oB.settings.contentMinSize[1]) {
+							size[1] = oB.settings.contentMinSize[1];
 						}
 						return size;
 					}
@@ -739,7 +734,7 @@ if (typeof oB !== 'undefined') {
 							obj.data('ob_data').ob_size[0] = sSize[0];
 							obj.data('ob_data').ob_size[1] = sSize[1];
 							var dim = oB.methods.getSize(obj, [0, 0], false),
-								margin = (oB.settings.contentMinHeight / 2) - (dim[0] / 2);
+								margin = (oB.settings.contentMinSize[0] / 2) - (dim[0] / 2);
 							$('#ob_content').unbind('click').click(function (e) {
 								e.stopPropagation();
 								var fullDim = oB.methods.getSize(false, [oSize[0], oSize[1]], true),
@@ -784,7 +779,7 @@ if (typeof oB !== 'undefined') {
 									});
 								}
 							});
-							if (dim[0] < oB.settings.contentMinHeight) {
+							if (dim[0] < oB.settings.contentMinSize[0]) {
 								content.css("margin-top", margin);
 							}
 							content.css({
