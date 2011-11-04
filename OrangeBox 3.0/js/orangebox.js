@@ -327,16 +327,16 @@ if (typeof oB !== 'undefined') {
 	
 						//Click to Hide Modal
 							$("body").append(overlay.show(oB.settings.fadeTime).click(function () {
-								oB.methods.destroy(oB.settings);
+								oB.methods.destroy();
 							})).append(container.click(function () {
-								oB.methods.destroy(oB.settings);
+								oB.methods.destroy();
 							}));
 							$("#ob_container").append('<div id="ob_float"></div>').append(ob_content);
 	
 						//Listens for Escape
 							function handleEscape(e) {
 								if (e.keyCode === 27 && oB.progress === null) {
-									oB.methods.destroy(oB.settings);
+									oB.methods.destroy();
 								} else if (e.keyCode === 37 && oB.progress === null) {
 									oB.methods.slideshowPause();
 									oB.methods.navigate(-1);
@@ -416,7 +416,7 @@ if (typeof oB !== 'undefined') {
 					if (oB.settings.showClose) {
 						$('#ob_content').append($('<div title="close" class="ob_controls ob_cs" id="ob_close"></div>').click(function (e) {
 							e.stopPropagation();
-							oB.methods.destroy(oB.settings);
+							oB.methods.destroy();
 						}));
 					}
 
@@ -904,9 +904,6 @@ if (typeof oB !== 'undefined') {
 							$(document).orangeControls('destroy', oB.settings.fadeTime);
 						}
 						$(document).unbind("keydown").unbind("mousemove");
-						$('#ob_overlay').fadeOut(oB.settings.fadeTime, function () {
-							$(this).remove().empty();
-						});
 						$('#ob_container').stop().fadeOut(oB.settings.fadeTime, function () {
 							if ($('#ob_content').hasClass('jw_player')) {
 								try {
@@ -919,6 +916,12 @@ if (typeof oB !== 'undefined') {
 							$(document).trigger('oB_closed');
 							if (x && $.isFunction(x)) {
 								x();
+							}
+						});
+						$('#ob_overlay').fadeOut(oB.settings.fadeTime, function () {
+							$(this).remove().empty();
+							if($('#ob_container').length > 0) {
+								$('#ob_container').remove();
 							}
 						});
 					}
