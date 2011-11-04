@@ -56,6 +56,10 @@ if (typeof oB !== 'undefined') {
 						if (o) {
 							$.extend(oB.settings, o);
 						}
+						oB.windowURL = window.location.href;
+						if (oB.windowURL.match(/(\&|\?)orangebox\=/)) {
+							oB.windowURL = oB.windowURL.substr(0, oB.windowURL.search(/(\&|\?)orangebox\=/));
+						}
 						if (oB.ourl = oB.methods.getUrlVars()['orangebox']) {
 							if (oB.ourl.match(/\#\.\w{1,}\.facebook/)) {
 								oB.ourl = oB.ourl.substr(0, oB.ourl.search(/\#\.\w{1,}\.facebook/));
@@ -282,74 +286,72 @@ if (typeof oB !== 'undefined') {
 					}
 				},
 				create: function (obj, o) {
-					if (o) {
-						$.extend(oB.settings, o);
-					}
-					if (!obj) {
-						obj = $(this);
-						oB.methods.setupData(obj);
-					}
-					if (obj.data('ob_data').ob_contentType) {
-
-					//Set Vars
-						oB.playing = oB.settings.autoplay;
-						oB.progress = null;
-						oB.docHeight = $(document).height();
-						oB.docWidth = $(document).width();
-						oB.currentGallery = $('.ob_gallery-' + obj.data('ob_data').ob_gallery);
-						var overlay = $('<div id="ob_overlay"></div>').css({
-								"opacity": oB.settings.overlayOpacity,
-								"height": oB.docHeight,
-								"min-height": oB.docHeight,
-								"min-width": oB.docWidth
-							}), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
-								e.stopPropagation();
-							}).css("border-width", oB.settings.contentBorderWidth);
-						oB.windowURL = window.location.href;
-						if (oB.windowURL.match(/(\&|\?)orangebox\=/)) {
-							oB.windowURL = oB.windowURL.substr(0, oB.windowURL.search(/(\&|\?)orangebox\=/));
+					if (!$('#ob_content').length) {
+						if (o) {
+							$.extend(oB.settings, o);
 						}
-
-					//Check for addThis
-						if (oB.settings.addThis === true && typeof addthis === 'undefined') {
-							oB.methods.logit('Connection with addThis failed');
-							oB.settings.addThis = false;
+						if (!obj) {
+							obj = $(this);
+							oB.methods.setupData(obj);
 						}
-
-					//if IE 6					
-						if (typeof document.body.style.maxHeight === "undefined") {
-							$("body", "html").css({
-								height: "100%",
-								width: "100%"
-							});
-						}
-
-					//Click to Hide Modal
-						$("body").append(overlay.show(oB.settings.fadeTime).click(function () {
-							oB.methods.destroy(oB.settings);
-						})).append(container.click(function () {
-							oB.methods.destroy(oB.settings);
-						}));
-						$("#ob_container").append('<div id="ob_float"></div>').append(ob_content);
-
-					//Listens for Escape
-						function handleEscape(e) {
-							if (e.keyCode === 27 && oB.progress === null) {
-								oB.methods.destroy(oB.settings);
-							} else if (e.keyCode === 37 && oB.progress === null) {
-								oB.methods.slideshowPause();
-								oB.methods.navigate(-1);
-							} else if (e.keyCode === 39 && oB.progress === null) {
-								oB.methods.slideshowPause();
-								oB.methods.navigate(1);
+						if (obj.data('ob_data').ob_contentType) {
+	
+						//Set Vars
+							oB.playing = oB.settings.autoplay;
+							oB.progress = null;
+							oB.docHeight = $(document).height();
+							oB.docWidth = $(document).width();
+							oB.currentGallery = $('.ob_gallery-' + obj.data('ob_data').ob_gallery);
+							var overlay = $('<div id="ob_overlay"></div>').css({
+									"opacity": oB.settings.overlayOpacity,
+									"height": oB.docHeight,
+									"min-height": oB.docHeight,
+									"min-width": oB.docWidth
+								}).hide(), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
+									e.stopPropagation();
+								}).css("border-width", oB.settings.contentBorderWidth);
+	
+						//Check for addThis
+							if (oB.settings.addThis === true && typeof addthis === 'undefined') {
+								oB.methods.logit('Connection with addThis failed');
+								oB.settings.addThis = false;
 							}
+	
+						//if IE 6					
+							if (typeof document.body.style.maxHeight === "undefined") {
+								$("body", "html").css({
+									height: "100%",
+									width: "100%"
+								});
+							}
+	
+						//Click to Hide Modal
+							$("body").append(overlay.show(oB.settings.fadeTime).click(function () {
+								oB.methods.destroy(oB.settings);
+							})).append(container.click(function () {
+								oB.methods.destroy(oB.settings);
+							}));
+							$("#ob_container").append('<div id="ob_float"></div>').append(ob_content);
+	
+						//Listens for Escape
+							function handleEscape(e) {
+								if (e.keyCode === 27 && oB.progress === null) {
+									oB.methods.destroy(oB.settings);
+								} else if (e.keyCode === 37 && oB.progress === null) {
+									oB.methods.slideshowPause();
+									oB.methods.navigate(-1);
+								} else if (e.keyCode === 39 && oB.progress === null) {
+									oB.methods.slideshowPause();
+									oB.methods.navigate(1);
+								}
+							}
+							if (oB.settings.keyboardNavigation) {
+								$(document).keydown(handleEscape);
+							}
+	
+						//Fire in the Hole
+							oB.methods.showContent(obj, true);
 						}
-						if (oB.settings.keyboardNavigation) {
-							$(document).keydown(handleEscape);
-						}
-
-					//Fire in the Hole
-						oB.methods.showContent(obj, true);
 					}
 				},
 				showContent: function (obj, initial) {
@@ -905,7 +907,7 @@ if (typeof oB !== 'undefined') {
 						$('#ob_overlay').fadeOut(oB.settings.fadeTime, function () {
 							$(this).remove().empty();
 						});
-						$('#ob_container').fadeOut(oB.settings.fadeTime, function () {
+						$('#ob_container').stop().fadeOut(oB.settings.fadeTime, function () {
 							if ($('#ob_content').hasClass('jw_player')) {
 								try {
 									jwplayer("ob_video").remove();
