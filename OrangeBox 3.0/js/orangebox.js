@@ -26,6 +26,7 @@ if (typeof oB !== 'undefined') {
 			ytScript: false,
 			ourl: '',
 			currentIndex: '',
+			windowURL: '',
 			settings: {
 				autoplay: false,
 				fadeControls: false,
@@ -56,8 +57,8 @@ if (typeof oB !== 'undefined') {
 							$.extend(oB.settings, o);
 						}
 						if (oB.ourl = oB.methods.getUrlVars()['orangebox']) {
-							if (oB.ourl.indexOf('#.') > 0) {
-								oB.ourl = oB.ourl.substr(0, oB.ourl.indexOf('#.'));
+							if (oB.ourl.match(/\#\.\w{1,}\.facebook/)) {
+								oB.ourl = oB.ourl.substr(0, oB.ourl.search(/\#\.\w{1,}\.facebook/));
 							}
 							oB.ourl = decodeURIComponent(oB.ourl);
 						}
@@ -66,10 +67,7 @@ if (typeof oB !== 'undefined') {
 								oB.methods.create($('#' + oB.ourl));
 							} else {
 								$('a[rel*=lightbox]').each(function () {
-									if ($(this).attr('rel').indexOf(oB.ourl) >= 0) {
-										oB.methods.create($(this));
-										return false;
-									} else if ($(this).attr('href').indexOf(oB.ourl) >= 0) {
+									if ($(this).attr('rel').indexOf(oB.ourl) !== -1 || $(this).attr('href').indexOf(oB.ourl) !== -1) {
 										oB.methods.create($(this));
 										return false;
 									}
@@ -108,12 +106,10 @@ if (typeof oB !== 'undefined') {
 							t = o.attr('title');
 						}
 						if (u.match(/height\=\d{1,}/)) {
-							var heightString = u.match(/height\=\d{1,}/)[0];
-							s[0] = parseInt(heightString.match(/\d{1,}/)[0], 10);
+							s[0] = parseInt(u.match(/height\=\d{1,}/)[0].match(/\d{1,}/)[0], 10);
 						}
 						if (u.match(/width\=\d{1,}/)) {
-							var widthString = u.match(/width\=\d{1,}/)[0];
-							s[1] = parseInt(widthString.match(/\d{1,}/)[0], 10);
+							s[1] = parseInt(u.match(/width\=\d{1,}/)[0].match(/\d{1,}/)[0], 10);
 						}
 						if (u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "iframe";
@@ -137,7 +133,7 @@ if (typeof oB !== 'undefined') {
 							m = oB.settings.maxImageSize;
 							u = u.replace('rss_200', 'json');
 							u = u + "&jsoncallback=?";
-							if (rel.indexOf("[") > 0) {
+							if (rel.match(/\[/)) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 								o.addClass('ob_gallery-' + g);
 							} else {
@@ -182,7 +178,7 @@ if (typeof oB !== 'undefined') {
 							u = u.replace('alt=rss', 'alt=json-in-script');
 							u = u + '&max-results=' + oB.settings.streamItems + '&callback=?';
 							m = oB.settings.maxImageSize;
-							if (rel.indexOf("[") > 0) {
+							if (rel.match(/\[/)) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 								o.addClass('ob_gallery-' + g);
 							} else {
@@ -258,7 +254,7 @@ if (typeof oB !== 'undefined') {
 						} else {
 							oB.methods.logit('Unsupported Media: ' + u);
 						}
-						if (rel && rel.indexOf("[") > 0 && c && c !== 'flickr') {
+						if (rel && rel.match(/\[/) && c && c !== 'flickr') {
 							g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 							o.addClass('ob_gallery-' + g);
 							var objectSet = $('.ob_gallery-' + g);
@@ -302,13 +298,17 @@ if (typeof oB !== 'undefined') {
 						oB.docWidth = $(document).width();
 						oB.currentGallery = $('.ob_gallery-' + obj.data('ob_data').ob_gallery);
 						var overlay = $('<div id="ob_overlay"></div>').css({
-							"opacity": oB.settings.overlayOpacity,
-							"height": oB.docHeight,
-							"min-height": oB.docHeight,
-							"min-width": oB.docWidth
-						}), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
-							e.stopPropagation();
-						}).css("border-width", oB.settings.contentBorderWidth);
+								"opacity": oB.settings.overlayOpacity,
+								"height": oB.docHeight,
+								"min-height": oB.docHeight,
+								"min-width": oB.docWidth
+							}), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
+								e.stopPropagation();
+							}).css("border-width", oB.settings.contentBorderWidth);
+						oB.windowURL = window.location.href;
+						if (oB.windowURL.match(/(\&|\?)orangebox\=/)) {
+							oB.windowURL = oB.windowURL.substr(0, oB.windowURL.search(/(\&|\?)orangebox\=/));
+						}
 
 					//Check for addThis
 						if (oB.settings.addThis === true && typeof addthis === 'undefined') {
@@ -360,9 +360,6 @@ if (typeof oB !== 'undefined') {
 						ob_caption = $('<div id="ob_caption"></div>').css("opacity", 0.95).click(function (e) {
 							e.stopPropagation();
 						}),
-						loc = window.location,
-						pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1),
-						windowURL = loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length) - 1) + window.location.pathname,
 						href_encode = encodeURIComponent(href),
 						navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
 							if (oB.progress === null) {
@@ -379,12 +376,14 @@ if (typeof oB !== 'undefined') {
 							}
 						}),
 						dotnav = $('<ul id="ob_dots"></ul>').click(function (e) { e.stopPropagation(); }),
-						ob_link = windowURL + "?orangebox=" + href_encode;
+						ob_link;
+					if(oB.windowURL.match(/\?/)) {
+						ob_link = oB.windowURL + "&orangebox=" + href_encode;
+					} else {
+						ob_link = oB.windowURL + "?orangebox=" + href_encode;
+					}
 					oB.currentIndex = obj.data('ob_data').ob_index;
 					oB.methods.showLoad();
-					if (windowURL.indexOf('?') > 0) {
-						windowURL = windowURL.substr(0, windowURL.indexOf('?'));
-					}
 					$('#ob_content').removeClass().addClass('content' + oB.currentIndex);
 
 				//Setup Dot Nav	
@@ -671,8 +670,8 @@ if (typeof oB !== 'undefined') {
 				//Inline Content
 					function showInline() {
 						var dim = oB.methods.getSize(obj, [0, 0], true);
-						if (href.indexOf('?') > 0) {
-							href = href.substr(0, href.indexOf('?'));
+						if (href.match(/\?/)) {
+							href = href.substr(0, href.indexOf("?"));
 						}
 						if ($(href).length && $(href).html() !== "") {
 							content = $('<div id="ob_inline">' + $(href).html() + '</div>').css({
