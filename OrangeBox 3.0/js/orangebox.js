@@ -206,15 +206,27 @@ if (typeof oB !== 'undefined') {
 								dataType: 'json',
 								success: function (data) {
 									$.each(data.feed.entry, function (index, item) {
+										var picasaSrc;
+										var picasaSize;
+										if (item.content) {
+											picasaSrc = item.content.src;
+										} else if (item.media$group.media$content[0]) {
+											picasaSrc = item.media$group.media$content[0].url;
+										} else {
+											return false;
+										}
+										if (item.gphoto$height && item.gphoto$width) {
+											picasaSize = [parseInt(item.gphoto$height.$t, 10), parseInt(item.gphoto$width.$t, 10)];
+										}
 										var objectSet = $('.' + 'ob_gallery-' + g), obj;
 										function addData(obj) {
 											obj.data('ob_data', {
-												ob_size: [parseInt(item.gphoto$height.$t, 10), parseInt(item.gphoto$width.$t, 10)],
+												ob_size: picasaSize,
 												ob_max: m,
 												ob_gallery: g,
 												ob_index: i,
 												ob_contentType: c,
-												ob_href: item.content.src,
+												ob_href: picasaSrc,
 												ob_title: item.title.$t,
 												ob_linkText: o.attr('data-ob_linkText'),
 												ob_link: o.attr('data-ob_link'),
@@ -229,7 +241,7 @@ if (typeof oB !== 'undefined') {
 											addData(o);
 										} else if (index < oB.settings.streamItems) {
 											i = objectSet.length;
-											obj = $('<a class="ob_gallery-' + g + '" href="' + item.content.src + '" title="' + item.title.$t + '" rel="lightbox[' + g + ']"></a>');
+											obj = $('<a class="ob_gallery-' + g + '" href="' + picasaSrc + '" title="' + item.title.$t + '" rel="lightbox[' + g + ']"></a>');
 											addData(obj);
 											$(obj).appendTo('body');
 										} else {
@@ -738,8 +750,11 @@ if (typeof oB !== 'undefined') {
 						content = $(img);
 						content.load(function () {
 							var oSize = [img.height, img.width],
-								sSize = [obj.data('ob_data').ob_size[0], obj.data('ob_data').ob_size[1]],
+								sSize = [0, 0],
 								running = false;
+							if (obj.data('ob_data').ob_size) {
+								sSize = [obj.data('ob_data').ob_size[0], obj.data('ob_data').ob_size[1]];
+							}
 							if (sSize[0] > 0 && sSize[1] === 0) {
 								sSize[1] = oSize[1] / oSize[0] * sSize[0];
 							} else if (sSize[1] > 0 && sSize[0] === 0) {
