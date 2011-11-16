@@ -593,7 +593,7 @@ if (typeof oB !== 'undefined') {
 								oB.methods.logit('Initialized: ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
 								$(document).trigger('oB_init');
 							} else {
-								oB.methods.logit('OrangeBox: ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
+								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
 							}
 							$('#ob_overlay').css("height", $(document).height());
 							oB.progress = null;
