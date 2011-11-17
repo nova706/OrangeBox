@@ -14,6 +14,7 @@ if (typeof oB !== 'undefined') {
 	}
 	(function ($) {
 		oB = {
+			gallery: [],
 			progress: '',
 			playing: '',
 			slideshowTimer: '',
@@ -106,10 +107,6 @@ if (typeof oB !== 'undefined') {
 						oB.browser = $.browser;
 						return this.each(function () {
 							oB.methods.setupData($(this));
-							$(this).click(function (e) {
-								e.preventDefault();
-								oB.methods.create($(this));
-							});
 						});
 					}
 					return false;
@@ -146,43 +143,25 @@ if (typeof oB !== 'undefined') {
 							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
 							c = "flickr";
-							m = oB.settings.maxImageSize;
 							u = u.replace('rss_200', 'json');
 							u = u + "&jsoncallback=?";
 							if (rel.match(/\[/)) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
-								o.addClass('ob_gallery-' + g);
 							} else {
 								g = 'flickr' + newDate.getTime();
-								o.addClass('ob_gallery-' + g);
 							}
 							$.getJSON(u, function (data) {
 								$.each(data.items, function (index, item) {
-									var item_href = item.media.m.replace('_m.jpg', '.jpg'), objectSet = $('.' + 'ob_gallery-' + g), obj;
-									function addData(obj) {
-										obj.data('ob_data', {
-											ob_size: s,
-											ob_max: m,
-											ob_gallery: g,
-											ob_index: i,
-											ob_contentType: c,
-											ob_href: item_href,
-											ob_title: item.title,
-											ob_linkText: o.attr('data-ob_linkText'),
-											ob_link: o.attr('data-ob_link'),
-											ob_linkTarget: o.attr('data-ob_linkTarget'),
-											ob_share: 'false',
-											ob_delayTimer: o.attr('data-ob_delayTimer')
-										});
-									}
+									var item_href = item.media.m.replace('_m.jpg', '.jpg');
 									if (index === 0) {
-										i = objectSet.length - 1;
-										addData(o);
+										o.attr({
+											href: item_href,
+											"data-ob_share": "false",
+											title: item.title
+										});
+										oB.methods.setupData(o);
 									} else if (index < oB.settings.streamItems) {
-										i = objectSet.length;
-										obj = $('<a class="ob_gallery-' + g + '" href="' + item_href + '" title="' + item.title + '" rel="lightbox[' + g + ']"></a>');
-										addData(obj);
-										$(obj).appendTo('body');
+										oB.methods.setupData($('<a href="' + item_href + '" data-ob_linkText="' + o.attr('data-ob_linkText') + '" data-ob_link="' + o.attr('data-ob_link') + '" data-ob_linkTarget="' + o.attr('data-ob_linkTarget') + '" data-ob_delayTimer="' + o.attr('data-ob_delayTimer') + '" data-ob_share="false" title="' + item.title + '" rel="lightbox[' + g + ']"></a>'));
 									} else {
 										return false;
 									}
@@ -193,13 +172,10 @@ if (typeof oB !== 'undefined') {
 							u = u.replace('/base/', '/api/');
 							u = u.replace('alt=rss', 'alt=json-in-script');
 							u = u + '&max-results=' + oB.settings.streamItems + '&callback=?';
-							m = oB.settings.maxImageSize;
 							if (rel.match(/\[/)) {
 								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
-								o.addClass('ob_gallery-' + g);
 							} else {
 								g = 'picasa' + newDate.getTime();
-								o.addClass('ob_gallery-' + g);
 							}
 							$.ajax({
 								url: u,
@@ -207,7 +183,6 @@ if (typeof oB !== 'undefined') {
 								success: function (data) {
 									$.each(data.feed.entry, function (index, item) {
 										var picasaSrc;
-										var picasaSize;
 										if (item.content) {
 											picasaSrc = item.content.src;
 										} else if (item.media$group.media$content[0]) {
@@ -215,35 +190,16 @@ if (typeof oB !== 'undefined') {
 										} else {
 											return false;
 										}
-										if (item.gphoto$height && item.gphoto$width) {
-											picasaSize = [parseInt(item.gphoto$height.$t, 10), parseInt(item.gphoto$width.$t, 10)];
-										}
-										var objectSet = $('.' + 'ob_gallery-' + g), obj;
-										function addData(obj) {
-											obj.data('ob_data', {
-												ob_size: picasaSize,
-												ob_max: m,
-												ob_gallery: g,
-												ob_index: i,
-												ob_contentType: c,
-												ob_href: picasaSrc,
-												ob_title: item.title.$t,
-												ob_linkText: o.attr('data-ob_linkText'),
-												ob_link: o.attr('data-ob_link'),
-												ob_caption: item.summary.$t,
-												ob_linkTarget: o.attr('data-ob_linkTarget'),
-												ob_share: 'false',
-												ob_delayTimer: o.attr('data-ob_delayTimer')
-											});
-										}
 										if (index === 0) {
-											i = objectSet.length - 1;
-											addData(o);
+											o.attr({
+												href: picasaSrc,
+												"data-ob_share": "false",
+												"data-ob_caption": item.summary.$t,
+												title: item.title.$t
+											});
+											oB.methods.setupData(o);
 										} else if (index < oB.settings.streamItems) {
-											i = objectSet.length;
-											obj = $('<a class="ob_gallery-' + g + '" href="' + picasaSrc + '" title="' + item.title.$t + '" rel="lightbox[' + g + ']"></a>');
-											addData(obj);
-											$(obj).appendTo('body');
+											oB.methods.setupData($('<a href="' + picasaSrc + '" data-ob_caption="' + item.summary.$t + '" data-ob_linkText="' + o.attr('data-ob_linkText') + '" data-ob_link="' + o.attr('data-ob_link') + '" data-ob_linkTarget="' + o.attr('data-ob_linkTarget') + '" data-ob_delayTimer="' + o.attr('data-ob_delayTimer') + '" data-ob_share="false" title="' + item.title.$t + '" rel="lightbox[' + g + ']"></a>'));
 										} else {
 											return false;
 										}
@@ -278,29 +234,45 @@ if (typeof oB !== 'undefined') {
 						} else {
 							oB.methods.logit('Unsupported Media: ' + u);
 						}
-						if (rel && rel.match(/\[/) && c && c !== 'flickr') {
+						if (rel && rel.match(/\[/) && c && c !== 'flickr' && c !== 'picasa') {
 							g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
-							o.addClass('ob_gallery-' + g);
-							var objectSet = $('.ob_gallery-' + g);
-							i = objectSet.length - 1;
+							var unique = true;
+							$.each(oB.gallery, function() {
+								if (this.name === g) {
+									unique = false;
+								}
+							});
+							if (unique) {
+								oB.gallery.push({name: g, objects: []});
+							}
+							$.each(oB.gallery, function() {
+								if (this.name === g) {
+									i = this.objects.push(o) - 1;
+								}
+							});
 						}
-						o.data('ob_data', {
-							ob_size: s,
-							ob_css: '',
-							ob_max: m,
-							ob_gallery: g,
-							ob_index: i,
-							ob_contentType: c,
-							ob_href: u,
-							ob_title: t,
-							ob_linkText: o.attr('data-ob_linkText'),
-							ob_link: o.attr('data-ob_link'),
-							ob_caption: o.attr('data-ob_caption'),
-							ob_linkTarget: o.attr('data-ob_linkTarget'),
-							ob_share: o.attr('data-ob_share'),
-							ob_delayTimer: o.attr('data-ob_delayTimer'),
-							ob_id: id
-						});
+						if (c && c !== "flickr" && c !== "picasa") {
+							o.data('oB', {
+								size: s,
+								css: '',
+								"max": m,
+								gallery: g,
+								index: i,
+								contentType: c,
+								href: u,
+								title: t,
+								linkText: o.attr('data-ob_linkText'),
+								"link": o.attr('data-ob_link'),
+								caption: o.attr('data-ob_caption'),
+								linkTarget: o.attr('data-ob_linkTarget'),
+								share: o.attr('data-ob_share'),
+								delayTimer: o.attr('data-ob_delayTimer'),
+								id: id
+							}).click(function (e) {
+								e.preventDefault();
+								oB.methods.create($(this));
+							});
+						}
 					} else {
 						oB.methods.logit('Object has no "href" attribute');
 						return false;
@@ -313,16 +285,24 @@ if (typeof oB !== 'undefined') {
 						}
 						if (!obj) {
 							obj = $(this);
+						}
+						if (!obj.data('oB')) {
 							oB.methods.setupData(obj);
 						}
-						if (obj.data('ob_data').ob_contentType) {
-	
+						if (obj.data('oB').contentType) {
 						//Set Vars
+							oB.currentGallery = [];
 							oB.playing = oB.settings.autoplay;
 							oB.progress = null;
 							oB.docHeight = $(document).height();
 							oB.docWidth = $(document).width();
-							oB.currentGallery = $('.ob_gallery-' + obj.data('ob_data').ob_gallery);
+							
+							$.each(oB.gallery, function() {
+								if (this.name === obj.data('oB').gallery) {
+									oB.currentGallery = this.objects;
+									return;
+								}
+							});
 							var overlay = $('<div id="ob_overlay"></div>').css({
 									"opacity": oB.settings.overlayOpacity,
 									"height": oB.docHeight,
@@ -376,9 +356,9 @@ if (typeof oB !== 'undefined') {
 					}
 				},
 				showContent: function (obj, initial) {
-					var href = obj.data('ob_data').ob_href,
-						title = obj.data('ob_data').ob_title,
-						contentType = obj.data('ob_data').ob_contentType,
+					var href = obj.data('oB').href,
+						title = obj.data('oB').title,
+						contentType = obj.data('oB').contentType,
 						content,
 						ob_caption = $('<div id="ob_caption"></div>').css("opacity", 0.95).click(function (e) {
 							e.stopPropagation();
@@ -405,13 +385,13 @@ if (typeof oB !== 'undefined') {
 					} else {
 						ob_link = oB.windowURL + "?orangebox=" + href_encode;
 					}
-					oB.currentIndex = obj.data('ob_data').ob_index;
+					oB.currentIndex = obj.data('oB').index;
 					oB.methods.showLoad();
 					$('#ob_content').removeClass().addClass('content' + oB.currentIndex);
 
 				//Setup Dot Nav	
 					if (oB.settings.showDots) {
-						oB.currentGallery.each(function (x) {
+						$.each(oB.currentGallery, function (x) {
 							dotnav.append($('<li id="ob_dot' + x + '"></li>').click(function (e) {
 								e.stopPropagation();
 								if (!$(this).hasClass('current') && oB.progress === null) {
@@ -444,23 +424,26 @@ if (typeof oB !== 'undefined') {
 				//Set Height and Width
 					function getDim() {
 						var size = [content.outerHeight(), content.outerWidth()];
-						if (obj.data('ob_data').ob_css) {
-							size = obj.data('ob_data').ob_css;
+						if (obj.data('oB').css) {
+							size = obj.data('oB').css;
 						}
 						if (content.css('padding-left')) {
-							obj.data('ob_data').ob_css[2] = parseInt(content.css('padding-left').replace('px', ''), 10) * 2;
+							obj.data('oB').css[2] = parseInt(content.css('padding-left').replace('px', ''), 10) * 2;
+							size[1] += obj.data('oB').css[2];
 						}
-						if (obj.data('ob_data').ob_css[0] === 0 && contentType === "inline") {
-							var copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: obj.data('ob_data').ob_css[1] - obj.data('ob_data').ob_css[2]});
+						if (obj.data('oB').css[0] === 0 && contentType === "inline") {
+							var copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: obj.data('oB').css[1] - obj.data('oB').css[2]});
 							$("body").append(copied_elem);
-							size[0] = copied_elem.height() + obj.data('ob_data').ob_css[2];
+							size[0] = copied_elem.height() + obj.data('oB').css[2];
 							copied_elem.remove();
+						} else if (contentType === "inline") {
+							size[0] += obj.data('oB').css[2];
 						}
-						if (!size[0] && obj.data('ob_data').ob_css[0]) {
-							size[0] = obj.data('ob_data').ob_css[0];
+						if (!size[0] && obj.data('oB').css[0]) {
+							size[0] = obj.data('oB').css[0];
 						}
-						if (!size[1] && obj.data('ob_data').ob_css[1]) {
-							size[1] = obj.data('ob_data').ob_css[1];
+						if (!size[1] && obj.data('oB').css[1]) {
+							size[1] = obj.data('oB').css[1];
 						}
 						if (content.attr('id') !== "ob_error" && size[0] < oB.settings.contentMinSize[0]) {
 							size[0] = oB.settings.contentMinSize[0];
@@ -495,18 +478,18 @@ if (typeof oB !== 'undefined') {
 						}
 						if (content.attr('id') !== "ob_error") {
 							$('#ob_content').append('<div id="ob_title"></div>');
-							if (obj.data('ob_data').ob_link) {
-								if (obj.data('ob_data').ob_linkTarget === "_self") {
+							if (obj.data('oB').link && obj.data('oB').link !== "" && obj.data('oB').link !== "undefined") {
+								if (obj.data('oB').linkTarget === "_self") {
 									target = 'target="_self"';
 								}
-								if (obj.data('ob_data').ob_linkText) {
-									title = title + ' <a href="' + obj.data('ob_data').ob_link + '" ' + target + ' >' + obj.data('ob_data').ob_linkText + '</a>';
+								if (obj.data('oB').linkText && obj.data('oB').linkText !== "undefined") {
+									title = title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').linkText + '</a>';
 								} else {
-									title = title + ' <a href="' + obj.data('ob_data').ob_link + '" ' + target + ' >' + obj.data('ob_data').ob_link + '</a>';
+									title = title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').link + '</a>';
 								}
 							}
 							$('#ob_title').append(title).click(function (e) { e.stopPropagation(); });
-							if (oB.settings.addThis && contentType !== "iframe" && contentType !== "inline" && obj.data('ob_data').ob_share !== "false") {
+							if (oB.settings.addThis && contentType !== "iframe" && contentType !== "inline" && obj.data('oB').share !== "false") {
 								$('#ob_share').empty().remove();
 								addThis.addClass("ob_share-" + title.replace(/ /g, "_"));
 								if (title === "") {
@@ -524,8 +507,8 @@ if (typeof oB !== 'undefined') {
 								$('#ob_share').html('').append(shareHTML);
 							}
 							setWindowMargin(dim[0] + (oB.settings.contentBorderWidth * 2), dim[1]);
-							if (obj.data('ob_data').ob_caption) {
-								ob_caption.append('<p>' + obj.data('ob_data').ob_caption + '</p>');
+							if (obj.data('oB').caption) {
+								ob_caption.append('<p>' + obj.data('oB').caption + '</p>');
 								$('#ob_content').append(ob_caption);
 							}
 						}
@@ -545,7 +528,7 @@ if (typeof oB !== 'undefined') {
 					function setControls() {
 						if (oB.settings.showDots) {
 							$('#ob_dots').find('li').each(function () {
-								var i = 'ob_dot' + obj.data('ob_data').ob_index;
+								var i = 'ob_dot' + obj.data('oB').index;
 								if ($(this).attr('id') === i) {
 									$(this).addClass('current');
 								} else {
@@ -636,7 +619,7 @@ if (typeof oB !== 'undefined') {
 							oB.player = new YT.Player('ob_video', {
 								height: content.css('height'),
 								width: content.css('width'),
-								videoId: obj.data('ob_data').ob_id,
+								videoId: obj.data('oB').id,
 								events: {
 									'onStateChange': onPlayerStateChange
 								},
@@ -652,8 +635,8 @@ if (typeof oB !== 'undefined') {
 						setModalProperties();
 						setControls();
 						if (oB.playing && contentType !== "youtube" && contentType !== "quicktime") {
-							if (obj.data('ob_data').ob_delayTimer) {
-								delayTimer = parseInt(obj.data('ob_data').ob_delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10);
+							if (obj.data('oB').delayTimer) {
+								delayTimer = parseInt(obj.data('oB').delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10);
 							}
 							oB.slideshowTimer = setTimeout(function () {
 								oB.methods.navigate(1);
@@ -665,8 +648,7 @@ if (typeof oB !== 'undefined') {
 					function throwError() {
 						content = $('<div id="ob_error">' + oB.settings.notFound + '</div>');
 						oB.methods.showLoad(1);
-						$('#ob_content').append(content);
-						$('#ob_content').fadeIn(oB.settings.fadeTime, function () {
+						$('#ob_content').append(content).css('width', 250).fadeIn(oB.settings.fadeTime, function () {
 							$('#ob_overlay').css({
 								"height": $(document).height()
 							});
@@ -685,7 +667,7 @@ if (typeof oB !== 'undefined') {
 							newhref = href.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
-						obj.data('ob_data').ob_css = [dim[0], dim[1]]
+						obj.data('oB').css = [dim[0], dim[1]]
 						content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
 							"height": dim[0],
 							"width": dim[1]
@@ -700,7 +682,7 @@ if (typeof oB !== 'undefined') {
 							href = href.substr(0, href.indexOf("?"));
 						}
 						if ($(href).length && $(href).html() !== "") {
-							obj.data('ob_data').ob_css = [dim[0], dim[1]]
+							obj.data('oB').css = dim;
 							content = $('<div id="ob_inline">' + $(href).html() + '</div>').css({
 								"width": dim[1]
 							});
@@ -727,16 +709,16 @@ if (typeof oB !== 'undefined') {
 							content = $('<div id="ob_video" height="' + dim[0] + '" width="' + dim[1] + '"></div>').css("background-color", "#000000");
 							break;
 						case "vimeo":
-							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://player.vimeo.com/video/' + obj.data('ob_data').ob_id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
+							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://player.vimeo.com/video/' + obj.data('oB').id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
 							break;
 						case "viddler":
-							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('ob_data').ob_id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
+							content = $('<iframe id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('oB').id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
 							break;
 						case "flash":
 							content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed></div>');
 							break;
 						}
-						obj.data('ob_data').ob_css = [dim[0], dim[1]];
+						obj.data('oB').css = [dim[0], dim[1]];
 						content.css({
 							"height": dim[0],
 							"width": dim[1]
@@ -752,8 +734,8 @@ if (typeof oB !== 'undefined') {
 							var oSize = [img.height, img.width],
 								sSize = [0, 0],
 								running = false;
-							if (obj.data('ob_data').ob_size) {
-								sSize = [obj.data('ob_data').ob_size[0], obj.data('ob_data').ob_size[1]];
+							if (obj.data('oB').size) {
+								sSize = [obj.data('oB').size[0], obj.data('oB').size[1]];
 							}
 							if (sSize[0] > 0 && sSize[1] === 0) {
 								sSize[1] = oSize[1] / oSize[0] * sSize[0];
@@ -762,10 +744,10 @@ if (typeof oB !== 'undefined') {
 							} else if (sSize[0] === 0 && sSize[1] === 0) {
 								sSize = [oSize[0], oSize[1]];
 							}
-							obj.data('ob_data').ob_size = sSize;
+							obj.data('oB').size = sSize;
 							var dim = oB.methods.getSize(obj, [0, 0], false),
 								margin = (oB.settings.contentMinSize[0] / 2) - (dim[0] / 2);
-							obj.data('ob_data').ob_css = dim;
+							obj.data('oB').css = dim;
 							$('#ob_content').unbind('click').click(function (e) {
 								e.stopPropagation();
 								var fullDim = oB.methods.getSize(false, [oSize[0], oSize[1]], true),
@@ -881,8 +863,8 @@ if (typeof oB !== 'undefined') {
 							$(this).removeClass('expanded').css({
 								"min-height": ''
 							}).empty();
-							oB.delayTimer = $(oB.currentGallery[i]).data('ob_data').ob_delayTimer;
-							oB.methods.showContent($(oB.currentGallery[i]));
+							oB.delayTimer = oB.currentGallery[i].data('oB').delayTimer;
+							oB.methods.showContent(oB.currentGallery[i]);
 						});
 					} else {
 						oB.progress = null;
@@ -968,9 +950,8 @@ if (typeof oB !== 'undefined') {
 						mSize[1] -= 120;
 					}
 					if (obj) {
-						s[0] = obj.data('ob_data').ob_size[0];
-						s[1] = obj.data('ob_data').ob_size[1];
-						var m = obj.data('ob_data').ob_max;
+						s = obj.data('oB').size;
+						var m = obj.data('oB').max;
 						if (m[0] === 0) {
 							mSize[0] = 0;
 						} else if (m[0] > 1 && m[0] < mSize[0]) {
@@ -1024,7 +1005,7 @@ if (typeof oB !== 'undefined') {
 		};
 
 		$.fn.orangeBox = function (method) {
-			if (method === "showContent" || method === "setupData" || method === "getSize" || method === "getUrlVars" ||  method === "logit") {
+			if (method === "showContent" || method === "getSize" || method === "getUrlVars" ||  method === "logit") {
 				oB.methods.logit(method + ' cannot be called externally');
 				return false;
 			} else if (oB.methods[method]) {
@@ -1044,4 +1025,5 @@ jQuery(document).ready(function ($) {
 	} else {
 		$('a[rel*=lightbox]').orangeBox();
 	}
+	$(document).trigger('oB_ready');
 });
