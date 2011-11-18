@@ -50,7 +50,9 @@ if (typeof oB !== 'undefined') {
 				fadeTime: 200,
 				slideshowTimer: 3000,
 				streamItems: 10,
-				logging: false
+				logging: false,
+				checkAlias: false,
+				quicktime: true
 			},
 			methods: {
 				init: function (o) {
@@ -79,6 +81,9 @@ if (typeof oB !== 'undefined') {
 									}
 								});
 							}
+						}
+						if (oB.settings.quicktime && typeof QT_WriteOBJECT === "undefined") {
+							oB.settings.quicktime = false;
 						}
 						if (oB.settings.addThis) {
 							$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
@@ -112,9 +117,34 @@ if (typeof oB !== 'undefined') {
 					return false;
 				},
 				setupData: function (o) {
-					var u = o.attr('href');
-					if (u) {
-						var c = false, s = [0, 0], m = 0, i = 0, t = "", g = false, rel = o.attr('rel'), id;
+					var u = o.attr('href'), c = false, s = [0, 0], m = 0, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true;
+					if (rel && rel.match(/\[/)) {
+						g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
+						$.each(oB.gallery, function() {
+							if (this.name === g) {
+								unique = false;
+								if (oB.settings.checkAlias) {
+									$.each(this.objects, function() {
+										if (this.data('oB') && this.data('oB').href === o.attr('href')) {
+											oB.methods.logit('Object already added: ' + u, true);
+											alias = this;
+										}
+									});
+								}
+							}
+						});
+						if (unique) {
+							oB.gallery.push({name: g, objects: []});
+						}
+					}
+					if (oB.settings.checkAlias && o.data('oB') || alias) {
+						oB.methods.logit('Object already added: ' + u, true);
+						o.click(function (e) {
+								e.preventDefault();
+								oB.methods.create(alias);
+							});
+						return false;
+					} else if (u) {
 						if (typeof o.attr('title') !== "undefined") {
 							t = o.attr('title');
 						}
@@ -132,10 +162,9 @@ if (typeof oB !== 'undefined') {
 							m = oB.settings.maxImageSize;
 						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "pdf";
-							u = encodeURIComponent(u);
-							u = "http://docs.google.com/viewer?url=" + u + "&embedded=true&iframe=true";
+							u = "http://docs.google.com/viewer?url=" + encodeURIComponent(u) + "&embedded=true&iframe=true";
 							m = oB.settings.iframeSize;
-						} else if (u.match(/\.(?:mov|mp4|m4v|3gpp|3gpp2|avi|dv|m4a|m4b|m4p|mp3|caf|aiff|au|sd2|wav|snd|amr)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
+						} else if (u.match(/\.(?:mov|mp4|m4v|3gpp|3gpp2|avi|dv|m4a|m4b|m4p|mp3|caf|aiff|au|sd2|wav|snd|amr)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/) && oB.settings.quicktime) {
 							c = "quicktime";
 							m = oB.settings.maxVideoSize;
 						} else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
@@ -143,11 +172,8 @@ if (typeof oB !== 'undefined') {
 							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
 							c = "flickr";
-							u = u.replace('rss_200', 'json');
-							u = u + "&jsoncallback=?";
-							if (rel.match(/\[/)) {
-								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
-							} else {
+							u = u.replace('rss_200', 'json') + "&jsoncallback=?";
+							if (!rel.match(/\[/)) {
 								g = 'flickr' + newDate.getTime();
 							}
 							$.getJSON(u, function (data) {
@@ -169,12 +195,8 @@ if (typeof oB !== 'undefined') {
 							});
 						} else if (u.match(/^https:\/\/picasaweb\.google\.com\/data\/feed\/base\//)) {
 							c = "picasa";
-							u = u.replace('/base/', '/api/');
-							u = u.replace('alt=rss', 'alt=json-in-script');
-							u = u + '&max-results=' + oB.settings.streamItems + '&callback=?';
-							if (rel.match(/\[/)) {
-								g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
-							} else {
+							u = u.replace('/base/', '/api/').replace('alt=rss', 'alt=json-in-script') + '&max-results=' + oB.settings.streamItems + '&callback=?';
+							if (!rel.match(/\[/)) {
 								g = 'picasa' + newDate.getTime();
 							}
 							$.ajax({
@@ -234,24 +256,12 @@ if (typeof oB !== 'undefined') {
 						} else {
 							oB.methods.logit('Unsupported Media: ' + u);
 						}
-						if (rel && rel.match(/\[/) && c && c !== 'flickr' && c !== 'picasa') {
-							g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
-							var unique = true;
-							$.each(oB.gallery, function() {
-								if (this.name === g) {
-									unique = false;
-								}
-							});
-							if (unique) {
-								oB.gallery.push({name: g, objects: []});
-							}
+						if (c && c !== "flickr" && c !== "picasa") {
 							$.each(oB.gallery, function() {
 								if (this.name === g) {
 									i = this.objects.push(o) - 1;
 								}
 							});
-						}
-						if (c && c !== "flickr" && c !== "picasa") {
 							o.data('oB', {
 								size: s,
 								css: '',
@@ -284,7 +294,11 @@ if (typeof oB !== 'undefined') {
 							$.extend(oB.settings, o);
 						}
 						if (!obj) {
-							obj = $(this);
+							if (this instanceof jQuery) {
+								obj = this;
+							} else {
+								obj = $(this);
+							}
 						}
 						if (!obj.data('oB')) {
 							oB.methods.setupData(obj);
@@ -308,7 +322,7 @@ if (typeof oB !== 'undefined') {
 									"height": oB.docHeight,
 									"min-height": oB.docHeight,
 									"min-width": oB.docWidth
-								}).hide(), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
+								}), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
 									e.stopPropagation();
 								}).css("border-width", oB.settings.contentBorderWidth);
 	
@@ -327,7 +341,7 @@ if (typeof oB !== 'undefined') {
 							}
 	
 						//Click to Hide Modal
-							$("body").append(overlay.show(oB.settings.fadeTime).click(function () {
+							$("body").append(overlay.fadeIn(oB.settings.fadeTime).click(function () {
 								oB.methods.destroy();
 							})).append(container.click(function () {
 								oB.methods.destroy();
@@ -649,9 +663,7 @@ if (typeof oB !== 'undefined') {
 						content = $('<div id="ob_error">' + oB.settings.notFound + '</div>');
 						oB.methods.showLoad(1);
 						$('#ob_content').append(content).css('width', 250).fadeIn(oB.settings.fadeTime, function () {
-							$('#ob_overlay').css({
-								"height": $(document).height()
-							});
+							$('#ob_overlay').css("height", $(document).height());
 							oB.methods.logit('Could not find file');
 						});
 						clearTimeout(oB.controlTimer);
