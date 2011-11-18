@@ -51,7 +51,7 @@ if (typeof oB !== 'undefined') {
 				slideshowTimer: 3000,
 				streamItems: 10,
 				logging: false,
-				checkAlias: false,
+				checkAlias: true,
 				quicktime: true
 			},
 			methods: {
