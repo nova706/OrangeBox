@@ -1008,7 +1008,7 @@ if (typeof oB !== 'undefined') {
 				logit: function (m, d) {
 					if (d && oB.settings.logging === "debug") {
 						console.log('OrangeBox: ' + m);
-					} else if (oB.settings.logging) {
+					} else if (!d && oB.settings.logging) {
 						console.log('OrangeBox: ' + m);
 					}
 				}
