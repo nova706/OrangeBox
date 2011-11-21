@@ -94,6 +94,14 @@ if (typeof oB !== 'undefined') {
 						} else if (oB.ourl) {
 							checkURL();
 						}
+						try {
+							document.createEvent("TouchEvent");
+							oB.touch = true;
+							oB.methods.logit('Touch device detected', true);
+						} catch (e) {
+							oB.touch = false;
+							oB.methods.logit('Touch device not detected', true);
+						}
 						if (navigator.plugins) {
 							oB.quicktime = false;
 							for (i=0; i < navigator.plugins.length; i++ ) {
@@ -310,7 +318,6 @@ if (typeof oB !== 'undefined') {
 							oB.progress = null;
 							oB.docHeight = $(document).height();
 							oB.docWidth = $(document).width();
-							
 							$.each(oB.gallery, function() {
 								if (this.name === obj.data('oB').gallery) {
 									oB.currentGallery = this.objects;
@@ -559,7 +566,7 @@ if (typeof oB !== 'undefined') {
 							}
 						}
 						clearTimeout(oB.controlTimer);
-						if (oB.settings.fadeControls) {
+						if (oB.settings.fadeControls && !oB.touch) {
 							if (!oB.currentGallery[oB.currentIndex + 1] || !oB.currentGallery[oB.currentIndex - 1] || initial) {
 								$('.ob_controls').fadeIn(oB.settings.fadeTime);
 							}
@@ -614,7 +621,7 @@ if (typeof oB !== 'undefined') {
 					function buildit() {
 						var delayTimer = oB.settings.slideshowTimer;
 						$('#ob_content').append(content.addClass('ob_contents'));
-						if (oB.settings.fadeCaption) {
+						if (oB.settings.fadeCaption && !oB.touch) {
 							ob_caption.hide();
 							$('#ob_content').hover(function () {
 								$('#ob_caption').stop().fadeTo(oB.settings.fadeTime, 0.95);
