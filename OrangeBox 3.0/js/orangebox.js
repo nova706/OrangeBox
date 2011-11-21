@@ -15,19 +15,8 @@ if (typeof oB !== 'undefined') {
 	(function ($) {
 		oB = {
 			gallery: [],
-			progress: '',
-			playing: '',
-			slideshowTimer: '',
-			docHeight: '',
-			docWidth: '',
-			controlTimer: '',
-			loadTimer: '',
-			player: '',
 			APIready: false,
 			ytScript: false,
-			ourl: '',
-			currentIndex: '',
-			windowURL: '',
 			quicktime: true,
 			settings: {
 				autoplay: false,
@@ -51,8 +40,7 @@ if (typeof oB !== 'undefined') {
 				slideshowTimer: 3000,
 				streamItems: 10,
 				logging: false,
-				checkAlias: true,
-				quicktime: true
+				checkAlias: true
 			},
 			methods: {
 				init: function (o) {
@@ -99,26 +87,24 @@ if (typeof oB !== 'undefined') {
 							oB.touch = false;
 							oB.methods.logit('Touch device not detected', true);
 						}
-						if (oB.settings.quicktime) {
-							if (typeof QT_WriteOBJECT === "undefined") {
-								oB.settings.quicktime = false;
-							} else {
-								oB.settings.quicktime = false;
-								if (navigator.plugins) {
-									var i;
-									for (i=0; i < navigator.plugins.length; i++ ) {
-										if (navigator.plugins[i].name.indexOf("QuickTime") >= 0) { 
-											oB.settings.quicktime = true;
-										}
+						if (typeof QT_WriteOBJECT === "undefined") {
+							oB.quicktime = false;
+						} else {
+							oB.quicktime = false;
+							if (navigator.plugins) {
+								var i;
+								for (i=0; i < navigator.plugins.length; i++ ) {
+									if (navigator.plugins[i].name.indexOf("QuickTime") >= 0) { 
+										oB.quicktime = true;
 									}
 								}
-								if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) === "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
-									oB.settings.quicktime = true;
-								}
 							}
-							if (oB.settings.quicktime === false) {
-								oB.methods.logit('Quicktime not loaded');
+							if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) === "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
+								oB.quicktime = true;
 							}
+						}
+						if (oB.quicktime === false) {
+							oB.methods.logit('Quicktime not loaded');
 						}
 						if (oB.settings.orangeControls === true && !$().orangeControls) {
 							oB.methods.logit('Connection with OrangeControls failed');
@@ -179,7 +165,7 @@ if (typeof oB !== 'undefined') {
 							c = "pdf";
 							u = "http://docs.google.com/viewer?url=" + encodeURIComponent(u) + "&embedded=true&iframe=true";
 							m = oB.settings.iframeSize;
-						} else if (u.match(/\.(?:mov|mp4|m4v|3gpp|3gpp2|avi|dv|m4a|m4b|m4p|mp3|caf|aiff|au|sd2|wav|snd|amr)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/) && oB.settings.quicktime) {
+						} else if (u.match(/\.(?:mov|mp4|m4v|3gpp|3gpp2|avi|dv|m4a|m4b|m4p|mp3|caf|aiff|au|sd2|wav|snd|amr)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/) && oB.quicktime) {
 							c = "quicktime";
 							m = oB.settings.maxVideoSize;
 						} else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
