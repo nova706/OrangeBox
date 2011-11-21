@@ -105,13 +105,14 @@ if (typeof oB !== 'undefined') {
 							} else {
 								oB.settings.quicktime = false;
 								if (navigator.plugins) {
+									var i;
 									for (i=0; i < navigator.plugins.length; i++ ) {
 										if (navigator.plugins[i].name.indexOf("QuickTime") >= 0) { 
 											oB.settings.quicktime = true;
 										}
 									}
 								}
-								if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) == "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
+								if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) === "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
 									oB.settings.quicktime = true;
 								}
 							}
@@ -151,7 +152,7 @@ if (typeof oB !== 'undefined') {
 							oB.gallery.push({name: g, objects: []});
 						}
 					}
-					if (oB.settings.checkAlias && o.data('oB') || alias) {
+					if (oB.settings.checkAlias && (o.data('oB') || alias)) {
 						oB.methods.logit('Object already added: ' + u, true);
 						o.click(function (e) {
 								e.preventDefault();
@@ -692,7 +693,7 @@ if (typeof oB !== 'undefined') {
 							newhref = href.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
-						obj.data('oB').css = [dim[0], dim[1]]
+						obj.data('oB').css = [dim[0], dim[1]];
 						content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
 							"height": dim[0],
 							"width": dim[1]
@@ -975,8 +976,7 @@ if (typeof oB !== 'undefined') {
 						mSize[1] -= 120;
 					}
 					if (obj) {
-						s = obj.data('oB').size;
-						var m = obj.data('oB').max;
+						s = obj.data('oB').size, m = obj.data('oB').max;
 						if (m[0] === 0) {
 							mSize[0] = 0;
 						} else if (m[0] > 1 && m[0] < mSize[0]) {
@@ -1006,7 +1006,7 @@ if (typeof oB !== 'undefined') {
 						s[0] = s[0] * mSize[1] / s[1];
 						s[1] = mSize[1];
 					}
-					return [Math.round(s[0]), Math.round(s[1])];;
+					return [Math.round(s[0]), Math.round(s[1])];
 				},
 				getUrlVars: function () {
 					var i,
