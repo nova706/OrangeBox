@@ -82,9 +82,6 @@ if (typeof oB !== 'undefined') {
 								});
 							}
 						}
-						if (oB.settings.quicktime && typeof QT_WriteOBJECT === "undefined") {
-							oB.settings.quicktime = false;
-						}
 						if (oB.settings.addThis) {
 							$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
 								if (oB.ourl) {
@@ -102,16 +99,25 @@ if (typeof oB !== 'undefined') {
 							oB.touch = false;
 							oB.methods.logit('Touch device not detected', true);
 						}
-						if (navigator.plugins) {
-							oB.quicktime = false;
-							for (i=0; i < navigator.plugins.length; i++ ) {
-								if (navigator.plugins[i].name.indexOf("QuickTime") >= 0) { 
-									oB.quicktime = true;
+						if (oB.settings.quicktime) {
+							if (typeof QT_WriteOBJECT === "undefined") {
+								oB.settings.quicktime = false;
+							} else {
+								oB.settings.quicktime = false;
+								if (navigator.plugins) {
+									for (i=0; i < navigator.plugins.length; i++ ) {
+										if (navigator.plugins[i].name.indexOf("QuickTime") >= 0) { 
+											oB.settings.quicktime = true;
+										}
+									}
+								}
+								if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) == "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
+									oB.settings.quicktime = true;
 								}
 							}
-						}
-						if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) == "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
-							oB.quicktime = true;
+							if (oB.settings.quicktime === false) {
+								oB.methods.logit('Quicktime not loaded');
+							}
 						}
 						if (oB.settings.orangeControls === true && !$().orangeControls) {
 							oB.methods.logit('Connection with OrangeControls failed');
@@ -288,7 +294,7 @@ if (typeof oB !== 'undefined') {
 								id: id
 							}).click(function (e) {
 								e.preventDefault();
-								oB.methods.create($(this));
+								oB.methods.create(o);
 							});
 						}
 					} else {
