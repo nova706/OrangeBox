@@ -109,6 +109,7 @@
 	text-align:right;
 	z-index:1004;
 	line-height:1em;
+	cursor:text;
 }
 #ob_left,#ob_right {
 	bottom:8px;
