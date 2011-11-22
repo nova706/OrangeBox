@@ -54,7 +54,7 @@
 #ob_caption p {
 	padding:0;
 	margin:10px;
-	cursor:text;
+	cursor:auto;
 	line-height:1.625em;
 }
 #ob_video_wrapper {
@@ -68,6 +68,7 @@
 	padding:20px;
 	overflow:auto;
 	line-height:1.625em;
+	cursor:auto;
 }
 #ob_load {
 	-moz-border-radius:5px;
@@ -109,7 +110,7 @@
 	text-align:right;
 	z-index:1004;
 	line-height:1em;
-	cursor:text;
+	cursor:auto;
 }
 #ob_left,#ob_right {
 	bottom:8px;
