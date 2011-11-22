@@ -325,6 +325,9 @@ if (typeof oB !== 'undefined') {
 								}), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
 									e.stopPropagation();
 								}).css("border-width", oB.settings.contentBorderWidth);
+							if (oB.touch) {
+								container.css("min-width", oB.docWidth);
+							}
 	
 						//Check for addThis
 							if (oB.settings.addThis === true && typeof addthis === 'undefined') {

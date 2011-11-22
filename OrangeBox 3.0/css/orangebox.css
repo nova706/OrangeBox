@@ -16,12 +16,13 @@
 	z-index:1000;
 }
 #ob_container {
-	height:100%;
-	left:0;
 	position:absolute;
 	top:0;
-	min-width:100%;
+	left:0;
+	margin:0;
+	padding:0;
 	width:100%;
+	height:100%;
 	z-index:1001;
 }
 #ob_float {
