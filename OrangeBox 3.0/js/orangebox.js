@@ -706,6 +706,7 @@ if (typeof oB !== 'undefined') {
 							content = $('<div id="ob_inline"></div>').css({
 								"width": dim[1]
 							});
+							$(href).parent().addClass('ob_inline_content_holder');
 							$(href).appendTo(content).addClass('ob_inline_content').show();
 							if (dim[0] !== 0) {
 								content.css("height", dim[0]);
@@ -882,7 +883,8 @@ if (typeof oB !== 'undefined') {
 								document.qt1.Stop();
 							}
 							if($('#ob_inline').length) {
-								$('#ob_inline').children('.ob_inline_content').appendTo('body').hide().removeClass('ob_inline_content');
+								$('#ob_inline').children('.ob_inline_content').appendTo('.ob_inline_content_holder').hide().removeClass('ob_inline_content');
+								$('.ob_inline_content_holder').removeClass('ob_inline_content_holder');
 							}
 							$(this).removeClass('expanded').css({
 								"min-height": ''
@@ -930,7 +932,8 @@ if (typeof oB !== 'undefined') {
 					if ($('#ob_content').length > 0) {
 						$(document).trigger('oB_closing');
 						if($('#ob_inline').length) {
-							$('#ob_inline').children('.ob_inline_content').appendTo('body').hide().removeClass('ob_inline_content');
+							$('#ob_inline').children('.ob_inline_content').appendTo('.ob_inline_content_holder').hide().removeClass('ob_inline_content');
+							$('.ob_inline_content_holder').removeClass('ob_inline_content_holder');
 						}
 						if (o) {
 							$.extend(oB.settings, o);
