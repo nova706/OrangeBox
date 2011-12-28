@@ -47,6 +47,14 @@ if (typeof oB !== 'undefined') {
 			methods: {
 				init: function (o) {
 					if (!$('#ob_content').length) {
+						var searchTerm = 'a[rel*=lightbox], area[rel*=lightbox]';
+						if(oB.settings.searchTerm !== "") {
+							if(oB.settings.useClass) {
+								searchTerm = 'a.'+oB.settings.searchTerm+', area.'+oB.settings.searchTerm;
+							} else {
+								searchTerm = 'a[rel*='+oB.settings.searchTerm+'], area[rel*='+oB.settings.searchTerm+']';
+							}
+						}
 						if (o) {
 							$.extend(oB.settings, o);
 						}
@@ -64,7 +72,7 @@ if (typeof oB !== 'undefined') {
 							if (oB.ourl.match(/^\w{1,}$/) && $('#' + oB.ourl).length > 0) {
 								oB.methods.create($('#' + oB.ourl));
 							} else {
-								$('a[rel*=lightbox]').each(function () {
+								$(searchTerm).each(function () {
 									if ($(this).attr('rel').indexOf(oB.ourl) !== -1 || $(this).attr('href').indexOf(oB.ourl) !== -1) {
 										oB.methods.create($(this));
 										return false;
@@ -1056,12 +1064,12 @@ if (typeof oB !== 'undefined') {
 	})(jQuery);
 }
 jQuery(document).ready(function ($) {
-	var searchTerm = 'a[rel*=lightbox]';
+	var searchTerm = 'a[rel*=lightbox], area[rel*=lightbox]';
 	if(oB.settings.searchTerm !== "") {
 		if(oB.settings.useClass) {
-			searchTerm = 'a.'+oB.settings.searchTerm;
+			searchTerm = 'a.'+oB.settings.searchTerm+', area.'+oB.settings.searchTerm;
 		} else {
-			searchTerm = 'a[rel*='+oB.settings.searchTerm+']';
+			searchTerm = 'a[rel*='+oB.settings.searchTerm+'], area[rel*='+oB.settings.searchTerm+']';
 		}
 	}
 	if (typeof orangebox_vars !== "undefined") {
