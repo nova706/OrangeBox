@@ -7,7 +7,7 @@
  */
 #ob_overlay {
 	background-color:#333;
-	opacity:0;
+	display:none;
 	height:100%;
 	left:0;
 	position:fixed;
@@ -46,10 +46,7 @@
 #ob_caption {
 	color:#333;
 	background-color:#fff;
-	position:absolute;
-	bottom:15%;
 	font-size:small;
-	max-width:75%;
 }
 #ob_caption p {
 	padding:0;
@@ -88,7 +85,6 @@
 }
 #ob_error {
 	text-align:center;
-	width:250px;
 	padding:10px;
 }
 #ob_close {

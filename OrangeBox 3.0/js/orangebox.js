@@ -20,8 +20,9 @@ if (typeof oB !== 'undefined') {
 			quicktime: true,
 			settings: {
 				autoplay: false,
+				useClass: false,
+				searchTerm: 'lightbox',
 				fadeControls: false,
-				fadeCaption: true,
 				keyboardNavigation: true,
 				orangeControls: false,
 				showClose: true,
@@ -377,7 +378,7 @@ if (typeof oB !== 'undefined') {
 						title = obj.data('oB').title,
 						contentType = obj.data('oB').contentType,
 						content,
-						ob_caption = $('<div id="ob_caption"></div>').css("opacity", 0.95).click(function (e) {
+						ob_caption = $('<div id="ob_caption"></div>').click(function (e) {
 							e.stopPropagation();
 						}),
 						href_encode = encodeURIComponent(href),
@@ -476,7 +477,10 @@ if (typeof oB !== 'undefined') {
 						var copied_elem = $('<div>' + title + '</div>').css({visibility: "hidden", display: "block", position: "absolute", width: w - 40, "line-height": $('#ob_title').css('font-size')});
 						$("body").append(copied_elem);
 						$('#ob_content').css('margin-top', copied_elem.height() + 44);
-						$('#ob_title').css('bottom', cH);
+						$('#ob_title').css({
+							'margin-top': -copied_elem.height() - oB.settings.contentBorderWidth - 4,
+							'margin-right': -oB.settings.contentBorderWidth
+						});
 						copied_elem.remove();
 					}
 
@@ -494,7 +498,6 @@ if (typeof oB !== 'undefined') {
 							p = window.pageYOffset;
 						}
 						if (content.attr('id') !== "ob_error") {
-							$('#ob_content').append('<div id="ob_title"></div>');
 							if (obj.data('oB').link && obj.data('oB').link !== "" && obj.data('oB').link !== "undefined") {
 								if (obj.data('oB').linkTarget === "_self") {
 									target = 'target="_self"';
@@ -524,10 +527,6 @@ if (typeof oB !== 'undefined') {
 								$('#ob_share').html('').append(shareHTML);
 							}
 							setWindowMargin(dim[0] + (oB.settings.contentBorderWidth * 2), dim[1]);
-							if (obj.data('oB').caption) {
-								ob_caption.append('<p>' + obj.data('oB').caption + '</p>');
-								$('#ob_content').append(ob_caption);
-							}
 						}
 						$("#ob_container").css({
 							"margin-top": p
@@ -596,34 +595,31 @@ if (typeof oB !== 'undefined') {
 								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
 							}
 							$('#ob_overlay').css("height", $(document).height());
-							oB.progress = null;
-						});
-						if (contentType === "quicktime" && oB.playing) {
-							var videoobj = $('#qt1').get(0);
-							if (!videoobj) {
-								videoobj = $('#qt_embed1').get(0);
-							}
-							if (videoobj) {
-								if ( document.addEventListener ) {
-									videoobj.addEventListener('qt_ended', function () { oB.methods.navigate(1); }, false);
-								} else {
-									videoobj.attachEvent('onqt_ended', function () { oB.methods.navigate(1); });
+							if (contentType === "quicktime" && oB.playing) {
+								var videoobj = $('#qt1').get(0);
+								if (!videoobj) {
+									videoobj = $('#qt_embed1').get(0);
+								}
+								if (videoobj) {
+									if ( document.addEventListener ) {
+										videoobj.addEventListener('qt_ended', function () { oB.methods.navigate(1); }, false);
+									} else {
+										videoobj.attachEvent('onqt_ended', function () { oB.methods.navigate(1); });
+									}
 								}
 							}
-						}
+							oB.progress = null;
+						});
 					}
 
 				//Build the Window
 					function buildit() {
 						var delayTimer = oB.settings.slideshowTimer;
+						$('#ob_content').append('<div id="ob_title"></div>');
 						$('#ob_content').append(content.addClass('ob_contents'));
-						if (oB.settings.fadeCaption && !oB.touch) {
-							ob_caption.hide();
-							$('#ob_content').hover(function () {
-								$('#ob_caption').stop().fadeTo(oB.settings.fadeTime, 0.95);
-							}, function () {
-								$('#ob_caption').stop().fadeOut(oB.settings.fadeTime);
-							});
+						if (obj.data('oB').caption) {
+							ob_caption.append('<p>' + obj.data('oB').caption + '</p>');
+							$('#ob_content').append(ob_caption);
 						}
 						if (contentType === "youtube" && oB.APIready) {
 							function onPlayerStateChange(event) {
@@ -1034,10 +1030,18 @@ if (typeof oB !== 'undefined') {
 	})(jQuery);
 }
 jQuery(document).ready(function ($) {
+	var searchTerm = 'a[rel*=lightbox]';
+	if(oB.settings.searchTerm !== "") {
+		if(oB.settings.useClass) {
+			searchTerm = 'a.'+oB.settings.searchTerm;
+		} else {
+			searchTerm = 'a[rel*='+oB.settings.searchTerm+']';
+		}
+	}
 	if (typeof orangebox_vars !== "undefined") {
-		$('a[rel*=lightbox]').orangeBox(orangebox_vars);
+		$(searchTerm).orangeBox(orangebox_vars);
 	} else {
-		$('a[rel*=lightbox]').orangeBox();
+		$(searchTerm).orangeBox();
 	}
 	$(document).trigger('oB_ready');
 });
