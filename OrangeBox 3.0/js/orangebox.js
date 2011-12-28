@@ -20,6 +20,7 @@ if (typeof oB !== 'undefined') {
 			quicktime: true,
 			settings: {
 				autoplay: false,
+				nextGen: false,
 				useClass: false,
 				searchTerm: 'lightbox',
 				fadeControls: false,
@@ -119,7 +120,7 @@ if (typeof oB !== 'undefined') {
 					return false;
 				},
 				setupData: function (o) {
-					var u = o.attr('href'), c = false, s = [0, 0], m = 0, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true;
+					var u = o.attr('href'), c = false, s = [0, 0], m = 0, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption');
 					if (rel && rel.match(/\[/)) {
 						g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 						$.each(oB.gallery, function() {
@@ -162,6 +163,15 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "image";
 							m = oB.settings.maxImageSize;
+							if(o.parent().hasClass('ngg-gallery-thumbnail') && oB.settings.nextGen) {
+								var child = o.children('img')[0];
+								if(typeof o.attr('title') !== "undefined") {
+									cap = o.attr('title');
+								}
+								if(typeof child.attr('alt') !== "undefined") {
+									t = child.attr('alt');
+								}
+							}
 						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "pdf";
 							u = "http://docs.google.com/viewer?url=" + encodeURIComponent(u) + "&embedded=true&iframe=true";
@@ -275,7 +285,7 @@ if (typeof oB !== 'undefined') {
 								title: t,
 								linkText: o.attr('data-ob_linkText'),
 								"link": o.attr('data-ob_link'),
-								caption: o.attr('data-ob_caption'),
+								caption: cap,
 								linkTarget: o.attr('data-ob_linkTarget'),
 								share: o.attr('data-ob_share'),
 								delayTimer: o.attr('data-ob_delayTimer'),
@@ -380,7 +390,7 @@ if (typeof oB !== 'undefined') {
 						content,
 						ob_caption = $('<div id="ob_caption"></div>').click(function (e) {
 							e.stopPropagation();
-						}),
+						}).append('<p>' + obj.data('oB').caption + '</p>'),
 						href_encode = encodeURIComponent(href),
 						navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
 							if (oB.progress === null) {
@@ -618,7 +628,6 @@ if (typeof oB !== 'undefined') {
 						$('#ob_content').append('<div id="ob_title"></div>');
 						$('#ob_content').append(content.addClass('ob_contents'));
 						if (obj.data('oB').caption) {
-							ob_caption.append('<p>' + obj.data('oB').caption + '</p>');
 							$('#ob_content').append(ob_caption);
 						}
 						if (contentType === "youtube" && oB.APIready) {
@@ -694,9 +703,10 @@ if (typeof oB !== 'undefined') {
 						}
 						if ($(href).length && $(href).html() !== "") {
 							obj.data('oB').css = dim;
-							content = $('<div id="ob_inline">' + $(href).html() + '</div>').css({
+							content = $('<div id="ob_inline"></div>').css({
 								"width": dim[1]
 							});
+							$(href).appendTo(content).addClass('ob_inline_content').show();
 							if (dim[0] !== 0) {
 								content.css("height", dim[0]);
 							}
@@ -871,6 +881,9 @@ if (typeof oB !== 'undefined') {
 							if (document.qt1 && document.qt1.Stop) {
 								document.qt1.Stop();
 							}
+							if($('#ob_inline').length) {
+								$('#ob_inline').children('.ob_inline_content').appendTo('body').hide().removeClass('ob_inline_content');
+							}
 							$(this).removeClass('expanded').css({
 								"min-height": ''
 							}).empty();
@@ -916,6 +929,9 @@ if (typeof oB !== 'undefined') {
 				destroy: function (o, x) {
 					if ($('#ob_content').length > 0) {
 						$(document).trigger('oB_closing');
+						if($('#ob_inline').length) {
+							$('#ob_inline').children('.ob_inline_content').appendTo('body').hide().removeClass('ob_inline_content');
+						}
 						if (o) {
 							$.extend(oB.settings, o);
 						}
