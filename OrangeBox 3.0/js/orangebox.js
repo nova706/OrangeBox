@@ -519,7 +519,7 @@ if (typeof oB !== 'undefined') {
 								}
 							}
 							$('#ob_title').append(title).click(function (e) { e.stopPropagation(); });
-							if (oB.settings.addThis && contentType !== "iframe" && contentType !== "inline" && obj.data('oB').share !== "false") {
+							if (oB.settings.addThis && contentType !== "iframe" && obj.data('oB').share !== "false") {
 								$('#ob_share').empty().remove();
 								addThis.addClass("ob_share-" + title.replace(/ /g, "_"));
 								if (title === "") {
@@ -598,11 +598,12 @@ if (typeof oB !== 'undefined') {
 					function fadeit() {
 						oB.methods.showLoad(1);
 						$('#ob_content').fadeIn(oB.settings.fadeTime, function () {
-							if (initial) {
-								oB.methods.logit('Initialized: ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
-								$(document).trigger('oB_init');
-							} else {
+							if(contentType !== "iframe" && obj.data('oB').share !== "false") {
+								$(document).trigger('oB_init', ob_link);
 								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
+							} else {
+								$(document).trigger('oB_init', "");
+								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '"', true);
 							}
 							$('#ob_overlay').css("height", $(document).height());
 							if (contentType === "quicktime" && oB.playing) {
