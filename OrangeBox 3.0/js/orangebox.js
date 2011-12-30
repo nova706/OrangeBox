@@ -503,7 +503,14 @@ if (typeof oB !== 'undefined') {
 
 				//Set Window Margin
 					function setWindowMargin(cH, w) {
-						var copied_elem = $('<div>' + title + '</div>').css({visibility: "hidden", display: "block", position: "absolute", width: w - 40, "line-height": $('#ob_title').css('font-size')});
+						var copied_elem = $('<div>' + title + '</div>').css({
+							visibility: "hidden", 
+							display: "block", 
+							position: "absolute", 
+							width: w - 40, 
+							"line-height": $('#ob_title').css('line-height'),
+							"font-size": $('#ob_title').css('font-size')
+						});
 						$("body").append(copied_elem);
 						$('#ob_content').css('margin-top', copied_elem.height() + 44);
 						$('#ob_title').css({
