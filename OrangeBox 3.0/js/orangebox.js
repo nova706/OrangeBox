@@ -35,10 +35,8 @@ if (typeof oB !== 'undefined') {
 				contentBorderWidth: 4,
 				contentRoundedBorder: true,
 				contentMinSize: [100, 200],
-				iframeSize: [0.75, 0.75],
-				inlineSize: [0, 0.5],
-				maxImageSize: [0.75, 0.75],
-				maxVideoSize: [390, 640],
+				contentMaxSize: [0.75, 0.75],
+				videoAspect: [390, 640],
 				fadeTime: 200,
 				slideshowTimer: 3000,
 				streamItems: 10,
@@ -129,7 +127,7 @@ if (typeof oB !== 'undefined') {
 					return false;
 				},
 				setupData: function (o) {
-					var u = o.attr('href'), c = false, s = [0, 0], m = 0, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption');
+					var u = o.attr('href'), c = false, s = [0, 0], m = oB.settings.contentMaxSize, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption');
 					if (rel && rel.match(/\[/)) {
 						g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 						$.each(oB.gallery, function() {
@@ -168,10 +166,13 @@ if (typeof oB !== 'undefined') {
 						}
 						if (u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "iframe";
-							m = oB.settings.iframeSize;
+							if (s[0] === 0 && m[0] === 0) {
+								m = [m[1], m[1]];
+							} else if(m[0] !== 0) {
+								m = [m[0], m[1]];
+							}
 						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "image";
-							m = oB.settings.maxImageSize;
 							if(o.parent().hasClass('ngg-gallery-thumbnail') && oB.settings.nextGen) {
 								var child = o.children('img')[0];
 								if(typeof o.attr('title') !== "undefined") {
@@ -184,13 +185,15 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "pdf";
 							u = "http://docs.google.com/viewer?url=" + encodeURIComponent(u) + "&embedded=true&iframe=true";
-							m = oB.settings.iframeSize;
+							if (s[0] === 0 && m[0] === 0) {
+								m = [m[1], m[1]];
+							} else if(m[0] !== 0) {
+								m = [m[0], m[1]];
+							}
 						} else if (u.match(/\.(?:mov|mp4|m4v|3gpp|3gpp2|avi|dv|m4a|m4b|m4p|mp3|caf|aiff|au|sd2|wav|snd|amr)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/) && oB.quicktime) {
 							c = "quicktime";
-							m = oB.settings.maxVideoSize;
 						} else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "flash";
-							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
 							c = "flickr";
 							u = u.replace('rss_200', 'json') + "&jsoncallback=?";
@@ -256,7 +259,6 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							id = u.match(/\?v=\w{1,}/)[0].substring(3);
 							c = "youtube";
-							m = oB.settings.maxVideoSize;
 							if (!oB.ytScript) {
 								$.getScript('http://www.youtube.com/player_api');
 								oB.ytScript = true;
@@ -264,19 +266,15 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							id = u.match(/vimeo\.com\/\d{1,}/)[0].substring(10);
 							c = "vimeo";
-							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							id = u.match(/viddler\.com\/(player|simple)\/\w{1,}/)[0].substring(19);
 							c = "viddler";
-							m = oB.settings.maxVideoSize;
 						} else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "inline";
-							m = oB.settings.inlineSize;
-							if (s[0] === 0) {
-								s[0] = m[0];
-							}
-							if (s[1] === 0) {
-								s[1] = m[1];
+							if (s[0] === 0 && m[0] === 0) {
+								m = [m[1], m[1]];
+							} else if(m[0] !== 0) {
+								m = [m[0], m[1]];
 							}
 						} else {
 							oB.methods.logit('Unsupported Media: ' + u);
@@ -710,7 +708,7 @@ if (typeof oB !== 'undefined') {
 
 				//iFrame Content
 					function showiFrame() {
-						var dim = oB.methods.getSize(obj, [0, 0], false),
+						var dim = oB.methods.getSize(obj, [0, 0]),
 							newhref = href.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
@@ -724,7 +722,7 @@ if (typeof oB !== 'undefined') {
 
 				//Inline Content
 					function showInline() {
-						var dim = oB.methods.getSize(obj, [0, 0], true);
+						var dim = oB.methods.getSize(obj, [0, 0]);
 						if (href.match(/\?/)) {
 							href = href.substr(0, href.indexOf("?"));
 						}
@@ -750,7 +748,7 @@ if (typeof oB !== 'undefined') {
 
 				//Video Content
 					function showVideo() {
-						var dim = oB.methods.getSize(obj, [0, 0], false);
+						var dim = oB.methods.getSize(obj, [0, 0]);
 						switch (contentType) {
 						case "quicktime":
 							if (href.match(/\?/)) {
@@ -787,24 +785,24 @@ if (typeof oB !== 'undefined') {
 							var oSize = [img.height, img.width],
 								sSize = [0, 0],
 								running = false;
-							if (obj.data('oB').size) {
-								sSize = [obj.data('oB').size[0], obj.data('oB').size[1]];
+							if (obj.data('oB').size) { //If there is a size set by parameters width=&height=, get them
+								sSize = obj.data('oB').size;
 							}
-							if (sSize[0] > 0 && sSize[1] === 0) {
+							if (sSize[0] > 0 && sSize[1] === 0) { //If height= is set but width= is not scale correctly
 								sSize[1] = oSize[1] / oSize[0] * sSize[0];
-							} else if (sSize[1] > 0 && sSize[0] === 0) {
+							} else if (sSize[1] > 0 && sSize[0] === 0) { //If width= is set but height= is not scale correctly
 								sSize[0] = oSize[0] / oSize[1] * sSize[1];
-							} else if (sSize[0] === 0 && sSize[1] === 0) {
+							} else if (sSize[0] === 0 && sSize[1] === 0) { //If neither is set, set to original size
 								sSize = [oSize[0], oSize[1]];
 							}
 							obj.data('oB').size = sSize;
-							var dim = oB.methods.getSize(obj, [0, 0], false),
+							var dim = oB.methods.getSize(obj, [0, 0]),
 								margin = (oB.settings.contentMinSize[0] / 2) - (dim[0] / 2);
 							obj.data('oB').css = dim;
 							$('#ob_content').unbind('click').click(function (e) {
 								e.stopPropagation();
-								var fullDim = oB.methods.getSize(false, [oSize[0], oSize[1]], true),
-									newDim = oB.methods.getSize(obj, [0, 0], false),
+								var fullDim = oB.methods.getSize(false, oSize, true),
+									newDim = oB.methods.getSize(obj, [0, 0]),
 									setDim,
 									p = $(window).scrollTop();
 								if (p === 0) {
@@ -1013,7 +1011,18 @@ if (typeof oB !== 'undefined') {
 						mSize[1] -= 120;
 					}
 					if (obj) {
-						s = obj.data('oB').size, m = obj.data('oB').max;
+						s = obj.data('oB').size, m = obj.data('oB').max, a = oB.settings.videoAspect;
+
+						if(obj.data('oB').contentType == "quicktime" || obj.data('oB').contentType == "youtube" || obj.data('oB').contentType == "vimeo" || obj.data('oB').contentType == "viddler" || obj.data('oB').contentType == "flash") {
+							if (s[0] > 0 && s[1] === 0) { //If height= is set but width= is not scale correctly
+								s[1] = a[1] / a[0] * s[0];
+							} else if (s[1] > 0 && s[0] === 0) { //If width= is set but height= is not scale correctly
+								s[0] = a[0] / a[1] * s[1];
+							} else if (s[0] === 0 && s[1] === 0) { //If neither is set, set to original size
+								s = a;
+							}	
+						}
+						
 						if (m[0] === 0) {
 							mSize[0] = 0;
 						} else if (m[0] > 1 && m[0] < mSize[0]) {
