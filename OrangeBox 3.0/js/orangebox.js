@@ -204,6 +204,7 @@ if (typeof oB !== 'undefined') {
 										o.attr({
 											href: item_href,
 											"data-ob_share": "false",
+											caption: cap,
 											title: item.title
 										});
 										oB.methods.setupData(o);
@@ -225,7 +226,7 @@ if (typeof oB !== 'undefined') {
 								dataType: 'json',
 								success: function (data) {
 									$.each(data.feed.entry, function (index, item) {
-										var picasaSrc;
+										var picasaSrc, picasaCaption = cap;
 										if (item.content) {
 											picasaSrc = item.content.src;
 										} else if (item.media$group.media$content[0]) {
@@ -233,11 +234,14 @@ if (typeof oB !== 'undefined') {
 										} else {
 											return false;
 										}
+										if(cap == "") {
+											cap = item.summary.$t;
+										}
 										if (index === 0) {
 											o.attr({
 												href: picasaSrc,
 												"data-ob_share": "false",
-												"data-ob_caption": item.summary.$t,
+												"data-ob_caption": cap,
 												title: item.title.$t
 											});
 											oB.methods.setupData(o);
