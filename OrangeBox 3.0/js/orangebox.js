@@ -33,6 +33,7 @@ if (typeof oB !== 'undefined') {
 				notFound: 'Not Found',
 				overlayOpacity: 0.95,
 				contentBorderWidth: 4,
+				contentRoundedBorder: true,
 				contentMinSize: [100, 200],
 				iframeSize: [0.75, 0.75],
 				inlineSize: [0, 0.5],
@@ -344,6 +345,12 @@ if (typeof oB !== 'undefined') {
 								}), container = $('<div id="ob_container"></div>'), ob_content = $('<div id="ob_content"></div>').click(function (e) {
 									e.stopPropagation();
 								}).css("border-width", oB.settings.contentBorderWidth);
+							if(oB.settings.contentRoundedBorder) {
+								ob_content.css({
+									"-moz-border-radius": oB.settings.contentBorderWidth,
+									"border-radius": oB.settings.contentBorderWidth
+								});
+							}
 							if (oB.touch) {
 								container.css("min-width", oB.docWidth);
 							}
