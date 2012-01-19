@@ -122,7 +122,7 @@ if (typeof oB !== 'undefined') {
 					return false;
 				},
 				setupData: function (o) {
-					var u = o.attr('href'), c = false, s = [0, 0], m = oB.settings.contentMaxSize, i = 0, t = "", g = false, rel = o.attr('rel'), class = o.attr('class'), id, alias = false, unique = true, cap = o.attr('data-ob_caption');
+					var u = o.attr('href'), c = false, s = [0, 0], m = oB.settings.contentMaxSize, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption');
 					if (rel && rel.match(/\[/)) {
 						g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 						$.each(oB.gallery, function() {
