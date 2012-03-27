@@ -45,12 +45,12 @@ if (typeof oB !== 'undefined') {
 			methods: {
 				init: function (o) {
 					if (!$('#ob_content').length) {
+						if (o) {
+							$.extend(oB.settings, o);
+						}
 						var searchTerm = 'a[rel*=lightbox], area[rel*=lightbox]';
 						if(oB.settings.searchTerm !== "") {
 							searchTerm = 'a[rel*='+oB.settings.searchTerm+'], area[rel*='+oB.settings.searchTerm+']';
-						}
-						if (o) {
-							$.extend(oB.settings, o);
 						}
 						oB.windowURL = window.location.href;
 						if (oB.windowURL.match(/(\&|\?)orangebox\=/)) {
@@ -62,28 +62,7 @@ if (typeof oB !== 'undefined') {
 							}
 							oB.ourl = decodeURIComponent(oB.ourl);
 						}
-						function checkURL() {
-							if (oB.ourl.match(/^\w{1,}$/) && $('#' + oB.ourl).length > 0) {
-								oB.methods.create($('#' + oB.ourl));
-							} else {
-								$(searchTerm).each(function () {
-									if ($(this).attr('href').indexOf(oB.ourl) !== -1) {
-										oB.methods.create($(this));
-										return false;
-									}
-								});
-							}
-						}
-						if (oB.settings.addThis) {
-							$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
-								if (oB.ourl) {
-									checkURL();
-								}
-							});
-						} else if (oB.ourl) {
-							checkURL();
-						}
-						try {
+												try {
 							document.createEvent("TouchEvent");
 							oB.touch = true;
 							oB.methods.logit('Touch device detected', true);
@@ -115,6 +94,28 @@ if (typeof oB !== 'undefined') {
 							oB.settings.orangeControls = false;
 						}
 						oB.browser = $.browser;
+
+						function checkURL() {
+							if (oB.ourl.match(/^\w{1,}$/) && $('#' + oB.ourl).length > 0) {
+								oB.methods.create($('#' + oB.ourl));
+							} else {
+								$(searchTerm).each(function () {
+									if ($(this).attr('href').indexOf(oB.ourl) !== -1) {
+										oB.methods.create($(this));
+										return false;
+									}
+								});
+							}
+						}
+						if (oB.settings.addThis) {
+							$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
+								if (oB.ourl) {
+									checkURL();
+								}
+							});
+						} else if (oB.ourl) {
+							checkURL();
+						}
 						return this.each(function () {
 							oB.methods.setupData($(this));
 						});
@@ -591,8 +592,11 @@ if (typeof oB !== 'undefined') {
 						}
 						clearTimeout(oB.controlTimer);
 						if (oB.settings.fadeControls && !oB.touch) {
-							if (!oB.currentGallery[oB.currentIndex + 1] || !oB.currentGallery[oB.currentIndex - 1] || initial) {
+							if(!oB.playing || initial) {
 								$('.ob_controls').fadeIn(oB.settings.fadeTime);
+							}
+							else {
+								$('.ob_controls').hide();
 							}
 							oB.controlTimer = setTimeout(function () {
 								$('.ob_controls').fadeOut(oB.settings.fadeTime);
