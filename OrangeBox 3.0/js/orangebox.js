@@ -103,7 +103,7 @@ if (typeof oB !== 'undefined') {
 					return false;
 				},
 				setupData: function (o) {
-					var u = o.attr('href'), c = false, s = [0, 0], m = oB.settings.contentMaxSize, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption');
+					var u = o.attr('href'), c = false, s = [0, 0], m = oB.settings.contentMaxSize, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption'), child;
 					if (rel && rel.match(/\[/)) {
 						g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 						$.each(oB.gallery, function() {
@@ -129,7 +129,6 @@ if (typeof oB !== 'undefined') {
 								e.preventDefault();
 								oB.methods.create(alias);
 							});
-						return false;
 					} else if (u) {
 						if (typeof o.attr('title') !== "undefined") {
 							t = o.attr('title');
@@ -150,7 +149,7 @@ if (typeof oB !== 'undefined') {
 						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "image";
 							if(o.parent().hasClass('ngg-gallery-thumbnail') && oB.settings.nextGen) {
-								var child = o.children('img')[0];
+								child = o.children('img')[0];
 								if(typeof o.attr('title') !== "undefined") {
 									cap = o.attr('title');
 								}
@@ -211,7 +210,7 @@ if (typeof oB !== 'undefined') {
 										} else {
 											return false;
 										}
-										if(cap == "") {
+										if(cap === "") {
 											cap = item.summary.$t;
 										}
 										if (index === 0) {
@@ -282,7 +281,6 @@ if (typeof oB !== 'undefined') {
 						}
 					} else {
 						oB.methods.logit('Object has no "href" attribute');
-						return false;
 					}
 				},
 				create: function (obj, o) {
@@ -442,7 +440,7 @@ if (typeof oB !== 'undefined') {
 
 				//Set Height and Width
 					function getDim() {
-						var size = [content.outerHeight(), content.outerWidth()];
+						var size = [content.outerHeight(), content.outerWidth()], copied_elem;
 						if (obj.data('oB').css) {
 							size = obj.data('oB').css;
 						}
@@ -451,7 +449,7 @@ if (typeof oB !== 'undefined') {
 							size[1] += obj.data('oB').css[2];
 						}
 						if (obj.data('oB').css[0] === 0 && contentType === "inline") {
-							var copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: obj.data('oB').css[1] - obj.data('oB').css[2]});
+							copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: obj.data('oB').css[1] - obj.data('oB').css[2]});
 							$("body").append(copied_elem);
 							size[0] = copied_elem.height() + obj.data('oB').css[2];
 							copied_elem.remove();
@@ -742,7 +740,9 @@ if (typeof oB !== 'undefined') {
 						content.load(function () {
 							var oSize = [img.height, img.width],
 								sSize = [0, 0],
-								running = false;
+								running = false,
+								dim,
+								margin;
 							if (obj.data('oB').size) { //If there is a size set by parameters width=&height=, get them
 								sSize = obj.data('oB').size;
 							}
@@ -754,8 +754,8 @@ if (typeof oB !== 'undefined') {
 								sSize = [oSize[0], oSize[1]];
 							}
 							obj.data('oB').size = sSize;
-							var dim = oB.methods.getSize(obj, [0, 0]),
-								margin = (oB.settings.contentMinSize[0] / 2) - (dim[0] / 2);
+							dim = oB.methods.getSize(obj, [0, 0]);
+							margin = (oB.settings.contentMinSize[0] / 2) - (dim[0] / 2);
 							obj.data('oB').css = dim;
 							$('#ob_content').unbind('click').click(function (e) {
 								e.stopPropagation();
@@ -960,7 +960,7 @@ if (typeof oB !== 'undefined') {
 					}
 				},
 				getSize: function (obj, s, noMaxHeight) {
-					var mSize = [$(window).height() - 44, $(window).width() - 44];
+					var mSize = [$(window).height() - 44, $(window).width() - 44], m, a;
 					if (oB.docWidth > $(window).width()) {
 						mSize[1] = oB.docWidth - 44;
 					}
@@ -968,9 +968,11 @@ if (typeof oB !== 'undefined') {
 						mSize[1] -= 120;
 					}
 					if (obj) {
-						s = obj.data('oB').size, m = obj.data('oB').max, a = oB.settings.videoAspect;
-
-						if(obj.data('oB').contentType == "youtube" || obj.data('oB').contentType == "vimeo" || obj.data('oB').contentType == "viddler" || obj.data('oB').contentType == "flash") {
+						s = obj.data('oB').size;
+						m = obj.data('oB').max;
+						a = oB.settings.videoAspect;
+						
+						if(obj.data('oB').contentType === "youtube" || obj.data('oB').contentType === "vimeo" || obj.data('oB').contentType === "viddler" || obj.data('oB').contentType === "flash") {
 							if (s[0] > 0 && s[1] === 0) { //If height= is set but width= is not scale correctly
 								s[1] = a[1] / a[0] * s[0];
 							} else if (s[1] > 0 && s[0] === 0) { //If width= is set but height= is not scale correctly
@@ -1035,14 +1037,12 @@ if (typeof oB !== 'undefined') {
 		$.fn.orangeBox = function (method) {
 			if (method === "showContent" || method === "getSize" || method === "getUrlVars" ||  method === "logit") {
 				oB.methods.logit(method + ' cannot be called externally');
-				return false;
 			} else if (oB.methods[method]) {
 				return oB.methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
 			} else if (typeof method === 'object' || !method) {
 				return oB.methods.init.apply(this, arguments);
 			} else {
 				oB.methods.logit(method + ' does not exist in OrangeBox');
-				return false;
 			}
 		};
 	})(jQuery);
