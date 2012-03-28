@@ -17,7 +17,6 @@ if (typeof oB !== 'undefined') {
 			gallery: [],
 			APIready: false,
 			ytScript: false,
-			quicktime: true,
 			settings: {
 				autoplay: false,
 				nextGen: false,
@@ -69,25 +68,6 @@ if (typeof oB !== 'undefined') {
 						} catch (e) {
 							oB.touch = false;
 							oB.methods.logit('Touch device not detected', true);
-						}
-						if (typeof QT_WriteOBJECT === "undefined") {
-							oB.quicktime = false;
-						} else {
-							oB.quicktime = false;
-							if (navigator.plugins) {
-								var i;
-								for (i=0; i < navigator.plugins.length; i++ ) {
-									if (navigator.plugins[i].name.indexOf("QuickTime") >= 0) { 
-										oB.quicktime = true;
-									}
-								}
-							}
-							if ((navigator.appVersion.indexOf("Mac") > 0) && (navigator.appName.substring(0,9) === "Microsoft") && (parseInt(navigator.appVersion) < 5) ) {
-								oB.quicktime = true;
-							}
-						}
-						if (oB.quicktime === false) {
-							oB.methods.logit('Quicktime not loaded');
 						}
 						if (oB.settings.orangeControls === true && !$().orangeControls) {
 							oB.methods.logit('Connection with OrangeControls failed');
@@ -186,8 +166,6 @@ if (typeof oB !== 'undefined') {
 							} else if(m[0] !== 0) {
 								m = [m[0], m[1]];
 							}
-						} else if (u.match(/\.(?:mov|mp4|m4v|3gpp|3gpp2|avi|dv|m4a|m4b|m4p|mp3|caf|aiff|au|sd2|wav|snd|amr)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/) && oB.quicktime) {
-							c = "quicktime";
 						} else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "flash";
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
@@ -629,19 +607,6 @@ if (typeof oB !== 'undefined') {
 								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '"', true);
 							}
 							$('#ob_overlay').css("height", $(document).height());
-							if (contentType === "quicktime" && oB.playing) {
-								var videoobj = $('#qt1').get(0);
-								if (!videoobj) {
-									videoobj = $('#qt_embed1').get(0);
-								}
-								if (videoobj) {
-									if ( document.addEventListener ) {
-										videoobj.addEventListener('qt_ended', function () { oB.methods.navigate(1); }, false);
-									} else {
-										videoobj.attachEvent('onqt_ended', function () { oB.methods.navigate(1); });
-									}
-								}
-							}
 							oB.progress = null;
 						});
 					}
@@ -680,7 +645,7 @@ if (typeof oB !== 'undefined') {
 						}
 						setModalProperties();
 						setControls();
-						if (oB.playing && contentType !== "youtube" && contentType !== "quicktime") {
+						if (oB.playing && contentType !== "youtube") {
 							if (obj.data('oB').delayTimer) {
 								delayTimer = parseInt(obj.data('oB').delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10);
 							}
@@ -749,12 +714,6 @@ if (typeof oB !== 'undefined') {
 					function showVideo() {
 						var dim = oB.methods.getSize(obj, [0, 0]);
 						switch (contentType) {
-						case "quicktime":
-							if (href.match(/\?/)) {
-								href = href.substr(0, href.indexOf("?")) + '?width=' + dim[1] + '&height=' + dim[0];
-							}
-							content = $(QT_WriteOBJECT(href , dim[1], dim[0], '', 'AUTOPLAY', 'True', 'SCALE', 'Aspect', 'EnableJavaScript', 'True', 'postdomevents', 'True', 'emb#NAME' , 'qt1' , 'obj#id' , 'qt1', 'emb#id', 'qt_embed1'));
-							break;
 						case "youtube":
 							content = $('<div id="ob_video" height="' + dim[0] + '" width="' + dim[1] + '"></div>').css("background-color", "#000000");
 							break;
@@ -870,7 +829,6 @@ if (typeof oB !== 'undefined') {
 					case "inline":
 						showInline();
 						break;
-					case "quicktime":
 					case "youtube":
 					case "vimeo":
 					case "viddler":
@@ -1012,7 +970,7 @@ if (typeof oB !== 'undefined') {
 					if (obj) {
 						s = obj.data('oB').size, m = obj.data('oB').max, a = oB.settings.videoAspect;
 
-						if(obj.data('oB').contentType == "quicktime" || obj.data('oB').contentType == "youtube" || obj.data('oB').contentType == "vimeo" || obj.data('oB').contentType == "viddler" || obj.data('oB').contentType == "flash") {
+						if(obj.data('oB').contentType == "youtube" || obj.data('oB').contentType == "vimeo" || obj.data('oB').contentType == "viddler" || obj.data('oB').contentType == "flash") {
 							if (s[0] > 0 && s[1] === 0) { //If height= is set but width= is not scale correctly
 								s[1] = a[1] / a[0] * s[0];
 							} else if (s[1] > 0 && s[0] === 0) { //If width= is set but height= is not scale correctly
