@@ -56,12 +56,11 @@ if (typeof oB !== 'undefined') {
 							oB.windowURL = oB.windowURL.substr(0, oB.windowURL.search(/(\&|\?)orangebox\=/));
 						}
 						if (oB.ourl = oB.methods.getUrlVars()['orangebox']) {
-							if (oB.ourl.match(/\#\.\w{1,}\.facebook/)) {
-								oB.ourl = oB.ourl.substr(0, oB.ourl.search(/\#\.\w{1,}\.facebook/));
+							if (oB.ourl.match(/\#\..{1,}\.facebook/)) {
+								oB.ourl = oB.ourl.substr(0, oB.ourl.search(/\#\..{1,}\.facebook/));
 							}
-							oB.ourl = decodeURIComponent(oB.ourl);
 						}
-												try {
+						try {
 							document.createEvent("TouchEvent");
 							oB.touch = true;
 							oB.methods.logit('Touch device detected', true);
@@ -76,11 +75,29 @@ if (typeof oB !== 'undefined') {
 						oB.browser = $.browser;
 
 						function checkURL() {
-							if (oB.ourl.match(/^\w{1,}$/) && $('#' + oB.ourl).length > 0) {
+							if (oB.ourl.match(/^\#\w{1,}$/) && $('#' + oB.ourl).length > 0) {
 								oB.methods.create($('#' + oB.ourl));
 							} else {
 								$(searchTerm).each(function () {
-									if ($(this).attr('href').indexOf(oB.ourl) !== -1) {
+									var href = $(this).attr('href');
+									href = href.replace(/\//gi,'');
+									href = href.replace(/\./gi,'');
+									href = href.replace(/\:/gi,'');
+									href = href.replace(/\?/gi,'');
+									href = href.replace(/\&/gi,'');
+									href = href.replace(/\=/gi,'');
+									href = href.replace(/\#/gi,'');
+									/*
+									
+									strip out special characters in ob_link
+									
+									strip out special characters in href
+									then compare
+									
+									
+									*/
+									
+									if (href.indexOf(oB.ourl) !== -1) {
 										oB.methods.create($(this));
 										return false;
 									}
@@ -159,7 +176,6 @@ if (typeof oB !== 'undefined') {
 							}
 						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "pdf";
-							u = "http://docs.google.com/viewer?url=" + encodeURIComponent(u) + "&embedded=true&iframe=true";
 							if (s[0] === 0 && m[0] === 0) {
 								m = [m[1], m[1]];
 							} else if(m[0] !== 0) {
@@ -380,7 +396,7 @@ if (typeof oB !== 'undefined') {
 						ob_caption = $('<div id="ob_caption"></div>').click(function (e) {
 							e.stopPropagation();
 						}).append('<p>' + obj.data('oB').caption + '</p>'),
-						href_encode = encodeURIComponent(href),
+						tag = href,
 						navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
 							if (oB.progress === null) {
 								oB.methods.slideshowPause();
@@ -397,10 +413,17 @@ if (typeof oB !== 'undefined') {
 						}),
 						dotnav = $('<ul id="ob_dots"></ul>').click(function (e) { e.stopPropagation(); }),
 						ob_link;
+					tag = tag.replace(/\//gi,'');
+					tag = tag.replace(/\./gi,'');
+					tag = tag.replace(/\:/gi,'');
+					tag = tag.replace(/\?/gi,'');
+					tag = tag.replace(/\&/gi,'');
+					tag = tag.replace(/\=/gi,'');
+					tag = tag.replace(/\#/gi,'');
 					if(oB.windowURL.match(/\?/)) {
-						ob_link = oB.windowURL + "&orangebox=" + href_encode;
+						ob_link = oB.windowURL + "&orangebox=" + tag;
 					} else {
-						ob_link = oB.windowURL + "?orangebox=" + href_encode;
+						ob_link = oB.windowURL + "?orangebox=" + tag;
 					}
 					oB.currentIndex = obj.data('oB').index;
 					oB.methods.showLoad();
@@ -681,6 +704,21 @@ if (typeof oB !== 'undefined') {
 						});
 						buildit();
 					}
+					
+				//PDF Content
+					function showPDF() {
+						var dim = oB.methods.getSize(obj, [0, 0]), newhref;
+						newhref = "http://docs.google.com/viewer?url=" + encodeURIComponent(href) + "&embedded=true&iframe=true";
+						newhref = newhref.replace(/(\?|\&)iframe\=true/, '');
+						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
+						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
+							obj.data('oB').css = [dim[0], dim[1]];
+						content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
+							"height": dim[0],
+							"width": dim[1]
+						});
+						buildit();
+					}
 
 				//Inline Content
 					function showInline() {
@@ -818,8 +856,10 @@ if (typeof oB !== 'undefined') {
 					}
 					switch (contentType) {
 					case "iframe":
-					case "pdf":
 						showiFrame();
+						break;
+					case "pdf":
+						showPDF();
 						break;
 					case "image":
 					case "flickr":
