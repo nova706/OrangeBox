@@ -693,26 +693,16 @@ if (typeof oB !== 'undefined') {
 
 				//iFrame Content
 					function showiFrame() {
-						var dim = oB.methods.getSize(obj, [0, 0]),
-							newhref = href.replace(/(\?|\&)iframe\=true/, '');
-						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
-						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
-						obj.data('oB').css = [dim[0], dim[1]];
-						content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
-							"height": dim[0],
-							"width": dim[1]
-						});
-						buildit();
-					}
-					
-				//PDF Content
-					function showPDF() {
 						var dim = oB.methods.getSize(obj, [0, 0]), newhref;
-						newhref = "http://docs.google.com/viewer?url=" + encodeURIComponent(href) + "&embedded=true&iframe=true";
+						if(contentType === "pdf") {
+							newhref = "http://docs.google.com/viewer?url=" + encodeURIComponent(href) + "&embedded=true&iframe=true";
+						} else {
+							newhref = href;
+						}
 						newhref = newhref.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
-							obj.data('oB').css = [dim[0], dim[1]];
+						obj.data('oB').css = [dim[0], dim[1]];
 						content = $('<iframe id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
 							"height": dim[0],
 							"width": dim[1]
@@ -856,10 +846,8 @@ if (typeof oB !== 'undefined') {
 					}
 					switch (contentType) {
 					case "iframe":
-						showiFrame();
-						break;
 					case "pdf":
-						showPDF();
+						showiFrame();
 						break;
 					case "image":
 					case "flickr":
