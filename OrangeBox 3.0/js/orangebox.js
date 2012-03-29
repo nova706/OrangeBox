@@ -680,23 +680,32 @@ if (typeof oB !== 'undefined') {
 
 				//Video Content
 					function showVideo() {
-						var dim = oB.methods.getSize(obj, [0, 0]);
+						var dim = oB.methods.getSize(obj, [0, 0]), src;
 						switch (contentType) {
-						case "youtube":
-							content = $('<iframe allowTransparency="true" id="ob_video" width="100%" height="100%" src="http://www.youtube.com/embed/'+ obj.data('oB').id +'?autoplay=1&fs=1&modestbranding=1&rel=0&showsearch=0&wmode=transparent" frameborder="0"></iframe>').css("background-color", "#000000");
-							break;
-						case "vimeo":
-							content = $('<iframe allowTransparency="true" id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://player.vimeo.com/video/' + obj.data('oB').id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
-							break;
-						case "viddler":
-							content = $('<iframe allowTransparency="true" id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('oB').id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent"></iframe>').css("background-color", "#000000");
-							break;
-						case "flash":
-							content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed></div>');
-							break;
+							case "youtube":
+								src = 'http://www.youtube.com/embed/'+ obj.data('oB').id +'?autoplay=1&fs=1&modestbranding=1&rel=0&showsearch=0&wmode=transparent';
+								break;
+							case "vimeo":
+								src = 'http://player.vimeo.com/video/' + obj.data('oB').id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
+								break;
+							case "viddler":
+								src = 'http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('oB').id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
+								break;
 						}
 						obj.data('oB').css = [dim[0], dim[1]];
-						content.css({
+						content = $('<iframe allowTransparency="true" id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + src + '"></iframe>').css({
+							"height": dim[0],
+							"width": dim[1],
+							"background-color": "#000000"
+						});
+						buildit();
+					}
+					
+				//Flash Content
+					function showFlash() {
+						var dim = oB.methods.getSize(obj, [0, 0]);
+						obj.data('oB').css = [dim[0], dim[1]];
+						content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed></div>').css({
 							"height": dim[0],
 							"width": dim[1]
 						});
@@ -802,8 +811,10 @@ if (typeof oB !== 'undefined') {
 					case "youtube":
 					case "vimeo":
 					case "viddler":
-					case "flash":
 						showVideo();
+						break;
+					case "flash":
+						showFlash();
 						break;
 					default:
 						oB.methods.logit('Unsupported Media: ' + href);
