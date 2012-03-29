@@ -7,7 +7,6 @@
  */
 #ob_overlay {
 	background-color:#333;
-	display:none;
 	height:100%;
 	left:0;
 	position:fixed;
