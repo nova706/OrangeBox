@@ -87,16 +87,7 @@ if (typeof oB !== 'undefined') {
 									href = href.replace(/\&/gi,'');
 									href = href.replace(/\=/gi,'');
 									href = href.replace(/\#/gi,'');
-									/*
-									
-									strip out special characters in ob_link
-									
-									strip out special characters in href
-									then compare
-									
-									
-									*/
-									
+
 									if (href.indexOf(oB.ourl) !== -1) {
 										oB.methods.create($(this));
 										return false;
@@ -305,11 +296,7 @@ if (typeof oB !== 'undefined') {
 							$.extend(oB.settings, o);
 						}
 						if (!obj) {
-							if (this instanceof jQuery) {
-								obj = this;
-							} else {
-								obj = $(this);
-							}
+							obj = (this instanceof jQuery) ? this : $(this);
 						}
 						if (!obj.data('oB')) {
 							oB.methods.setupData(obj);
@@ -420,11 +407,7 @@ if (typeof oB !== 'undefined') {
 					tag = tag.replace(/\&/gi,'');
 					tag = tag.replace(/\=/gi,'');
 					tag = tag.replace(/\#/gi,'');
-					if(oB.windowURL.match(/\?/)) {
-						ob_link = oB.windowURL + "&orangebox=" + tag;
-					} else {
-						ob_link = oB.windowURL + "?orangebox=" + tag;
-					}
+					ob_link = (oB.windowURL.match(/\?/)) ? oB.windowURL + "&orangebox=" + tag : oB.windowURL + "?orangebox=" + tag;
 					oB.currentIndex = obj.data('oB').index;
 					oB.methods.showLoad();
 					$('#ob_content').removeClass().addClass('content' + oB.currentIndex);
@@ -531,11 +514,7 @@ if (typeof oB !== 'undefined') {
 								if (obj.data('oB').linkTarget === "_self") {
 									target = 'target="_self"';
 								}
-								if (obj.data('oB').linkText && obj.data('oB').linkText !== "undefined") {
-									title = title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').linkText + '</a>';
-								} else {
-									title = title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').link + '</a>';
-								}
+								title = (obj.data('oB').linkText && obj.data('oB').linkText !== "undefined") ? title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').linkText + '</a>' : title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').link + '</a>';
 							}
 							$('#ob_title').append(title).click(function (e) { e.stopPropagation(); });
 							if (oB.settings.addThis && contentType !== "iframe" && obj.data('oB').share !== "false") {
@@ -642,10 +621,8 @@ if (typeof oB !== 'undefined') {
 						}
 						if (contentType === "youtube" && oB.APIready) {
 							function onPlayerStateChange(event) {
-								if (event.data === YT.PlayerState.ENDED) {
-									if (oB.playing) {
-										oB.methods.navigate(1);
-									}
+								if (event.data === YT.PlayerState.ENDED && oB.playing) {
+									oB.methods.navigate(1);
 								}
 							}
 							oB.player = new YT.Player('ob_video', {
@@ -694,11 +671,7 @@ if (typeof oB !== 'undefined') {
 				//iFrame Content
 					function showiFrame() {
 						var dim = oB.methods.getSize(obj, [0, 0]), newhref;
-						if(contentType === "pdf") {
-							newhref = "http://docs.google.com/viewer?url=" + encodeURIComponent(href) + "&embedded=true&iframe=true";
-						} else {
-							newhref = href;
-						}
+						newhref = (contentType === "pdf") ? "http://docs.google.com/viewer?url=" + encodeURIComponent(href) + "&embedded=true&iframe=true" : href;
 						newhref = newhref.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
@@ -886,16 +859,6 @@ if (typeof oB !== 'undefined') {
 							oB.player.destroy();
 						}
 						$('#ob_content').fadeOut(oB.settings.fadeTime, function () {
-							if ($('#ob_content').hasClass('jw_player')) {
-								try {
-									jwplayer("ob_video").remove();
-								} catch (error) {
-									oB.methods.logit(error);
-								}
-							}
-							if (document.qt1 && document.qt1.Stop) {
-								document.qt1.Stop();
-							}
 							if($('#ob_inline').length) {
 								$('#ob_inline').children('.ob_inline_content').appendTo('.ob_inline_content_holder').removeClass('ob_inline_content');
 								$('.ob_inline_hide').hide().removeClass('ob_inline_hide');
@@ -966,13 +929,6 @@ if (typeof oB !== 'undefined') {
 						}
 						$(document).unbind("keydown").unbind("mousemove");
 						$('#ob_container').stop().fadeOut(oB.settings.fadeTime, function () {
-							if ($('#ob_content').hasClass('jw_player')) {
-								try {
-									jwplayer("ob_video").remove();
-								} catch (error) {
-									oB.methods.logit(error);
-								}
-							}
 							$(this).remove().empty();
 							$(document).trigger('oB_closed');
 							if (x && $.isFunction(x)) {
