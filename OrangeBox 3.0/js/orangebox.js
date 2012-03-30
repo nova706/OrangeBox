@@ -370,9 +370,7 @@ if (typeof oB !== 'undefined') {
 						title = obj.data('oB').title,
 						contentType = obj.data('oB').contentType,
 						content,
-						ob_caption = $('<div id="ob_caption"></div>').click(function (e) {
-							e.stopPropagation();
-						}).append('<p>' + obj.data('oB').caption + '</p>'),
+						ob_caption = '',
 						tag = href,
 						navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
 							if (oB.progress === null) {
@@ -390,6 +388,11 @@ if (typeof oB !== 'undefined') {
 						}),
 						dotnav = $('<ul id="ob_dots"></ul>').click(function (e) { e.stopPropagation(); }),
 						ob_link;
+					if(obj.data('oB').caption) {
+						ob_caption = $('<div id="ob_caption"></div>').click(function (e) {
+							e.stopPropagation();
+						}).append('<p>' + obj.data('oB').caption + '</p>');
+					}
 					tag = tag.replace(/\//gi,'');
 					tag = tag.replace(/\./gi,'');
 					tag = tag.replace(/\:/gi,'');
@@ -485,59 +488,7 @@ if (typeof oB !== 'undefined') {
 						});
 						copied_elem.remove();
 					}
-
-				//Set Modal Properties
-					function setModalProperties() {
-						var p = $(window).scrollTop(),
-							dim = getDim(),
-							target = 'target="_blank"',
-							addThis = $('<a id="ob_share" class="addthis_button_compact"></a>'),
-							shareHTML = $('<span class="at300bs at15nc at15t_compact"></span>').css('display', 'inline-block');
-						if (p === 0) {
-							p = $(document).scrollTop();
-						}
-						if (p === 0) {
-							p = window.pageYOffset;
-						}
-						if (content.attr('id') !== "ob_error") {
-							if (obj.data('oB').link && obj.data('oB').link !== "" && obj.data('oB').link !== "undefined") {
-								if (obj.data('oB').linkTarget === "_self") {
-									target = 'target="_self"';
-								}
-								title = (obj.data('oB').linkText && obj.data('oB').linkText !== "undefined") ? title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').linkText + '</a>' : title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').link + '</a>';
-							}
-							$('#ob_title').append(title).click(function (e) { e.stopPropagation(); });
-							if (oB.settings.addThis && contentType !== "iframe" && obj.data('oB').share !== "false") {
-								$('#ob_share').empty().remove();
-								addThis.addClass("ob_share-" + title.replace(/ /g, "_"));
-								if (title === "") {
-									title = "share";
-								}
-								$('#ob_title').append(addThis);
-								addthis.button('.ob_share-' + title.replace(/ /g, "_"), {
-									services_compact: 'twitter,facebook,digg,delicious,more',
-									ui_offset_left: -244,
-									ui_offset_top: 4
-								}, {
-									url: ob_link,
-									title: title
-								});
-								$('#ob_share').html('').append(shareHTML);
-							}
-							setWindowMargin(dim[0] + (oB.settings.contentBorderWidth * 2), dim[1]);
-						}
-						$("#ob_container").css({
-							"margin-top": p
-						});
-						$('#ob_float').css({
-							"margin-bottom": -(dim[0] + (oB.settings.contentBorderWidth * 2) + 44) / 2
-						});
-						$('#ob_content').css({
-							"min-height": dim[0],
-							"width": dim[1]
-						});
-					}
-
+					
 				//Update Navigation
 					function setControls() {
 						if (oB.settings.showDots) {
@@ -570,9 +521,9 @@ if (typeof oB !== 'undefined') {
 								$('.ob_controls').fadeOut(oB.settings.fadeTime);
 							}, 1200);
 							$(document).mousemove(function (event) {
+								$('.ob_controls').fadeIn(oB.settings.fadeTime);
 								clearTimeout(oB.controlTimer);
 								oB.controlTimer = setTimeout(function () {
-									$('.ob_controls').fadeIn(oB.settings.fadeTime);
 									if (!$(event.target).hasClass('ob_controls') && !$(event.target).parent().hasClass('ob_controls')) {
 										oB.controlTimer = setTimeout(function () {
 											$('.ob_controls').fadeOut(oB.settings.fadeTime);
@@ -585,56 +536,95 @@ if (typeof oB !== 'undefined') {
 						}
 					}
 
-				//Fade the Window In
-					function fadeit() {
-						oB.methods.showLoad(1);
-						$('#ob_content').fadeIn(oB.settings.fadeTime, function () {
-							if(contentType !== "iframe" && obj.data('oB').share !== "false") {
+				//Adjust Modal Properties
+					function adjustModalProperties() {
+						var dim = getDim();
+						if (contentType !== "error") {
+							setWindowMargin(dim[0] + (oB.settings.contentBorderWidth * 2), dim[1]);
+						} else {
+							dim[1] = 250;
+						}
+						$('#ob_float').css({
+							"margin-bottom": -(dim[0] + (oB.settings.contentBorderWidth * 2) + 44) / 2
+						});
+						$('#ob_content').css({
+							"min-height": dim[0],
+							"width": dim[1]
+						});
+					}
+
+				//Build the Window
+					function buildWindow() {
+						var delayTimer = (obj.data('oB').delayTimer) ? parseInt(obj.data('oB').delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10) : oB.settings.slideshowTimer,
+							target = 'target="_blank"',
+							addThis = $('<a id="ob_share" class="addthis_button_compact"></a>'),
+							shareHTML = $('<span class="at300bs at15nc at15t_compact"></span>').css('display', 'inline-block'),
+							p = $(window).scrollTop();
+						if (p === 0) {
+							p = $(document).scrollTop();
+						}
+						if (p === 0) {
+							p = window.pageYOffset;
+						}
+						$("#ob_container").css("margin-top", p);
+						$('#ob_content').append('<div id="ob_title"></div>').append(content.addClass('ob_contents'));
+						if(contentType !== "error") {
+							$('#ob_content').append(ob_caption);
+							if (obj.data('oB').link && obj.data('oB').link !== "") {
+								if (obj.data('oB').linkTarget === "_self") {
+									target = 'target="_self"';
+								}
+								title = (obj.data('oB').linkText && obj.data('oB').linkText !== "undefined") ? title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').linkText + '</a>' : title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').link + '</a>';
+							}
+							$('#ob_title').append(title).click(function (e) { e.stopPropagation(); });
+							if (oB.settings.addThis && obj.data('oB').share !== "false") {
+								addThis.addClass("ob_share-" + title.replace(/ /g, "_"));
+								if (title === "") { title = "share"; }
+								$('#ob_title').append(addThis);
+								addthis.button('.ob_share-' + title.replace(/ /g, "_"), {
+									services_compact: 'twitter,facebook,digg,delicious,more',
+									ui_offset_left: -244,
+									ui_offset_top: 4
+								}, {
+									url: ob_link,
+									title: title
+								});
+								$('#ob_share').html('').append(shareHTML);
+							}
+							setControls();
+							if(obj.data('oB').share !== "false") {
 								$(document).trigger('oB_init', ob_link);
 								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '" link:"' + ob_link + '"', true);
 							} else {
 								$(document).trigger('oB_init', "");
 								oB.methods.logit('ID:' + oB.currentIndex + ' href:"' + href + '"', true);
 							}
-							$('#ob_overlay').css("height", $(document).height());
 							oB.progress = null;
-						});
-					}
-
-				//Build the Window
-					function buildit() {
-						var delayTimer = oB.settings.slideshowTimer;
-						$('#ob_content').append('<div id="ob_title"></div>');
-						$('#ob_content').append(content.addClass('ob_contents'));
-						if (obj.data('oB').caption) {
-							$('#ob_content').append(ob_caption);
-						}
-						fadeit();
-						setModalProperties();
-						setControls();
-						if (oB.playing) {
-							if (obj.data('oB').delayTimer) {
-								delayTimer = parseInt(obj.data('oB').delayTimer, 10) + parseInt(oB.settings.slideshowTimer, 10);
+							if (oB.playing) {
+								oB.slideshowTimer = setTimeout(function () {
+									oB.methods.navigate(1);
+								}, delayTimer);
 							}
-							oB.slideshowTimer = setTimeout(function () {
-								oB.methods.navigate(1);
-							}, delayTimer);
+						} else {
+							oB.methods.logit('Could not find file');
 						}
+						oB.methods.showLoad(1);
+						$('#ob_content').fadeIn(oB.settings.fadeTime, function () {
+							$('#ob_overlay').css("height", $(document).height());
+						});
+						adjustModalProperties();
 					}
 
 				//Error Content
 					function throwError() {
 						content = $('<div id="ob_error">' + oB.settings.notFound + '</div>');
-						oB.methods.showLoad(1);
-						$('#ob_content').append(content).css('width', 250).fadeIn(oB.settings.fadeTime, function () {
-							$('#ob_overlay').css("height", $(document).height());
-							oB.methods.logit('Could not find file');
-						});
+						$('#ob_content').append(content.addClass('ob_contents'));
+						contentType = "error";
 						clearTimeout(oB.controlTimer);
 						clearTimeout(oB.slideshowTimer);
 						clearTimeout(oB.scrollTimer);
 						$(document).unbind("keydown").unbind("mousemove");
-						setModalProperties();
+						buildWindow();
 					}
 
 				//iFrame Content
@@ -645,11 +635,11 @@ if (typeof oB !== 'undefined') {
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
 						obj.data('oB').css = [dim[0], dim[1]];
-						content = $('<iframe allowTransparency="true" id="ob_iframe" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
+						content = $('<iframe allowTransparency="true" id="ob_iframe" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
 							"height": dim[0],
 							"width": dim[1]
 						});
-						buildit();
+						buildWindow();
 					}
 
 				//Inline Content
@@ -672,7 +662,7 @@ if (typeof oB !== 'undefined') {
 							if (dim[0] !== 0) {
 								content.css("height", dim[0]);
 							}
-							buildit();
+							buildWindow();
 						} else {
 							throwError();
 						}
@@ -698,7 +688,7 @@ if (typeof oB !== 'undefined') {
 							"width": dim[1],
 							"background-color": "#000000"
 						});
-						buildit();
+						buildWindow();
 					}
 					
 				//Flash Content
@@ -709,7 +699,7 @@ if (typeof oB !== 'undefined') {
 							"height": dim[0],
 							"width": dim[1]
 						});
-						buildit();
+						buildWindow();
 					}
 
 				//Image Content
@@ -787,7 +777,7 @@ if (typeof oB !== 'undefined') {
 								"height": dim[0],
 								"width": dim[1]
 							});
-							buildit();
+							buildWindow();
 						}).error(function () {
 							throwError();
 						}).attr({
