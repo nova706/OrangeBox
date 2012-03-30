@@ -570,7 +570,7 @@ if (typeof oB !== 'undefined') {
 						$('#ob_content').append('<div id="ob_title"></div>').append(content.addClass('ob_contents'));
 						if(contentType !== "error") {
 							$('#ob_content').append(ob_caption);
-							if (obj.data('oB').link && obj.data('oB').link !== "") {
+							if (obj.data('oB').link && obj.data('oB').link !== "" && obj.data('oB').link !== "undefined" ) {
 								if (obj.data('oB').linkTarget === "_self") {
 									target = 'target="_self"';
 								}
