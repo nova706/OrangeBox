@@ -266,8 +266,8 @@ if (typeof oB !== 'undefined') {
 								title: t,
 								linkText: o.attr('data-ob_linkText'),
 								"link": o.attr('data-ob_link'),
-								caption: cap,
 								linkTarget: o.attr('data-ob_linkTarget'),
+								caption: cap,
 								share: o.attr('data-ob_share'),
 								delayTimer: o.attr('data-ob_delayTimer'),
 								id: id
@@ -635,7 +635,7 @@ if (typeof oB !== 'undefined') {
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
 						obj.data('oB').css = [dim[0], dim[1]];
-						content = $('<iframe allowTransparency="true" id="ob_iframe" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + newhref + '"></iframe>').css({
+						content = $('<div id="ob_iframe"><iframe allowTransparency="true" height="100%" width="100%" scrolling="auto" type="text/html" frameborder="0" hspace="0" src="' + newhref + '"></iframe></div>').css({
 							"height": dim[0],
 							"width": dim[1]
 						});
@@ -683,7 +683,7 @@ if (typeof oB !== 'undefined') {
 								break;
 						}
 						obj.data('oB').css = [dim[0], dim[1]];
-						content = $('<iframe allowTransparency="true" id="ob_video" height="100%" width="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + src + '"></iframe>').css({
+						content = $('<div id="ob_iframe"><iframe allowTransparency="true" id="ob_video" width="100%" height="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + src + '"></iframe></div>').css({
 							"height": dim[0],
 							"width": dim[1],
 							"background-color": "#000000"
@@ -810,6 +810,35 @@ if (typeof oB !== 'undefined') {
 						oB.methods.logit('Unsupported Media: ' + href);
 						return false;
 					}
+				},
+				createCustom: function (content, o) {
+					if (o) {
+						$.extend(oB.settings, o);
+					}
+					if(content.href === "undefined" || content.href === "") return false;
+					var obj = $('<a href="'+ content.href +'"></a>');
+					if(content.title) obj.attr('title', content.title);
+					if(content.caption) obj.attr('data-ob_caption', content.caption);
+					
+					if(content.link) obj.attr('data-ob_link', content.link);
+					if(content.linkText) obj.attr('data-ob_linkText', content.linkText);
+					if(content.linkTarget) obj.attr('data-ob_linkTarget', content.linkTarget);
+					
+					if(content.delay) obj.attr('data-ob_delayTimer', content.delay);
+					
+					if(content.share) obj.attr('data-ob_share', 'true');
+					else obj.attr('data-ob_share', 'false');
+					
+					if(content.html) {
+						var html = $(content.html).css('display', 'none');
+						$(body).append(html);
+					}
+					
+					if(content.gallery) obj.attr('rel', oB.settings.searchTerm + '['+ content.gallery +']');
+					else obj.attr('rel', oB.settings.searchTerm);
+					
+					oB.methods.setupData(obj);
+					oB.methods.create(obj);
 				},
 				navigate: function (d, i, o) {
 					if (o) {
