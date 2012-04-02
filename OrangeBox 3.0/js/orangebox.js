@@ -47,13 +47,7 @@ if (typeof oB !== 'undefined') {
 						} else {
 							$(searchTerm).each(function () {
 								var href = $(this).attr('href');
-								href = href.replace(/\//gi,'');
-								href = href.replace(/\./gi,'');
-								href = href.replace(/\:/gi,'');
-								href = href.replace(/\?/gi,'');
-								href = href.replace(/\&/gi,'');
-								href = href.replace(/\=/gi,'');
-								href = href.replace(/\#/gi,'');
+								href = href.replace(/\//gi,'').replace(/\./gi,'').replace(/\:/gi,'').replace(/\?/gi,'').replace(/\&/gi,'').replace(/\=/gi,'').replace(/\#/gi,'');
 
 								if (href.indexOf(oB.ourl) !== -1) {
 									oB.methods.create($(this));
@@ -393,13 +387,7 @@ if (typeof oB !== 'undefined') {
 							e.stopPropagation();
 						}).append('<p>' + obj.data('oB').caption + '</p>');
 					}
-					tag = tag.replace(/\//gi,'');
-					tag = tag.replace(/\./gi,'');
-					tag = tag.replace(/\:/gi,'');
-					tag = tag.replace(/\?/gi,'');
-					tag = tag.replace(/\&/gi,'');
-					tag = tag.replace(/\=/gi,'');
-					tag = tag.replace(/\#/gi,'');
+					tag = tag.replace(/\//gi,'').replace(/\./gi,'').replace(/\:/gi,'').replace(/\?/gi,'').replace(/\&/gi,'').replace(/\=/gi,'').replace(/\#/gi,'');
 					ob_link = (oB.windowURL.match(/\?/)) ? oB.windowURL + "&orangebox=" + tag : oB.windowURL + "?orangebox=" + tag;
 					oB.currentIndex = obj.data('oB').index;
 					oB.methods.showLoad();
@@ -439,28 +427,25 @@ if (typeof oB !== 'undefined') {
 
 				//Set Height and Width
 					function getDim() {
-						var size = [content.outerHeight(), content.outerWidth()], copied_elem;
-						if (obj.data('oB').css) {
-							size = obj.data('oB').css;
-						}
-						if (content.css('padding-left')) {
-							obj.data('oB').css[2] = parseInt(content.css('padding-left').replace('px', ''), 10) * 2;
-							size[1] += obj.data('oB').css[2];
-						}
-						if (obj.data('oB').css[0] === 0 && contentType === "inline") {
-							copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: obj.data('oB').css[1] - obj.data('oB').css[2]});
-							$("body").append(copied_elem);
-							size[0] = copied_elem.height() + obj.data('oB').css[2];
-							copied_elem.remove();
-						} else if (contentType === "inline") {
-							size[0] += obj.data('oB').css[2];
-						}
-						if (!size[0] && obj.data('oB').css[0]) {
+						var size = [content.outerHeight(), content.outerWidth(), 0], copied_elem;
+						if (obj.data('oB').css[0]) {
 							size[0] = obj.data('oB').css[0];
 						}
-						if (!size[1] && obj.data('oB').css[1]) {
+						if (obj.data('oB').css[1]) {
 							size[1] = obj.data('oB').css[1];
 						}
+						if (content.css('padding-left')) {
+							size[2] = parseInt(content.css('padding-left').replace('px', ''), 10) * 2;
+						}
+						if (contentType === "inline" && size[0] === 0) {
+							copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: size[1] - size[2] - size[2]});
+							$("body").append(copied_elem);
+							size[0] = copied_elem.height() + size[2];
+							copied_elem.remove();
+						} else if (contentType === "inline") {
+							size[0] += size[2];
+						}
+						size[1] += size[2];
 						if (content.attr('id') !== "ob_error" && size[0] < oB.settings.contentMinSize[0]) {
 							size[0] = oB.settings.contentMinSize[0];
 						}
@@ -634,7 +619,7 @@ if (typeof oB !== 'undefined') {
 						newhref = newhref.replace(/(\?|\&)iframe\=true/, '');
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
-						obj.data('oB').css = [dim[0], dim[1]];
+						obj.data('oB').css = dim;
 						content = $('<div id="ob_iframe"><iframe allowTransparency="true" height="100%" width="100%" scrolling="auto" type="text/html" frameborder="0" hspace="0" src="' + newhref + '"></iframe></div>').css({
 							"height": dim[0],
 							"width": dim[1]
@@ -682,7 +667,7 @@ if (typeof oB !== 'undefined') {
 								src = 'http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('oB').id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
 								break;
 						}
-						obj.data('oB').css = [dim[0], dim[1]];
+						obj.data('oB').css = dim;
 						content = $('<div id="ob_iframe"><iframe allowTransparency="true" id="ob_video" width="100%" height="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + src + '"></iframe></div>').css({
 							"height": dim[0],
 							"width": dim[1],
@@ -694,7 +679,7 @@ if (typeof oB !== 'undefined') {
 				//Flash Content
 					function showFlash() {
 						var dim = oB.methods.getSize(obj, [0, 0]);
-						obj.data('oB').css = [dim[0], dim[1]];
+						obj.data('oB').css = dim;
 						content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed></div>').css({
 							"height": dim[0],
 							"width": dim[1]
