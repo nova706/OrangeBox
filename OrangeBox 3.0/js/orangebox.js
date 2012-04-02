@@ -99,7 +99,7 @@ if (typeof oB !== 'undefined') {
 					return false;
 				},
 				setupData: function (o) {
-					var u = o.attr('href'), c = false, s = [0, 0], m = oB.settings.contentMaxSize, i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption'), child;
+					var u = o.attr('href'), c = false, s = [0, 0], i = 0, t = "", g = false, rel = o.attr('rel'), id, alias = false, unique = true, cap = o.attr('data-ob_caption'), child;
 					if (rel && rel.match(/\[/)) {
 						g = rel.substring(rel.indexOf("[") + 1, rel.indexOf("]")).replace(/ /g, "_");
 						$.each(oB.gallery, function() {
@@ -137,11 +137,6 @@ if (typeof oB !== 'undefined') {
 						}
 						if (u.match(/(\?|\&)(iframe\=true)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "iframe";
-							if (s[0] === 0 && m[0] === 0) {
-								m = [m[1], m[1]];
-							} else if(m[0] !== 0) {
-								m = [m[0], m[1]];
-							}
 						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "image";
 							if(o.parent().hasClass('ngg-gallery-thumbnail') && oB.settings.nextGen) {
@@ -155,11 +150,6 @@ if (typeof oB !== 'undefined') {
 							}
 						} else if (u.match(/\.pdf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "pdf";
-							if (s[0] === 0 && m[0] === 0) {
-								m = [m[1], m[1]];
-							} else if(m[0] !== 0) {
-								m = [m[0], m[1]];
-							}
 						} else if (u.match(/\.swf((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "flash";
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
@@ -235,11 +225,6 @@ if (typeof oB !== 'undefined') {
 							c = "viddler";
 						} else if (u.match(/^#\w{1,}((\?|\&)(width\=\d+(\&height\=\d+)?|height\=\d+(\&width\=\d+)?))?$/)) {
 							c = "inline";
-							if (s[0] === 0 && m[0] === 0) {
-								m = [m[1], m[1]];
-							} else if(m[0] !== 0) {
-								m = [m[0], m[1]];
-							}
 						} else {
 							oB.methods.logit('Unsupported Media: ' + u);
 						}
@@ -252,7 +237,6 @@ if (typeof oB !== 'undefined') {
 							o.data('oB', {
 								size: s,
 								css: '',
-								"max": m,
 								gallery: g,
 								index: i,
 								contentType: c,
@@ -333,7 +317,7 @@ if (typeof oB !== 'undefined') {
 								oB.settings.addThis = false;
 							}
 	
-						//if IE 6					
+						//if IE 6			
 							if (typeof document.body.style.maxHeight === "undefined") {
 								$("body", "html").css({
 									height: "100%",
@@ -424,55 +408,6 @@ if (typeof oB !== 'undefined') {
 							oB.methods.destroy();
 						}));
 					}
-
-				//Set Height and Width
-					function getDim() {
-						var size = [content.outerHeight(), content.outerWidth(), 0], copied_elem;
-						if (obj.data('oB').css[0]) {
-							size[0] = obj.data('oB').css[0];
-						}
-						if (obj.data('oB').css[1]) {
-							size[1] = obj.data('oB').css[1];
-						}
-						if (content.css('padding-left')) {
-							size[2] = parseInt(content.css('padding-left').replace('px', ''), 10) * 2;
-						}
-						if (contentType === "inline" && size[0] === 0) {
-							copied_elem = $(href).clone().attr("id", false).css({visibility: "hidden", display: "block", position: "absolute", "line-height": "1.625em", width: size[1] - size[2] - size[2]});
-							$("body").append(copied_elem);
-							size[0] = copied_elem.height() + size[2];
-							copied_elem.remove();
-						} else if (contentType === "inline") {
-							size[0] += size[2];
-						}
-						size[1] += size[2];
-						if (content.attr('id') !== "ob_error" && size[0] < oB.settings.contentMinSize[0]) {
-							size[0] = oB.settings.contentMinSize[0];
-						}
-						if (size[1] < oB.settings.contentMinSize[1]) {
-							size[1] = oB.settings.contentMinSize[1];
-						}
-						return [Math.round(size[0]), Math.round(size[1])];
-					}
-
-				//Set Window Margin
-					function setWindowMargin(cH, w) {
-						var copied_elem = $('<div>' + title + '</div>').css({
-							visibility: "hidden", 
-							display: "block", 
-							position: "absolute", 
-							width: w - 40, 
-							"line-height": $('#ob_title').css('line-height'),
-							"font-size": $('#ob_title').css('font-size')
-						});
-						$("body").append(copied_elem);
-						$('#ob_content').css('margin-top', copied_elem.height() + 44);
-						$('#ob_title').css({
-							'margin-top': -copied_elem.height() - oB.settings.contentBorderWidth - 4,
-							'margin-right': -oB.settings.contentBorderWidth
-						});
-						copied_elem.remove();
-					}
 					
 				//Update Navigation
 					function setControls() {
@@ -520,10 +455,42 @@ if (typeof oB !== 'undefined') {
 							$('.ob_controls').fadeIn(oB.settings.fadeTime);
 						}
 					}
+					
+				//Set Window Margin
+					function setWindowMargin(cH, w) {
+						var copied_elem = $('<div>' + title + '</div>').css({
+							visibility: "hidden", 
+							display: "block", 
+							position: "absolute", 
+							width: w - 40, 
+							"line-height": $('#ob_title').css('line-height'),
+							"font-size": $('#ob_title').css('font-size')
+						});
+						$("body").append(copied_elem);
+						$('#ob_content').css('margin-top', copied_elem.height() + 44);
+						$('#ob_title').css({
+							'margin-top': -copied_elem.height() - oB.settings.contentBorderWidth - 4,
+							'margin-right': -oB.settings.contentBorderWidth
+						});
+						copied_elem.remove();
+					}
 
 				//Adjust Modal Properties
 					function adjustModalProperties() {
-						var dim = getDim();
+						var size = [content.outerHeight(), content.outerWidth()], dim;
+						if (obj.data('oB').css[0]) {
+							size[0] = obj.data('oB').css[0];
+						}
+						if (obj.data('oB').css[1]) {
+							size[1] = obj.data('oB').css[1];
+						}
+						if (content.attr('id') !== "ob_error" && size[0] < oB.settings.contentMinSize[0]) {
+							size[0] = oB.settings.contentMinSize[0];
+						}
+						if (size[1] < oB.settings.contentMinSize[1]) {
+							size[1] = oB.settings.contentMinSize[1];
+						}
+						dim = [Math.round(size[0]), Math.round(size[1])];
 						if (contentType !== "error") {
 							setWindowMargin(dim[0] + (oB.settings.contentBorderWidth * 2), dim[1]);
 						} else {
@@ -620,30 +587,47 @@ if (typeof oB !== 'undefined') {
 						newhref = newhref.replace(/(\?|\&)width\=\d{1,}/, '');
 						newhref = newhref.replace(/(\?|\&)height\=\d{1,}/, '');
 						obj.data('oB').css = dim;
-						content = $('<div id="ob_iframe"><iframe allowTransparency="true" height="100%" width="100%" scrolling="auto" type="text/html" frameborder="0" hspace="0" src="' + newhref + '"></iframe></div>').css({
-							"height": dim[0],
-							"width": dim[1]
-						});
+						content = $('<div id="ob_iframe"><iframe allowTransparency="true" height="100%" width="100%" scrolling="auto" type="text/html" frameborder="0" hspace="0" src="' + newhref + '"></iframe></div>').css("width", dim[1]);
+						if (dim[0] !== 0) {
+							content.css("height", dim[0]);
+						}
 						buildWindow();
 					}
 
 				//Inline Content
 					function showInline() {
-						var dim = oB.methods.getSize(obj, [0, 0]);
+						var dim = oB.methods.getSize(obj, [0, 0]), inline_content = $('<div class="inline_content"></div>'), s = obj.data('oB').size;
 						if (href.match(/\?/)) {
 							href = href.substr(0, href.indexOf("?"));
 						}
 						if ($(href).length && $(href).html() !== "") {
+							
+							if (s[0] === 0) {
+								var clone = $(href).clone();
+								clone.css('display', 'block');
+								var copied_elem = $('<div id="ob_inline"></div>').css({visibility: "hidden", display: "block", position: "absolute", width: dim[1]});
+								var copied_content = $('<div class="inline_content"></div>').append(clone);
+								copied_elem.append(copied_content);
+								$("body").append(copied_elem);
+								var height = copied_elem.height();
+								copied_content.empty().remove();
+								copied_elem.remove();
+								if(dim[0] > height) {
+									dim[0] = height;
+								}
+							}
+							
 							obj.data('oB').css = dim;
 							content = $('<div id="ob_inline"></div>').css({
 								"width": dim[1]
 							});
 							$(href).parent().addClass('ob_inline_content_holder');
 							if($(href).is(':visible')) {
-								$(href).appendTo(content).addClass('ob_inline_content');
+								$(href).appendTo(inline_content).addClass('ob_inline_content');
 							}else {
-								$(href).appendTo(content).addClass('ob_inline_content').addClass('ob_inline_hide').show();
+								$(href).appendTo(inline_content).addClass('ob_inline_content').addClass('ob_inline_hide').show();
 							}
+							content.append(inline_content);
 							if (dim[0] !== 0) {
 								content.css("height", dim[0]);
 							}
@@ -841,7 +825,7 @@ if (typeof oB !== 'undefined') {
 						$(document).trigger('oB_navigate', [i]);
 						$('#ob_content').fadeOut(oB.settings.fadeTime, function () {
 							if($('#ob_inline').length) {
-								$('#ob_inline').children('.ob_inline_content').appendTo('.ob_inline_content_holder').removeClass('ob_inline_content');
+								$('#ob_inline').find('.ob_inline_content').appendTo('.ob_inline_content_holder').removeClass('ob_inline_content');
 								$('.ob_inline_hide').hide().removeClass('ob_inline_hide');
 								$('.ob_inline_content_holder').removeClass('ob_inline_content_holder');
 							}
@@ -891,7 +875,7 @@ if (typeof oB !== 'undefined') {
 					if ($('#ob_content').length > 0) {
 						$(document).trigger('oB_closing');
 						if($('#ob_inline').length) {
-							$('#ob_inline').children('.ob_inline_content').appendTo('.ob_inline_content_holder').removeClass('ob_inline_content');
+							$('#ob_inline').find('.ob_inline_content').appendTo('.ob_inline_content_holder').removeClass('ob_inline_content');
 							$('.ob_inline_hide').hide().removeClass('ob_inline_hide');
 							$('.ob_inline_content_holder').removeClass('ob_inline_content_holder');
 						}
@@ -922,29 +906,35 @@ if (typeof oB !== 'undefined') {
 					}
 				},
 				getSize: function (obj, s, noMaxHeight) {
-					var mSize = [$(window).height() - 44, $(window).width() - 44], m, a;
-					if (oB.docWidth > $(window).width()) {
+					var ww = $(window).width(), wh = $(window).height();
+					var mSize = [wh - 44, ww - 44], m, a;
+					if (oB.docWidth > ww) {
 						mSize[1] = oB.docWidth - 44;
 					}
 					if (oB.settings.showNav) {
 						mSize[1] -= 120;
 					}
 					if (obj) {
-						s = obj.data('oB').size;
-						m = obj.data('oB').max;
+						s[0] = obj.data('oB').size[0];
+						s[1] = obj.data('oB').size[1];
+						m = oB.settings.contentMaxSize;
 						a = oB.settings.videoAspect;
+						c = obj.data('oB').contentType;
 						
-						if(obj.data('oB').contentType === "youtube" || obj.data('oB').contentType === "vimeo" || obj.data('oB').contentType === "viddler" || obj.data('oB').contentType === "flash") {
+						if(c === "youtube" || c === "vimeo" || c === "viddler" || c === "flash") {
 							if (s[0] > 0 && s[1] === 0) { //If height= is set but width= is not scale correctly
 								s[1] = a[1] / a[0] * s[0];
 							} else if (s[1] > 0 && s[0] === 0) { //If width= is set but height= is not scale correctly
 								s[0] = a[0] / a[1] * s[1];
 							} else if (s[0] === 0 && s[1] === 0) { //If neither is set, set to original size
 								s = a;
-							}	
+							}
 						}
-						
-						if (m[0] === 0) {
+						if(c === "iframe" || c === "pdf") {
+							mSize[0] -= 120;
+						}
+								
+						if (m[0] === 0 && c !== "iframe" && c !== "pdf") {
 							mSize[0] = 0;
 						} else if (m[0] > 1 && m[0] < mSize[0]) {
 							mSize[0] = m[0];

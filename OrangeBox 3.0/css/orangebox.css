@@ -65,10 +65,12 @@
 	margin:0 auto;
 }
 #ob_inline {
-	padding:20px;
 	overflow:auto;
-	line-height:1.625em;
 	cursor:auto;
+}
+#ob_inline .inline_content {
+	padding:20px;
+	line-height:1.625em;
 }
 #ob_load {
 	-moz-border-radius:5px;
