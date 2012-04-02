@@ -596,20 +596,20 @@ if (typeof oB !== 'undefined') {
 
 				//Inline Content
 					function showInline() {
-						var dim = oB.methods.getSize(obj, [0, 0]), inline_content = $('<div class="inline_content"></div>'), s = obj.data('oB').size;
+						var dim = oB.methods.getSize(obj, [0, 0]), inline_content = $('<div class="inline_content"></div>'), s = obj.data('oB').size, clone, copied_elem, copied_content, height;
 						if (href.match(/\?/)) {
 							href = href.substr(0, href.indexOf("?"));
 						}
 						if ($(href).length && $(href).html() !== "") {
 							
 							if (s[0] === 0) {
-								var clone = $(href).clone();
+								clone = $(href).clone();
 								clone.css('display', 'block');
-								var copied_elem = $('<div id="ob_inline"></div>').css({visibility: "hidden", display: "block", position: "absolute", width: dim[1]});
-								var copied_content = $('<div class="inline_content"></div>').append(clone);
+								copied_elem = $('<div id="ob_inline"></div>').css({visibility: "hidden", display: "block", position: "absolute", width: dim[1]});
+								copied_content = $('<div class="inline_content"></div>').append(clone);
 								copied_elem.append(copied_content);
 								$("body").append(copied_elem);
-								var height = copied_elem.height();
+								height = copied_elem.height();
 								copied_content.empty().remove();
 								copied_elem.remove();
 								if(dim[0] > height) {
@@ -785,7 +785,7 @@ if (typeof oB !== 'undefined') {
 						$.extend(oB.settings, o);
 					}
 					if(content.href === "undefined" || content.href === "") return false;
-					var obj = $('<a href="'+ content.href +'"></a>');
+					var obj = $('<a href="'+ content.href +'"></a>'), html;
 					if(content.title) obj.attr('title', content.title);
 					if(content.caption) obj.attr('data-ob_caption', content.caption);
 					
@@ -799,7 +799,7 @@ if (typeof oB !== 'undefined') {
 					else obj.attr('data-ob_share', 'false');
 					
 					if(content.html) {
-						var html = $(content.html).css('display', 'none');
+						html = $(content.html).css('display', 'none');
 						$(body).append(html);
 					}
 					
@@ -906,8 +906,7 @@ if (typeof oB !== 'undefined') {
 					}
 				},
 				getSize: function (obj, s, noMaxHeight) {
-					var ww = $(window).width(), wh = $(window).height();
-					var mSize = [wh - 44, ww - 44], m, a;
+					var ww = $(window).width(), wh = $(window).height(), mSize = [wh - 44, ww - 44], m, a;
 					if (oB.docWidth > ww) {
 						mSize[1] = oB.docWidth - 44;
 					}
