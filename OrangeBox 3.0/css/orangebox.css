@@ -45,9 +45,7 @@
 #ob_iframe {
 	-webkit-overflow-scrolling:touch;
 	overflow:auto;
-}
-#ob_iframe iframe {
-	position:absolute;
+	font-size:0;
 }
 #ob_caption {
 	color:#333;
