@@ -46,6 +46,9 @@
 	-webkit-overflow-scrolling:touch;
 	overflow:auto;
 }
+#ob_iframe iframe {
+	position:absolute;
+}
 #ob_caption {
 	color:#333;
 	background-color:#fff;
