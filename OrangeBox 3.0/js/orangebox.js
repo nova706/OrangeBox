@@ -141,7 +141,7 @@ if (typeof oB !== 'undefined') {
 						}
 						if (typeof o.attr('data-ob_iframe') !== 'undefined' && o.attr('data-ob_iframe') === "true") {
 							c = "iframe";
-						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)$/)) {
+						} else if (u.match(/\.(?:jpg|jpeg|bmp|png|gif)/)) {
 							c = "image";
 							if(o.parent().hasClass('ngg-gallery-thumbnail') && oB.settings.nextGen) {
 								child = o.children('img')[0];
@@ -152,9 +152,9 @@ if (typeof oB !== 'undefined') {
 									t = child.attr('alt');
 								}
 							}
-						} else if (u.match(/\.pdf$/)) {
+						} else if (u.match(/\.pdf/)) {
 							c = "pdf";
-						} else if (u.match(/\.swf$/)) {
+						} else if (u.match(/\.swf/)) {
 							c = "flash";
 						} else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id\=\d{1,}\@.{1,}\&lang\=.{1,}\&format\=rss\_200/)) {
 							c = "flickr";
