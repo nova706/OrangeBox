@@ -38,7 +38,7 @@ if (typeof oB !== 'undefined') {
 			},
 			methods: {
 				init: function (o) {
-					function checkURL() {
+					function checkURL(searchTerm) {
 						if (oB.ourl.match(/\#\..{1,}\.facebook/)) {
 							oB.ourl = oB.ourl.substr(0, oB.ourl.search(/\#\..{1,}\.facebook/));
 						}
@@ -86,11 +86,11 @@ if (typeof oB !== 'undefined') {
 						if (oB.settings.addThis) {
 							$.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
 								if (oB.ourl) {
-									checkURL();
+									checkURL(searchTerm);
 								}
 							});
 						} else if (oB.ourl) {
-							checkURL();
+							checkURL(searchTerm);
 						}
 						return this.each(function () {
 							oB.methods.setupData($(this));
@@ -918,7 +918,7 @@ if (typeof oB !== 'undefined') {
 					}
 				},
 				getSize: function (obj, s, noMaxHeight) {
-					var ww = $(window).width(), wh = $(window).height(), mSize = [wh - 44, ww - 44], m, a;
+					var ww = $(window).width(), wh = $(window).height(), mSize = [wh - 44, ww - 44], m, a, c;
 					if (oB.docWidth > ww) {
 						mSize[1] = oB.docWidth - 44;
 					}
