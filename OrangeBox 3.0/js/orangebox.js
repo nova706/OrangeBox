@@ -1,8 +1,8 @@
 /*
  * version: 3.0.0
  * package: OrangeBox
- * author: David Paul Hamilton - http://orangebox.davidpaulhamilton.net
- * copyright: Copyright (c) 2011 David Hamilton / DavidPaulHamilton.net All rights reserved.
+ * author: David Paul Hamilton - http://davidpaulhamilton.net/orangebox
+ * copyright: Copyright (c) 2012 David Hamilton / DavidPaulHamilton.net All rights reserved.
  * license: GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
  */
 if (typeof oB !== 'undefined') {
