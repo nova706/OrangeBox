@@ -661,7 +661,7 @@ if (typeof oB !== 'undefined') {
                                 break;
                         }
                         obj.data('oB').css = dim;
-                        content = $('<div id="ob_iframe"><iframe allowTransparency="true" id="ob_video" width="100%" height="100%" type="text/html" frameborder="0" hspace="0" scrolling="auto" src="' + src + '"></iframe></div>').css({
+                        content = $('<div id="ob_iframe"><iframe allowTransparency="true" id="ob_video" width="100%" height="100%" type="text/html" frameborder="0" hspace="0" scrolling="no" src="' + src + '"></iframe></div>').css({
                             "height": dim[0],
                             "width": dim[1],
                             "background-color": "#000000"
