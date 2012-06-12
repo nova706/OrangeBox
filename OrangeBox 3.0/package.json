@@ -1,0 +1,42 @@
+{
+    "name": "jquery.orangebox",
+    "version": "3.0.0",
+    "title": "OrangeBox: Lightweight jQuery Lightbox Plugin",
+    "author": {
+        "name": "David Hamilton",
+        "email": "dph706@gmail.com",
+        "url": "http://davidpaulhamilton.net"
+    },
+    "licenses": [
+        {
+            "type": "GNU/GPL",
+            "url": "http://www.gnu.org/copyleft/gpl.html"
+        }
+    ],
+    "jquery": {
+        "dependencies": {
+            "jquery": "1"
+        },
+        "docs": "http://davidpaulhamilton.net/orangebox/howto",
+        "demo": "http://davidpaulhamilton.net/orangebox/examples"
+    },
+    "description": "OrangeBox is a Lightweight, Cross-Browser, Automated jQuery Lightbox Script. It can display images, YouTube and Vimeo videos, Flash SWF files, PDFs, iFrames and any other inline content. It also groups items together (regardless of their content type) and shows easy to use navigation.",
+    "keywords": [
+        "AJAX",
+        "image",
+        "photo",
+        "lightbox",
+        "picture",
+        "modalbox",
+        "jquery",
+        "modal"
+    ],
+    "homepage": "http://davidpaulhamilton.net/orangebox",
+    "maintainers": [
+        {
+            "name": "David Hamilton",
+            "email": "dph706@gmail.com",
+            "url": "https://github.com/nova706"
+        }
+    ]
+}
