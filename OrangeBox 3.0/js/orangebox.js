@@ -540,6 +540,7 @@ if (typeof oB !== 'undefined') {
                             }
                             if (oB.settings.addThis && obj.data('oB').share !== "false") {
                                 addThis.addClass("ob_share");
+                                title = $.trim(title);
                                 if (title === "") { title = "&nbsp;"; }
                                 $('#ob_title').append(addThis);
                                 addthis.button('.ob_share', {
