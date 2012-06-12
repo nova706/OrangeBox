@@ -22,6 +22,7 @@ if (typeof oB !== 'undefined') {
                 showDots: false,
                 showNav: true,
                 addThis: true,
+                addThisServices: 'twitter,facebook,digg,delicious,more',
                 notFound: 'Not Found',
                 overlayOpacity: 0.95,
                 contentBorderWidth: 4,
@@ -544,7 +545,7 @@ if (typeof oB !== 'undefined') {
                                 if (title === "") { title = "&nbsp;"; }
                                 $('#ob_title').append(addThis);
                                 addthis.button('.ob_share', {
-                                    services_compact: 'twitter,facebook,digg,delicious,more',
+                                    services_compact: oB.settings.addThisServices,
                                     ui_offset_left: -244,
                                     ui_offset_top: 4
                                 }, {
