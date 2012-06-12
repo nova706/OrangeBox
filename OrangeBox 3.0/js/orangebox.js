@@ -673,7 +673,14 @@ if (typeof oB !== 'undefined') {
                     function showFlash() {
                         var dim = oB.methods.getSize(obj, [0, 0]);
                         obj.data('oB').css = dim;
-                        content = $('<div id="ob_video"><embed flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed></div>').css({
+                        content = $('<div id="ob_video">' +
+                            '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="' + dim[1] + '" height="' + dim[0] + '" id="ob_flash_content" align="middle">' +
+                            '<param name="movie" value="' + href + '"/><param name="wmode" value="transparent"/><param name="allowFullScreen" value="true"/>' +
+                            '<!--[if !IE]>--><object type="application/x-shockwave-flash" data="' + href + '" width="' + dim[1] + '" height="' + dim[0] + '"><param name="movie" value="' + href + '"/><!--<![endif]-->' +
+                            '<a href="http://www.adobe.com/go/getflash"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player"/></a>' +
+                            '<!--[if !IE]>--></object><!--<![endif]-->' +
+                            '<embed name="ob_flash_content" flashVars="playerVars=autoPlay=yes" src="' + href + '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" allowFullScreen="true" allowScriptAccess="always" width="' + dim[1] + '" height="' + dim[0] + '" type="application/x-shockwave-flash"></embed>' +
+                            '</object></div>').css({
                             "height": dim[0],
                             "width": dim[1]
                         });
