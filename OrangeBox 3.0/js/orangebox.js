@@ -197,7 +197,7 @@ if (typeof oB !== 'undefined') {
 										var picasaSrc, picasaCaption = cap, delay = "";
 										if(typeof o.attr('data-ob_delayTimer') !== "undefined" && o.attr('data-ob_delayTimer') !== "0") {
 											delay = 'data-ob_delayTimer="' + o.attr('data-ob_delayTimer') + '"';
-										};
+										}
 										if (item.content) {
 											picasaSrc = item.content.src;
 										} else if (item.media$group.media$content[0]) {
@@ -544,12 +544,11 @@ if (typeof oB !== 'undefined') {
 								}
 								title = (obj.data('oB').linkText && obj.data('oB').linkText !== "undefined") ? title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').linkText + '</a>' : title + ' <a href="' + obj.data('oB').link + '" ' + target + ' >' + obj.data('oB').link + '</a>';
 							}
-							$('#ob_title').append(title).click(function (e) { e.stopPropagation(); });
 							if (oB.settings.addThis && obj.data('oB').share !== "false") {
-								addThis.addClass("ob_share-" + title.replace(/ /g, "_"));
-								if (title === "") { title = "share"; }
+								addThis.addClass("ob_share");
+								if (title === "") { title = "&nbsp;"; }
 								$('#ob_title').append(addThis);
-								addthis.button('.ob_share-' + title.replace(/ /g, "_"), {
+								addthis.button('.ob_share', {
 									services_compact: 'twitter,facebook,digg,delicious,more',
 									ui_offset_left: -244,
 									ui_offset_top: 4
@@ -559,6 +558,7 @@ if (typeof oB !== 'undefined') {
 								});
 								$('#ob_share').html('').append(shareHTML);
 							}
+							$('#ob_title').prepend(title).click(function (e) { e.stopPropagation(); });
 							setControls();
 							if(obj.data('oB').share !== "false") {
 								$(document).trigger('oB_init', ob_link);
