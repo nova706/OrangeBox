@@ -1018,13 +1018,12 @@ if (typeof oB !== 'undefined') {
 }
 jQuery(document).ready(function ($) {
 	var searchTerm = 'a[data-ob*=lightbox], area[data-ob*=lightbox], a[rel*=lightbox], area[rel*=lightbox]';
+	if(typeof orangebox_vars !== "undefined") {
+		$.extend(oB.settings, orangebox_vars);
+	}
 	if(oB.settings.searchTerm !== "") {
 		searchTerm = 'a[data-ob*='+oB.settings.searchTerm+'], area[data-ob*='+oB.settings.searchTerm+'], a[rel*='+oB.settings.searchTerm+'], area[rel*='+oB.settings.searchTerm+']';
 	}
-	if (typeof orangebox_vars !== "undefined") {
-		$(searchTerm).orangeBox(orangebox_vars);
-	} else {
-		$(searchTerm).orangeBox();
-	}
+	$(searchTerm).orangeBox();
 	$(document).trigger('oB_ready');
 });
