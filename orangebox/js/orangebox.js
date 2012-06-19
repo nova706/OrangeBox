@@ -42,7 +42,7 @@ if (typeof oB !== 'undefined') {
                         if (oB.ourl.match(/#\..{1,}\.facebook/)) {
                             oB.ourl = oB.ourl.substr(0, oB.ourl.search(/#\..{1,}\.facebook/));
                         }
-                        if (oB.ourl.match(/^#\w{1,}$/) && $('#' + oB.ourl).length > 0) {
+                        if (oB.ourl.match(/^#[A-Za-z0-9_\-]{1,}$/) && $('#' + oB.ourl).length > 0) {
                             oB.methods.create($('#' + oB.ourl));
                         } else {
                             $(searchTerm).each(function () {
@@ -230,10 +230,10 @@ if (typeof oB !== 'undefined') {
                         } else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}$/i)) {
                             id = u.match(/viddler\.com\/(player|simple)\/\w{1,}/)[0].substring(19);
                             c = "viddler";
-                        } else if (u.match(/^#\w{1,}$/i)) {
+                        } else if (u.match(/^#[A-Za-z0-9_\-]{1,}$/i)) {
                             c = "inline";
                         } else {
-                            oB.methods.logit('Unsupported Media: ' + u);
+                            oB.methods.logit('Unsupported Media:s ' + u);
                         }
                         if (c && c !== "flickr" && c !== "picasa") {
                             $.each(oB.gallery, function() {
