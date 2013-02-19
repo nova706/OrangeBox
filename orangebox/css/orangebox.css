@@ -74,6 +74,9 @@
 	line-height:1.625em;
 }
 #ob_load {
+	background:url(loading.gif) no-repeat center;
+}
+#ob_load,#ob_load_text {
 	-moz-border-radius:5px;
 	background:url(loading.gif) no-repeat center;
 	background-color:#fff;
@@ -95,6 +98,8 @@
 }
 #ob_close {
 	background:url(buttons.png);
+}
+#ob_close, #ob_close_text {
 	cursor:pointer;
 	height:30px;
 	left:-26px;
@@ -102,6 +107,9 @@
 	top:-26px;
 	width:30px;
 	z-index:1005;
+}
+#ob_close_text {
+	top:-16px;
 }
 #ob_title {
 	color:#fff;
@@ -168,3 +176,22 @@
 }
 #ob_dots .current { background-color:#CCC!important; }
 #ob_share { margin-left:8px; }
+#ob_close_text,#ob_left,#ob_right,#ob_load_text {
+	color: #fff;
+	font-size: 250%;
+	text-shadow: 1px 1px 1px #000;
+	filter: dropshadow(color=#000, offx=1, offy=1);
+}
+.ob_controls {
+	cursor:pointer;
+	display:block;
+	height:30px;
+	margin-top:-9px;
+	position:absolute;
+	top:50%;
+	width:100%;
+	z-index:1004;
+}
+#ob_left, .ob_left {
+	text-align: right;
+}
