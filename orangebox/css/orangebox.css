@@ -176,7 +176,7 @@
 }
 #ob_dots .current { background-color:#CCC!important; }
 #ob_share { margin-left:8px; }
-#ob_close_text,.ob_controls,#ob_load_text {
+#ob_close_text,#ob_left,#ob_right,#ob_load_text {
 	color: #fff;
 	font-size: 250%;
 	text-shadow: 1px 1px 1px #000;
