@@ -22,7 +22,7 @@ if (typeof oB !== 'undefined') {
                 showDots: false,
                 showNav: true,
                 addThis: true,
-                addThisServices: 'twitter,facebook,digg,delicious,more',
+                addThisServices: 'twitter,facebook,google_plusone_share,more',
                 notFound: 'Not Found',
                 overlayOpacity: 0.95,
                 contentBorderWidth: 4,
@@ -42,7 +42,7 @@ if (typeof oB !== 'undefined') {
                         if (oB.ourl.match(/#\..{1,}\.facebook/)) {
                             oB.ourl = oB.ourl.substr(0, oB.ourl.search(/#\..{1,}\.facebook/));
                         }
-                        if (oB.ourl.match(/^#[A-Za-z0-9_\-]{1,}$/) && $('#' + oB.ourl).length > 0) {
+                        if (oB.ourl.match(/^#\w{1,}$/) && $('#' + oB.ourl).length > 0) {
                             oB.methods.create($('#' + oB.ourl));
                         } else {
                             $(searchTerm).each(function () {
@@ -84,7 +84,7 @@ if (typeof oB !== 'undefined') {
                         oB.browser = $.browser;
 
                         if (oB.settings.addThis) {
-                            $.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
+                            $.getScript('http://s7.addthis.com/js/250/addthis_widget.js', function () {
                                 if (oB.ourl) {
                                     checkURL(searchTerm);
                                 }
@@ -230,10 +230,10 @@ if (typeof oB !== 'undefined') {
                         } else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}$/i)) {
                             id = u.match(/viddler\.com\/(player|simple)\/\w{1,}/)[0].substring(19);
                             c = "viddler";
-                        } else if (u.match(/^#[A-Za-z0-9_\-]{1,}$/i)) {
+                        } else if (u.match(/^#\w{1,}$/i)) {
                             c = "inline";
                         } else {
-                            oB.methods.logit('Unsupported Media:s ' + u);
+                            oB.methods.logit('Unsupported Media: ' + u);
                         }
                         if (c && c !== "flickr" && c !== "picasa") {
                             $.each(oB.gallery, function() {
@@ -351,6 +351,20 @@ if (typeof oB !== 'undefined') {
                     }
                 },
                 showContent: function (obj, initial) {
+                    navRight = $('<a class="ob_nav" id="ob_right" title="next"><span class="ob_controls" id="ob_right-ico">&#8677;</span></a>').click(function (e) {
+                        if (oB.progress === null) {
+                            oB.methods.slideshowPause();
+                            e.stopPropagation();
+                            oB.methods.navigate(1);
+                        }
+                    });
+                    navLeft = $('<a class="ob_nav" id="ob_left" title="previous"><span class="ob_controls" id="ob_left-ico">&#8676;</span></a>').click(function (e) {
+                        if (oB.progress === null) {
+                            oB.methods.slideshowPause();
+                            e.stopPropagation();
+                            oB.methods.navigate(-1);
+                        }
+                    });
                     var href = obj.data('oB').href,
                         title = obj.data('oB').title,
                         contentType = obj.data('oB').contentType,
@@ -358,20 +372,8 @@ if (typeof oB !== 'undefined') {
                         ob_caption = '',
                         ob_caption_text = '',
                         tag = href,
-                        navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico"></span></a>').click(function (e) {
-                            if (oB.progress === null) {
-                                oB.methods.slideshowPause();
-                                e.stopPropagation();
-                                oB.methods.navigate(1);
-                            }
-                        }),
-                        navLeft = $('<a class="ob_nav" id="ob_left"><span class="ob_controls" id="ob_left-ico"></span></a>').click(function (e) {
-                            if (oB.progress === null) {
-                                oB.methods.slideshowPause();
-                                e.stopPropagation();
-                                oB.methods.navigate(-1);
-                            }
-                        }),
+                        navRight,
+                        navLeft,
                         dotnav = $('<ul id="ob_dots"></ul>').click(function (e) { e.stopPropagation(); }),
                         ob_link;
                     if(obj.data('oB').caption) {
@@ -414,7 +416,7 @@ if (typeof oB !== 'undefined') {
                         }
                     }
                     if (oB.settings.showClose) {
-                        $('#ob_content').append($('<div title="close" class="ob_controls ob_cs" id="ob_close"></div>').click(function (e) {
+                        $('#ob_content').append($('<div title="close" class="ob_controls ob_cs" id="ob_close">&#x02297;</div>').click(function (e) {
                             e.stopPropagation();
                             oB.methods.destroy();
                         }));
@@ -873,7 +875,7 @@ if (typeof oB !== 'undefined') {
                     }
                 },
                 showLoad: function (x) {
-                    var ob_load = $('<div id="ob_load"></div>').hide();
+                    var ob_load = $('<div id="ob_load">&#9684;</div>').hide();
                     if ($('#ob_load').length > 0 || x) {
                         clearTimeout(oB.loadTimer);
                         $('#ob_load').remove();

@@ -36,8 +36,6 @@
 	margin:22px auto 44px;
 	background-color:#fff;
 	border:0 solid #fff;
-	-webkit-box-shadow: 0px 0px 8px 2px #222222;
-	-moz-box-shadow: 0px 0px 8px 2px #222222;
 	line-height:0;
 	display:none;
 	z-index:1003;
@@ -74,9 +72,8 @@
 	line-height:1.625em;
 }
 #ob_load {
+	text-align: center
 	-moz-border-radius:5px;
-	background:url(loading.gif) no-repeat center;
-	background-color:#fff;
 	border-radius:5px;
 	height:40px;
 	left:50%;
@@ -85,8 +82,6 @@
 	width:40px;
 	margin:-25px 0 0 -25px;
 	padding:5px;
-	-webkit-box-shadow: 0px 0px 8px 2px #222222;
-	-moz-box-shadow: 0px 0px 8px 2px #222222;
 	z-index:1002;
 }
 #ob_error {
@@ -94,7 +89,6 @@
 	padding:10px;
 }
 #ob_close {
-	background:url(buttons.png);
 	cursor:pointer;
 	height:30px;
 	left:-26px;
@@ -102,6 +96,7 @@
 	top:-26px;
 	width:30px;
 	z-index:1005;
+	top:-16px;
 }
 #ob_title {
 	color:#fff;
@@ -135,11 +130,9 @@
 	z-index:1004;
 }
 #ob_left-ico {
-	background:url(buttons.png) center;
 	right:20px;
 }
 #ob_right-ico {
-	background:url(buttons.png) right;
 	left:20px;
 }
 #ob_left:hover,#ob_right:hover { visibility:visible; }
@@ -168,3 +161,27 @@
 }
 #ob_dots .current { background-color:#CCC!important; }
 #ob_share { margin-left:8px; }
+#ob_close,#ob_load,.ob_nav,#ob_load {
+	color: #fff;
+	font-size: 250%;
+	text-shadow: 1px 1px 1px #000;
+	filter: dropshadow(color=#000, offx=1, offy=1);
+}
+.ob_controls {
+	cursor:pointer;
+	display:block;
+	height:30px;
+	margin-top:-9px;
+	position:absolute;
+	top:50%;
+	width:100%;
+	z-index:1004;
+}
+#ob_left, .ob_left {
+	text-align: right;
+}
+/*#at_hover > *, .at-whatsthis > *, .atm-f > * , .atm-i > *, .atm-s > *, .atm-s, .at-whatsthis, .at-logo {*/
+.atm-f, .atm-i, .atm-s {
+	text-shadow: none;
+	filter: dropshadow(none);
+}
