@@ -22,7 +22,7 @@ if (typeof oB !== 'undefined') {
                 showDots: false,
                 showNav: true,
                 addThis: true,
-                addThisServices: 'twitter,facebook,digg,delicious,more',
+                addThisServices: 'twitter,facebook,google_plusone_share,more',
                 notFound: 'Not Found',
                 overlayOpacity: 0.95,
                 contentBorderWidth: 4,
