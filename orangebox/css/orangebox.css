@@ -130,11 +130,9 @@
 	z-index:1004;
 }
 #ob_left-ico {
-	background:url(buttons.png) center;
 	right:20px;
 }
 #ob_right-ico {
-	background:url(buttons.png) right;
 	left:20px;
 }
 #ob_left:hover,#ob_right:hover { visibility:visible; }
