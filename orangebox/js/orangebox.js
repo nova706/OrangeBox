@@ -84,7 +84,7 @@ if (typeof oB !== 'undefined') {
                         oB.browser = $.browser;
 
                         if (oB.settings.addThis) {
-                            $.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
+                            $.getScript('http://s7.addthis.com/js/250/addthis_widget.js', function () {
                                 if (oB.ourl) {
                                     checkURL(searchTerm);
                                 }
