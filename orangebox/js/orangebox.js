@@ -351,14 +351,14 @@ if (typeof oB !== 'undefined') {
                     }
                 },
                 showContent: function (obj, initial) {
-                    navRight = $('<a class="ob_nav" id="ob_right"><span class="ob_controls" id="ob_right-ico">&#8677;</span></a>').click(function (e) {
+                    navRight = $('<a class="ob_nav" id="ob_right" title="next"><span class="ob_controls" id="ob_right-ico">&#8677;</span></a>').click(function (e) {
                         if (oB.progress === null) {
                             oB.methods.slideshowPause();
                             e.stopPropagation();
                             oB.methods.navigate(1);
                         }
                     });
-                    navLeft = $('<a class="ob_nav" id="ob_left"><span class="ob_controls" id="ob_left-ico">&#8676;</span></a>').click(function (e) {
+                    navLeft = $('<a class="ob_nav" id="ob_left" title="previous"><span class="ob_controls" id="ob_left-ico">&#8676;</span></a>').click(function (e) {
                         if (oB.progress === null) {
                             oB.methods.slideshowPause();
                             e.stopPropagation();
