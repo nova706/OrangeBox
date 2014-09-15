@@ -42,7 +42,7 @@ if (typeof oB !== 'undefined') {
                         if (oB.ourl.match(/#\..{1,}\.facebook/)) {
                             oB.ourl = oB.ourl.substr(0, oB.ourl.search(/#\..{1,}\.facebook/));
                         }
-                        if (oB.ourl.match(/^#[A-Za-z0-9_\-]{1,}$/) && $('#' + oB.ourl).length > 0) {
+                        if (oB.ourl.match(/^#\w{1,}$/) && $('#' + oB.ourl).length > 0) {
                             oB.methods.create($('#' + oB.ourl));
                         } else {
                             $(searchTerm).each(function () {
@@ -84,7 +84,7 @@ if (typeof oB !== 'undefined') {
                         oB.browser = $.browser;
 
                         if (oB.settings.addThis) {
-                            $.getScript('http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
+                            $.getScript('https://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4dd42f2b5b9fc332', function () {
                                 if (oB.ourl) {
                                     checkURL(searchTerm);
                                 }
@@ -147,7 +147,7 @@ if (typeof oB !== 'undefined') {
                             c = "pdf";
                         } else if (u.match(/\.swf/i)) {
                             c = "flash";
-                        } else if (u.match(/^http:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id=\d{1,}@.{1,}&lang=.{1,}&format=rss_200/i)) {
+                        } else if (u.match(/^https?:\/\/api\.flickr\.com\/services\/feeds\/.{1,}\.gne\?id=\d{1,}@.{1,}&lang=.{1,}&format=rss_200/i)) {
                             c = "flickr";
                             u = u.replace('rss_200', 'json') + "&jsoncallback=?";
                             if (!rel.match(/\[/)) {
@@ -215,25 +215,25 @@ if (typeof oB !== 'undefined') {
                                     });
                                 }
                             });
-                        } else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}/i)) {
+                        } else if (u.match(/^https?:\/\/\w{0,3}\.?youtube\.\w{2,3}\/watch\?v=[\w\-]{11}/i)) {
                             id = u.match(/\?v=[\w\-]{11}/)[0].substring(3);
                             c = "youtube";
-                        } else if (u.match(/^http:\/\/\w{0,3}\.?youtu\.be\/[\w\-]{11}$/i)) {
+                        } else if (u.match(/^https?:\/\/\w{0,3}\.?youtu\.be\/[\w\-]{11}$/i)) {
                             id = u.match(/youtu\.be\/[\w\-]{11}$/)[0].substring(9);
                             c = "youtube";
-                        } else if (u.match(/^http:\/\/\w{0,3}\.?youtube\.\w{2,3}\/embed\/[\w\-]{11}$/i)) {
+                        } else if (u.match(/^https?:\/\/\w{0,3}\.?youtube\.\w{2,3}\/embed\/[\w\-]{11}$/i)) {
                             id = u.match(/\/embed\/[\w\-]{11}$/)[0].substring(7);
                             c = "youtube";
-                        } else if (u.match(/^http:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}$/i)) {
+                        } else if (u.match(/^https?:\/\/\w{0,3}\.?vimeo\.com\/\d{1,10}$/i)) {
                             id = u.match(/vimeo\.com\/\d{1,}/)[0].substring(10);
                             c = "vimeo";
-                        } else if (u.match(/^http:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}$/i)) {
+                        } else if (u.match(/^https?:\/\/\w{0,3}\.?viddler\.com\/(?:simple|player)\/\w{1,10}$/i)) {
                             id = u.match(/viddler\.com\/(player|simple)\/\w{1,}/)[0].substring(19);
                             c = "viddler";
-                        } else if (u.match(/^#[A-Za-z0-9_\-]{1,}$/i)) {
+                        } else if (u.match(/^#\w{1,}$/i)) {
                             c = "inline";
                         } else {
-                            oB.methods.logit('Unsupported Media:s ' + u);
+                            oB.methods.logit('Unsupported Media: ' + u);
                         }
                         if (c && c !== "flickr" && c !== "picasa") {
                             $.each(oB.gallery, function() {
@@ -650,13 +650,13 @@ if (typeof oB !== 'undefined') {
                         var dim = oB.methods.getSize(obj, [0, 0]), src;
                         switch (contentType) {
                             case "youtube":
-                                src = 'http://www.youtube.com/embed/'+ obj.data('oB').id +'?autoplay=1&fs=1&modestbranding=1&rel=0&showsearch=0&wmode=transparent';
+                                src = location.protocol + '//www.youtube.com/embed/'+ obj.data('oB').id +'?autoplay=1&fs=1&modestbranding=1&rel=0&showsearch=0&wmode=transparent';
                                 break;
                             case "vimeo":
-                                src = 'http://player.vimeo.com/video/' + obj.data('oB').id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
+                                src = location.protocol + '//player.vimeo.com/video/' + obj.data('oB').id + '?title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
                                 break;
                             case "viddler":
-                                src = 'http://cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('oB').id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
+                                src = location.protocol + '//cdn.static.viddler.com/flash/publisher.swf?key=' + obj.data('oB').id + '&title=0&byline=0&portrait=0&autoplay=1&wmode=transparent';
                                 break;
                         }
                         obj.data('oB').css = dim;
