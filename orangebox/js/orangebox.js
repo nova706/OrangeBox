@@ -21,7 +21,7 @@ if (typeof oB !== 'undefined') {
                 showClose: true,
                 showDots: false,
                 showNav: true,
-                addThis: false,
+                addThis: true,
                 addThisServices: 'twitter,facebook,digg,delicious,more',
                 notFound: 'Not Found',
                 overlayOpacity: 0.95,
